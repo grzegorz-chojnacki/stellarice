@@ -1,4 +1,4 @@
-class Ethic {
+class Ethic extends Authority {
   static valueSum = (acc, { value }) => acc + value
 
   constructor(name, value) {
@@ -6,7 +6,7 @@ class Ethic {
     this.value = value
   }
 
-  checked = () => empire.ethics.includes(this)
+  checked = () => empire.has(this)
 
   valid = () => {
     if (this.checked()) return true
@@ -15,32 +15,18 @@ class Ethic {
   }
 }
 
-const eGestalt              = new Ethic('Gestalt', 3)
-const eFanaticMilitarist    = new Ethic('Fanatic Militarist', 2)
-const eFanaticPacifist      = new Ethic('Fanatic Pacifist', 2)
-const eFanaticXenophobe     = new Ethic('Fanatic Xenophobe', 2)
-const eFanaticXenophile     = new Ethic('Fanatic Xenophile', 2)
-const eFanaticAuthoritarian = new Ethic('Fanatic Authoritarian', 2)
-const eFanaticEgalitarian   = new Ethic('Fanatic Egalitarian', 2)
-const eMilitarist           = new Ethic('Militarist', 1)
-const ePacifist             = new Ethic('Pacifist', 1)
-const eXenophobe            = new Ethic('Xenophobe', 1)
-const eXenophile            = new Ethic('Xenophile', 1)
-const eAuthoritarian        = new Ethic('Authoritarian', 1)
-const eEgalitarian          = new Ethic('Egalitarian', 1)
-
-const ethics = [
-  eGestalt,
-  eFanaticMilitarist,
-  eFanaticPacifist,
-  eFanaticXenophobe,
-  eFanaticXenophile,
-  eFanaticAuthoritarian,
-  eFanaticEgalitarian,
-  eMilitarist,
-  ePacifist,
-  eXenophobe,
-  eXenophile,
-  eAuthoritarian,
-  eEgalitarian,
-]
+const ethics = {
+  Gestalt:              new Ethic('Gestalt', 3),
+  FanaticMilitarist:    new Ethic('Fanatic Militarist', 2),
+  FanaticPacifist:      new Ethic('Fanatic Pacifist', 2),
+  FanaticXenophobe:     new Ethic('Fanatic Xenophobe', 2),
+  FanaticXenophile:     new Ethic('Fanatic Xenophile', 2),
+  FanaticAuthoritarian: new Ethic('Fanatic Authoritarian', 2),
+  FanaticEgalitarian:   new Ethic('Fanatic Egalitarian', 2),
+  Militarist:           new Ethic('Militarist', 1),
+  Pacifist:             new Ethic('Pacifist', 1),
+  Xenophobe:            new Ethic('Xenophobe', 1),
+  Xenophile:            new Ethic('Xenophile', 1),
+  Authoritarian:        new Ethic('Authoritarian', 1),
+  Egalitarian:          new Ethic('Egalitarian', 1),
+}

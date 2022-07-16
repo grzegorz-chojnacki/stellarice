@@ -12,38 +12,38 @@ class Authority {
     return (empire.authority.length == 0)
       && !this.cannotHave.some(x => nestedIncludes(empire, x))
       && this.mustHave.every(x => nestedIncludes(empire, x))
-
   }
 }
 
-const aDemocratic = new Authority('Democratic',
-  [ eAuthoritarian, eFanaticAuthoritarian, eGestalt ],
-  [])
-const aOligarchic = new Authority('Oligarchic',
-  [ eFanaticAuthoritarian, eFanaticEgalitarian, eGestalt ],
-  [])
-const aDictatorial = new Authority('Dictatorial',
-  [ eEgalitarian, eFanaticEgalitarian, eGestalt ],
-  [])
-const aImperial = new Authority('Imperial',
-  [ eEgalitarian, eFanaticEgalitarian, eGestalt ],
-  [])
-const aHiveMind = new Authority('Hive Mind',
-  [ pMechanical ],
-  [ eGestalt ])
-const aMachineIntelligence = new Authority('Machine Intelligence',
-  [],
-  [ pMechanical, eGestalt ])
-const aCorporate = new Authority('Corporate',
-  [ eFanaticAuthoritarian, eFanaticEgalitarian, eGestalt ],
-  [])
-
-const authority = [
-  aDemocratic,
-  aOligarchic,
-  aDictatorial,
-  aImperial,
-  aHiveMind,
-  aMachineIntelligence,
-  aCorporate,
-]
+const authority = {
+  Democratic: new Authority('Democratic', [
+    ethics.Authoritarian,
+    ethics.FanaticAuthoritarian,
+    ethics.Gestalt
+  ], []),
+  Oligarchic: new Authority('Oligarchic', [
+    ethics.FanaticAuthoritarian,
+    ethics.FanaticEgalitarian,
+    ethics.Gestalt
+  ], []),
+  Dictatorial: new Authority('Dictatorial', [
+    ethics.Egalitarian,
+    ethics.FanaticEgalitarian,
+    ethics.Gestalt
+  ], []),
+  Imperial: new Authority('Imperial', [
+    ethics.Egalitarian,
+    ethics.FanaticEgalitarian,
+    ethics.Gestalt
+  ], []),
+  HiveMind: new Authority('Hive Mind', [ pop.Mechanical ], [ ethics.Gestalt ]),
+  MachineIntelligence: new Authority('Machine Intelligence', [], [
+    pop.Mechanical,
+    ethics.Gestalt
+  ]),
+  Corporate: new Authority('Corporate', [
+    ethics.FanaticAuthoritarian,
+    ethics.FanaticEgalitarian,
+    ethics.Gestalt
+  ], []),
+}

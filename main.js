@@ -100,7 +100,7 @@ const render = () => {
     const section = htmlToElement('<section></section>')
     section.appendChild(htmlToElement(`<h2>${capitalize(name)}</h2>`))
 
-    all[name].forEach(item => {
+    Object.values(all[name]).forEach(item => {
       const element = htmlToElement(template(item))
       const input = element.getElementsByTagName('input')[0]
       input.onclick = () => {

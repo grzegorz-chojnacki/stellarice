@@ -9,12 +9,8 @@ class Pop {
   }
 }
 
-const pBiological = new Pop('Biological')
-const pMechanical = new Pop('Mechanical')
-const pLithoid    = new Pop('Lithoid')
-
-const pop = [
-  pBiological,
-  pMechanical,
-  pLithoid,
-]
+const pop = {
+  Biological: new Pop('Biological'),
+  Mechanical: new Pop('Mechanical'),
+  Lithoid:    new Pop('Lithoid'),
+}

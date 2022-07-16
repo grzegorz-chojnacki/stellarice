@@ -19,6 +19,16 @@ const toggleIncluded = (list, item) => {
   }
 }
 
+Object.prototype.has = function (something) {
+  for (const prop in this) {
+    if (this[prop] === something) return true
+    if (typeof(this[prop]) === 'object' && this[prop].has(something)) {
+      return true
+    }
+  }
+  return false
+}
+
 const nestedIncludes = (obj, item) => {
   for (const prop in obj) {
     if (obj[prop] instanceof Array && obj[prop].includes(item)) {
