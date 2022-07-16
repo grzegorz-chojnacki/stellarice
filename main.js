@@ -28,6 +28,11 @@ const sections = [
   },
   {
     name: 'traits',
+    summary: () => `
+      <p>
+        Available traits: ${5 - empire.traits.length}<br>
+        Available points: ${empire.traits.reduce(Trait.costSum, 2)}
+      </p>`,
     template: item => `
       <div>
         <input
@@ -105,9 +110,13 @@ const main = document.getElementsByTagName('main')[0]
 
 const render = () => {
   main.innerHTML = ''
-  sections.forEach(({ name, template }) => {
+  sections.forEach(({ name, summary, template }) => {
     const section = htmlToElement('<section></section>')
     section.appendChild(htmlToElement(`<h2>${capitalize(name)}</h2>`))
+
+    if (summary) {
+      section.appendChild(htmlToElement(summary()))
+    }
 
     Object.values(all[name]).forEach(item => {
       const element = htmlToElement(template(item))
@@ -121,7 +130,6 @@ const render = () => {
 
     main.appendChild(section)
   })
-  console.log('count', 5 - empire.traits.length, 'sum', empire.traits.reduce(Trait.costSum, 2))
 }
 
 render()
