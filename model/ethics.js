@@ -9,7 +9,7 @@ class Ethic extends Item {
   }
 
   genericConstraint = () => this.empireList.length < 3
-     && !this.empireList.some(ethic => ethic.kind === this.kind)
+     && !this.empireList.some(ethic => ethic.kind && ethic.kind === this.kind)
      && this.empireList.reduce(Ethic.valueSum, 0) + this.value <= 3
 }
 

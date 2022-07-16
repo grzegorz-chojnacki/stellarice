@@ -10,7 +10,7 @@ class Trait extends Item {
 
   genericConstraint = () => {
     return (this.empireList.length < 5)
-     && !this.empireList.some(trait => trait.kind === this.kind)
+     && !this.empireList.some(trait => trait.kind && trait.kind === this.kind)
      && this.empireList.reduce(Trait.valueSum, 2) + this.value >= 0}
 }
 
