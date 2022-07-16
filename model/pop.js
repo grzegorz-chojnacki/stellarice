@@ -7,8 +7,8 @@ class Pop extends Item {
 }
 
 const pop = {
-  Biological: () => new Pop('Biological'),
-  Mechanical: () => new Pop('Mechanical'),
-  Plantoid:   () => new Pop('Plantoid'),
-  Lithoid:    () => new Pop('Lithoid'),
+  Biological: new Pop('Biological'),
+  Mechanical: new Pop('Mechanical', () => every(ethics.Gestalt)),
+  Plantoid:   new Pop('Plantoid'),
+  Lithoid:    new Pop('Lithoid'),
 }

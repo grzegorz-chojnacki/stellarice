@@ -120,6 +120,4 @@ const render = () => {
   })
 }
 
-bruteForceDependencies(all)
-
 render()

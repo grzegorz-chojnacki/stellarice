@@ -4,8 +4,13 @@ html {
   color: #BBBBBB;
 }
 
+main {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 section {
-  margin: 0 1em 2em;
+  margin: 0 4em 2em 1em;
 }
 
 input:disabled, input:disabled + label {
