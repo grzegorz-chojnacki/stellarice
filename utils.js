@@ -18,3 +18,12 @@ const toggleIncluded = (list, item) => {
     list.push(item)
   }
 }
+
+const nestedIncludes = (obj, item) => {
+  for (const prop in obj) {
+    if (obj[prop] instanceof Array && obj[prop].includes(item)) {
+      return true
+    }
+  }
+  return false
+}

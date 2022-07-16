@@ -15,18 +15,32 @@ class Ethic {
   }
 }
 
+const eGestalt              = new Ethic('Gestalt', 3)
+const eFanaticMilitarist    = new Ethic('Fanatic Militarist', 2)
+const eFanaticPacifist      = new Ethic('Fanatic Pacifist', 2)
+const eFanaticXenophobe     = new Ethic('Fanatic Xenophobe', 2)
+const eFanaticXenophile     = new Ethic('Fanatic Xenophile', 2)
+const eFanaticAuthoritarian = new Ethic('Fanatic Authoritarian', 2)
+const eFanaticEgalitarian   = new Ethic('Fanatic Egalitarian', 2)
+const eMilitarist           = new Ethic('Militarist', 1)
+const ePacifist             = new Ethic('Pacifist', 1)
+const eXenophobe            = new Ethic('Xenophobe', 1)
+const eXenophile            = new Ethic('Xenophile', 1)
+const eAuthoritarian        = new Ethic('Authoritarian', 1)
+const eEgalitarian          = new Ethic('Egalitarian', 1)
+
 const ethics = [
-  new Ethic('Gestalt', 3),
-  new Ethic('Fanatic Militarist', 2),
-  new Ethic('Fanatic Pacifist', 2),
-  new Ethic('Fanatic Xenophobe', 2),
-  new Ethic('Fanatic Xenophile', 2),
-  new Ethic('Fanatic Authoritarian', 2),
-  new Ethic('Fanatic Egalitarian', 2),
-  new Ethic('Militarist', 1),
-  new Ethic('Pacifist', 1),
-  new Ethic('Xenophobe', 1),
-  new Ethic('Xenophile', 1),
-  new Ethic('Authoritarian', 1),
-  new Ethic('Egalitarian', 1),
+  eGestalt,
+  eFanaticMilitarist,
+  eFanaticPacifist,
+  eFanaticXenophobe,
+  eFanaticXenophile,
+  eFanaticAuthoritarian,
+  eFanaticEgalitarian,
+  eMilitarist,
+  ePacifist,
+  eXenophobe,
+  eXenophile,
+  eAuthoritarian,
+  eEgalitarian,
 ]
