@@ -11,6 +11,7 @@ const capitalize = str => str[0].toUpperCase() + str.slice(1)
 const disabled = item => !item.valid() ? 'disabled' : ''
 const invalid  = item => item.invalid() ? 'invalid' : ''
 const checked  = item => item.checked() ? 'checked' : ''
+const hidden   = item => item.hidden() ? 'hidden' : ''
 
 const toggleIncluded = (list, item) => {
   if (list.includes(item)) {

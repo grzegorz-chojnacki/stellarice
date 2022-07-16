@@ -93,7 +93,7 @@ const sections = [
   {
     name: 'civics',
     template: item => `
-      <div>
+      <div ${hidden(item)}>
         <input
           type="checkbox"
           id="${item.name}"

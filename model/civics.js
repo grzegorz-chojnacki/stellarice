@@ -4,6 +4,28 @@ class Civic extends Item {
     this.empireName += 's'
   }
 
+  normalClash = () => (Object.values(civicsNormal).includes(this) && some(
+      ethics.Gestalt,
+      authority.Corporate,
+      authority.HiveMind,
+      authority.MachineIntelligence))
+
+  corporateClash = () => (Object.values(civicsCorporate).includes(this)
+      && none(authority.Corporate))
+
+  hiveClash = () => (Object.values(civicsHive).includes(this)
+      && none(authority.HiveMind))
+
+  machineClash = () => (Object.values(civicsMachine).includes(this)
+      && none(authority.MachineIntelligence))
+
+  clashes = () => this.normalClash() || this.corporateClash()
+      || this.hiveClash() || this.machineClash()
+
+  hidden = () => !this.checked() && this.clashes()
+
+  invalid = () => !(this.rules()) || this.clashes()
+
   genericConstraint = () => (this.empireList.length < 2)
 }
 
