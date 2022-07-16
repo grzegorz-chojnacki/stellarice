@@ -37,7 +37,10 @@ const sections = [
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">${item.name}</label>
+        <label for="${item.name}">
+          [<span class="trait-point">${item.value}</span>]
+          ${item.name}
+        </label>
       </div>`
   },
   {
@@ -118,6 +121,7 @@ const render = () => {
 
     main.appendChild(section)
   })
+  console.log('count', 5 - empire.traits.length, 'sum', empire.traits.reduce(Trait.costSum, 2))
 }
 
 render()
