@@ -30,16 +30,8 @@ const nestedIncludes = (obj, item) => {
   return false
 }
 
-const and      = fn => xs => xs.every(fn)
-const or       = fn => xs => xs.some(fn)
-const id       = x => x
-const inEmpire = x => nestedIncludes(empire, x)
 
-const applyOperation = (xs, operation) =>
-  (xs.every(x => typeof(x) === 'boolean'))
-    ? operation(id)(xs)
-    : operation(inEmpire)(xs)
-
-const every = (...items) => applyOperation(items, and)
-const some  = (...items) => applyOperation(items, or)
-const none = (...items) => !some(...items)
+const testRule = x => (typeof(x) === 'boolean') ? x : nestedIncludes(empire, x)
+const every    = (...items) => items.every(testRule)
+const some     = (...items) => items.some(testRule)
+const none     = (...items) => !some(...items)

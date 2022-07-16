@@ -33,8 +33,8 @@ const authority = {
     ethics.Gestalt
   )),
   HiveMind: new Authority('Hive Mind', () => every(
+    ethics.Gestalt,
     none(pop.Mechanical),
-    every(ethics.Gestalt)
   )),
   MachineIntelligence: new Authority('Machine Intelligence', () => every(
     pop.Mechanical,

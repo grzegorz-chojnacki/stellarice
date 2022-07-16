@@ -19,11 +19,11 @@ const origin = {
       civics.FanaticPurifiers
     )),
   TreeOfLife: new Origin('Tree of Life', () => every(
-      every(authority.HiveMind),
+      authority.HiveMind,
       none(civics.DevouringSwarm, civics.Terravore)
     )),
   ResourceConsolidation: new Origin('Resource Consolidation', () => every(
-      every(authority.MachineIntelligence),
+      authority.MachineIntelligence,
       none(civics.RogueServitor, civics.OrganicReprocessing),
     )),
   CloneArmy: new Origin('Clone Army', () => none(
@@ -42,7 +42,7 @@ const origin = {
       civics.AgrarianIdyll
     )),
   CalamitousBirth: new Origin('Calamitous Birth', () => every(
-      every(pop.Lithoid),
+      pop.Lithoid,
       none(
         civics.CatalyticProcessing,
         civics.CorporateCatalyticProcessing,
@@ -111,7 +111,7 @@ const origin = {
       authority.MachineIntelligence
     )),
   TeachersOfTheShroud: new Origin('Teachers of the Shroud', () => every(
-      every(ethics.Spiritualist, ethics.FanaticSpiritualist),
+      some(ethics.Spiritualist, ethics.FanaticSpiritualist),
       none(civics.FanaticPurifiers)
     )),
   ProgenitorHive: new Origin('Progenitor Hive', () => every(
