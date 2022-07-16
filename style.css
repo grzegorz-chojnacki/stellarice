@@ -5,5 +5,9 @@ html {
 }
 
 section {
-  margin: 0 0 2em
+  margin: 0 1em 2em;
+}
+
+input:disabled, input:disabled + label {
+  opacity: 0.6;
 }
