@@ -6,7 +6,17 @@ const htmlToElement = html => {
   return template.content.firstChild
 }
 
-const capitalize = str => str[0].toUpperCase() + str.slice(1)
+const capitalize   = str => str[0].toUpperCase() + str.slice(1)
+const decapitalize = str => str.replace(/\<(be|the|of)\>/ig, x => x.toLowerCase())
+const spacify      = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
+
+const nameItems = obj => {
+  Object.keys(obj).forEach(prop => {
+    obj[prop].name = decapitalize(capitalize(spacify(prop)))
+  })
+  return obj
+}
+
 
 const disabled = item => !item.valid() ? 'disabled' : ''
 const invalid  = item => item.invalid() ? 'invalid' : ''
@@ -29,7 +39,6 @@ const nestedIncludes = (obj, item) => {
   }
   return false
 }
-
 
 const testRule = x => (typeof(x) === 'boolean') ? x : nestedIncludes(empire, x)
 const every    = (...items) => items.every(testRule)

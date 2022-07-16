@@ -1,47 +1,47 @@
 class Origin extends Item {
-  constructor(name, rules) {
-    super(name, rules)
+  constructor(rules) {
+    super(rules)
   }
 
   genericConstraint = () => (empire.origin.length === 0)
 }
 
-const origin = {
-  ProsperousUnification: new Origin('Prosperous Unification'),
-  GalacticDoorstep: new Origin('Galactic Doorstep'),
-  LostColony: new Origin('Lost Colony', () => none(ethics.Gestalt)),
-  Mechanist: new Origin('Mechanist', () => every(
+const origin = nameItems({
+  ProsperousUnification: new Origin(),
+  GalacticDoorstep: new Origin(),
+  LostColony: new Origin(() => none(ethics.Gestalt)),
+  Mechanist: new Origin(() => every(
       some(ethics.Materialist, ethics.FanaticMaterialist),
       none(ethics.Gestalt, civics.PermanentEmployment)
   )),
-  SyncreticEvolution: new Origin('Syncretic Evolution', () => none(
+  SyncreticEvolution: new Origin(() => none(
       ethics.Gestalt,
       civics.FanaticPurifiers
     )),
-  TreeOfLife: new Origin('Tree of Life', () => every(
+  TreeOfLife: new Origin(() => every(
       authority.HiveMind,
       none(civics.DevouringSwarm, civics.Terravore)
     )),
-  ResourceConsolidation: new Origin('Resource Consolidation', () => every(
+  ResourceConsolidation: new Origin(() => every(
       authority.MachineIntelligence,
       none(civics.RogueServitor, civics.OrganicReprocessing),
     )),
-  CloneArmy: new Origin('Clone Army', () => none(
+  CloneArmy: new Origin(() => none(
       ethics.Gestalt,
       civics.PermanentEmployment
     )),
-  LifeSeeded: new Origin('Life-Seeded', () => none(
+  LifeSeeded: new Origin(() => none(
       authority.MachineIntelligence
     )),
-  PostApocalyptic: new Origin('Post-Apocalyptic', () => none(
+  PostApocalyptic: new Origin(() => none(
       authority.MachineIntelligence,
       civics.Agrarian,
       civics.Anglers, civics.CorporateAnglers,
     )),
-  Remnants: new Origin('Remnants', () => none(
+  Remnants: new Origin(() => none(
       civics.AgrarianIdyll
     )),
-  CalamitousBirth: new Origin('Calamitous Birth', () => every(
+  CalamitousBirth: new Origin(() => every(
       pop.Lithoid,
       none(
         civics.CatalyticProcessing,
@@ -49,7 +49,7 @@ const origin = {
         civics.HiveCatalyticProcessing,
       )
     )),
-  CommonGround: new Origin('Common Ground', () => none(
+  CommonGround: new Origin(() => none(
       ethics.Xenophile, ethics.FanaticXenophile,
       ethics.Xenophobe, ethics.FanaticXenophobe,
       ethics.Gestalt,
@@ -57,33 +57,33 @@ const origin = {
       civics.FanaticPurifiers,
       civics.BarbaricDespoilers,
     )),
-  Hegemon: new Origin('Hegemon', () => none(
+  Hegemon: new Origin(() => none(
       ethics.Xenophobe, ethics.FanaticXenophobe,
       ethics.Egalitarian, ethics.FanaticEgalitarian,
       ethics.Gestalt,
       civics.InwardsPerfection,
       civics.FanaticPurifiers,
     )),
-  Doomsday: new Origin('Doomsday'),
-  OnTheShouldersOfGiants: new Origin('On the Shoulders of Giants', () => none(
+  Doomsday: new Origin(),
+  OnTheShouldersOfGiants: new Origin(() => none(
       ethics.Gestalt
     )),
-  Scion: new Origin('Scion', () => none(
+  Scion: new Origin(() => none(
       ethics.Gestalt,
       ethics.FanaticXenophobe,
       civics.PompousPurists,
     )),
-  ShatteredRing: new Origin('Shattered Ring', () => none(
+  ShatteredRing: new Origin(() => none(
       civics.Agrarian,
       civics.Anglers, civics.CorporateAnglers,
     )),
-  VoidDwellers: new Origin('Void Dwellers', () => none(
+  VoidDwellers: new Origin(() => none(
       ethics.Gestalt,
       civics.Agrarian,
       civics.Anglers, civics.CorporateAnglers,
       civics.IdyllicBloom, civics.HiveIdyllicBloom
     )),
-  Necrophage: new Origin('Necrophage', () => none(
+  Necrophage: new Origin(() => none(
       authority.MachineIntelligence,
       ethics.Xenophile, ethics.FanaticXenophile,
       ethics.FanaticEgalitarian,
@@ -91,30 +91,30 @@ const origin = {
       civics.Empath,
       civics.PermanentEmployment,
     )),
-  HereBeDragons: new Origin('Here Be Dragons', () => none(
+  HereBeDragons: new Origin(() => none(
       civics.FanaticPurifiers,
       civics.DevouringSwarm,
       civics.MachineTerminator,
     )),
-  OceanParadise: new Origin('Ocean Paradise', () => none(
+  OceanParadise: new Origin(() => none(
       authority.MachineIntelligence
     )),
-  SlingshotToTheStars: new Origin('Slingshot to the Stars'),
-  ImperialFiefdom: new Origin('Imperial Fiefdom', () => none(
+  SlingshotToTheStars: new Origin(),
+  ImperialFiefdom: new Origin(() => none(
       civics.InwardsPerfection,
       civics.DrivenAssimilator,
       civics.FanaticPurifiers,
       civics.DevouringSwarm,
       civics.MachineTerminator,
     )),
-  Subterranean: new Origin('Subterranean', () => none(
+  Subterranean: new Origin(() => none(
       authority.MachineIntelligence
     )),
-  TeachersOfTheShroud: new Origin('Teachers of the Shroud', () => every(
+  TeachersOfTheShroud: new Origin(() => every(
       some(ethics.Spiritualist, ethics.FanaticSpiritualist),
       none(civics.FanaticPurifiers)
     )),
-  ProgenitorHive: new Origin('Progenitor Hive', () => every(
+  ProgenitorHive: new Origin(() => every(
       authority.HiveMind
     )),
-}
+})

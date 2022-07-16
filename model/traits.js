@@ -1,8 +1,8 @@
 class Trait extends Item {
   static costSum = (acc, { cost }) => acc + cost
 
-  constructor(value, kind, name, rules) {
-    super(name, rules)
+  constructor(value, kind, rules) {
+    super(rules)
     this.empireName += 's'
     this.value = value
     this.cost = -value
@@ -34,43 +34,43 @@ const breeders         = Symbol('breeders')
 const strong           = Symbol('strong')
 const traditional      = Symbol('traditional')
 
-const traits = {
-  Adaptive:            new Trait( 2, adaptive, 'Adaptive'),
-  ExtremelyAdaptive:   new Trait( 4, adaptive, 'Extremely Adaptive'),
-  Nonadaptive:         new Trait(-2, adaptive, 'Nonadaptive'),
-  Agrarian:            new Trait( 2, null, 'Agrarian'),
-  Charismatic:         new Trait( 2, charismatic, 'Charismatic'),
-  Repugnant:           new Trait(-2, charismatic, 'Repugnant'),
-  Communal:            new Trait( 1, communal, 'Communal'),
-  Solitary:            new Trait(-2, communal, 'Solitary'),
-  Conformists:         new Trait( 2, conformists, 'Conformists'),
-  Deviants:            new Trait(-1, conformists, 'Deviants'),
-  Conservationist:     new Trait( 1, conservationists, 'Conservationist'),
-  Wasteful:            new Trait(-1, conservationists, 'Wasteful'),
-  Docile:              new Trait( 2, docile, 'Docile'),
-  Unruly:              new Trait(-2, docile, 'Unruly'),
-  Enduring:            new Trait( 1, enduring, 'Enduring'),
-  Venerable:           new Trait( 4, enduring, 'Venerable'),
-  Fleeting:            new Trait(-1, enduring, 'Fleeting'),
-  Industrious:         new Trait( 2, null, 'Industrious'),
-  Ingenious:           new Trait( 2, null, 'Ingenious'),
-  Intelligent:         new Trait( 2, null, 'Intelligent'),
-  NaturalEngineers:    new Trait( 1, null, 'Natural Engineers'),
-  NaturalPhysicists:   new Trait( 1, null, 'Natural Physicists'),
-  NaturalSociologists: new Trait( 1, null, 'Natural Sociologists'),
-  Nomadic:             new Trait( 1, nomadic, 'Nomadic'),
-  Sedentary:           new Trait(-1, nomadic, 'Sedentary'),
-  QuickLearners:       new Trait( 1, learners, 'Quick Learners'),
-  SlowLearners:        new Trait(-1, learners, 'Slow Learners'),
-  RapidBreeders:       new Trait( 2, breeders, 'Rapid Breeders'),
-  SlowBreeders:        new Trait(-2, breeders, 'Slow Breeders'),
-  Resilient:           new Trait( 1, null, 'Resilient'),
-  Strong:              new Trait( 1, strong, 'Strong'),
-  VeryStrong:          new Trait( 3, strong, 'Very Strong'),
-  Weak:                new Trait(-1, strong, 'Weak'),
-  Talented:            new Trait( 1, null, 'Talented'),
-  Thrifty:             new Trait( 2, null, 'Thrifty'),
-  Traditional:         new Trait( 1, traditional, 'Traditional'),
-  Quarrelsome:         new Trait(-1, traditional, 'Quarrelsome'),
-  Decadent:            new Trait(-1, null, 'Decadent'),
-}
+const traits = nameItems({
+  Adaptive:            new Trait( 2, adaptive),
+  ExtremelyAdaptive:   new Trait( 4, adaptive),
+  Nonadaptive:         new Trait(-2, adaptive),
+  Agrarian:            new Trait( 2, null),
+  Charismatic:         new Trait( 2, charismatic),
+  Repugnant:           new Trait(-2, charismatic),
+  Communal:            new Trait( 1, communal),
+  Solitary:            new Trait(-2, communal),
+  Conformists:         new Trait( 2, conformists),
+  Deviants:            new Trait(-1, conformists),
+  Conservationist:     new Trait( 1, conservationists),
+  Wasteful:            new Trait(-1, conservationists),
+  Docile:              new Trait( 2, docile),
+  Unruly:              new Trait(-2, docile),
+  Enduring:            new Trait( 1, enduring),
+  Venerable:           new Trait( 4, enduring),
+  Fleeting:            new Trait(-1, enduring),
+  Industrious:         new Trait( 2, null),
+  Ingenious:           new Trait( 2, null),
+  Intelligent:         new Trait( 2, null),
+  NaturalEngineers:    new Trait( 1, null),
+  NaturalPhysicists:   new Trait( 1, null),
+  NaturalSociologists: new Trait( 1, null),
+  Nomadic:             new Trait( 1, nomadic),
+  Sedentary:           new Trait(-1, nomadic),
+  QuickLearners:       new Trait( 1, learners),
+  SlowLearners:        new Trait(-1, learners),
+  RapidBreeders:       new Trait( 2, breeders),
+  SlowBreeders:        new Trait(-2, breeders),
+  Resilient:           new Trait( 1, null),
+  Strong:              new Trait( 1, strong),
+  VeryStrong:          new Trait( 3, strong),
+  Weak:                new Trait(-1, strong),
+  Talented:            new Trait( 1, null),
+  Thrifty:             new Trait( 2, null),
+  Traditional:         new Trait( 1, traditional),
+  Quarrelsome:         new Trait(-1, traditional),
+  Decadent:            new Trait(-1, null),
+})

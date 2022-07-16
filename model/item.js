@@ -1,6 +1,5 @@
 class Item {
-  constructor(name, rules = () => true) {
-    this.name = name
+  constructor(rules = () => true) {
     this.rules = rules
     this.empireName = this.constructor.name.toLowerCase()
   }

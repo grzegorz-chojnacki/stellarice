@@ -1,43 +1,43 @@
 class Authority extends Item {
-  constructor(name, rules) {
-    super(name, rules)
+  constructor(rules) {
+    super(rules)
   }
 
   genericConstraint = () => (this.empireList.length < 1)
 }
 
-const authority = {
-  Democratic: new Authority('Democratic', () => none(
+const authority = nameItems({
+  Democratic: new Authority(() => none(
     ethics.Authoritarian,
     ethics.FanaticAuthoritarian,
     ethics.Gestalt
   )),
-  Oligarchic: new Authority('Oligarchic', () => none(
+  Oligarchic: new Authority(() => none(
     ethics.FanaticAuthoritarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
   )),
-  Dictatorial: new Authority('Dictatorial', () => none(
+  Dictatorial: new Authority(() => none(
     ethics.Egalitarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
   )),
-  Imperial: new Authority('Imperial', () => none(
+  Imperial: new Authority(() => none(
     ethics.Egalitarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
   )),
-  Corporate: new Authority('Corporate', () => none(
+  Corporate: new Authority(() => none(
     ethics.FanaticAuthoritarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
   )),
-  HiveMind: new Authority('Hive Mind', () => every(
+  HiveMind: new Authority(() => every(
     ethics.Gestalt,
     none(pop.Mechanical),
   )),
-  MachineIntelligence: new Authority('Machine Intelligence', () => every(
+  MachineIntelligence: new Authority(() => every(
     pop.Mechanical,
     ethics.Gestalt
   )),
-}
+})
