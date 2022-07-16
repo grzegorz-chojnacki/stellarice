@@ -114,7 +114,7 @@ const origin = {
       every(ethics.Spiritualist, ethics.FanaticSpiritualist),
       none(civics.FanaticPurifiers)
     )),
-  ProgenitorHive: new Origin('Progenitor Hive', () => none(
+  ProgenitorHive: new Origin('Progenitor Hive', () => every(
       authority.HiveMind
     )),
 }
