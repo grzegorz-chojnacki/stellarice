@@ -17,11 +17,11 @@ const nameItems = obj => {
   return obj
 }
 
-
-const disabled = item => !item.valid() ? 'disabled' : ''
-const invalid  = item => item.invalid() ? 'invalid' : ''
-const checked  = item => item.checked() ? 'checked' : ''
-const hidden   = item => item.hidden() ? 'hidden' : ''
+const htmlFlag = (enabled, flag) => enabled ? flag : ''
+const disabled = item => htmlFlag(!item.valid(), 'disabled')
+const invalid  = item => htmlFlag(item.invalid(), 'invalid')
+const checked  = item => htmlFlag(item.checked(), 'checked')
+const hidden   = item => htmlFlag(item.hidden(), 'hidden')
 
 const toggleIncluded = (list, item) => {
   if (list.includes(item)) {
