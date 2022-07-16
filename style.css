@@ -11,3 +11,7 @@ section {
 input:disabled, input:disabled + label {
   opacity: 0.6;
 }
+
+input[invalid]:checked, input[invalid]:checked + label {
+  text-decoration: line-through;
+}

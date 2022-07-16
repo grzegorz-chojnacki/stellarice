@@ -1,16 +1,14 @@
-class Pop {
-  constructor(name) { this.name = name }
-
-  checked = () => empire.pop.includes(this)
-
-  valid = () => {
-    if (this.checked()) return true
-    return (empire.pop.length == 0)
+class Pop extends Item {
+  constructor(name, rules) {
+    super(name, rules)
   }
+
+  genericConstraint = () => this.empireList.length < 1
 }
 
 const pop = {
-  Biological: new Pop('Biological'),
-  Mechanical: new Pop('Mechanical'),
-  Lithoid:    new Pop('Lithoid'),
+  Biological: () => new Pop('Biological'),
+  Mechanical: () => new Pop('Mechanical'),
+  Plantoid:   () => new Pop('Plantoid'),
+  Lithoid:    () => new Pop('Lithoid'),
 }

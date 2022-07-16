@@ -21,6 +21,7 @@ const sections = [
           id="${item.name}"
           name="${item.name}"
           ${checked(item)}
+          ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.name}">${item.name}</label>
       </div>`
@@ -34,6 +35,7 @@ const sections = [
           id="${item.name}"
           name="${item.name}"
           ${checked(item)}
+          ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.name}">${item.name}</label>
       </div>`
@@ -47,6 +49,7 @@ const sections = [
           id="${item.name}"
           name="${item.name}"
           ${checked(item)}
+          ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.name}">${item.name}</label>
       </div>`
@@ -60,6 +63,7 @@ const sections = [
           id="${item.name}"
           name="${item.name}"
           ${checked(item)}
+          ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.name}">${item.name}</label>
       </div>`
@@ -73,6 +77,7 @@ const sections = [
           id="${item.name}"
           name="${item.name}"
           ${checked(item)}
+          ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.name}">${item.name}</label>
       </div>`
@@ -86,6 +91,7 @@ const sections = [
           id="${item.name}"
           name="${item.name}"
           ${checked(item)}
+          ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.name}">${item.name}</label>
       </div>`
@@ -113,5 +119,7 @@ const render = () => {
     main.appendChild(section)
   })
 }
+
+bruteForceDependencies(all)
 
 render()

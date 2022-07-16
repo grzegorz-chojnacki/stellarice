@@ -1,32 +1,39 @@
-class Ethic extends Authority {
+class Ethic extends Item {
   static valueSum = (acc, { value }) => acc + value
 
-  constructor(name, value) {
-    this.name = name
+  constructor(value, kind, name) {
+    super(name)
+    this.empireName += 's'
     this.value = value
+    this.kind = kind
   }
 
-  checked = () => empire.has(this)
-
-  valid = () => {
-    if (this.checked()) return true
-    return (empire.ethics.length < 2)
-        && (empire.ethics.reduce(Ethic.valueSum, 0) + this.value <= 3)
-  }
+  genericConstraint = () => this.empireList.length < 3
+     && !this.empireList.some(ethic => ethic.kind === this.kind)
+     && this.empireList.reduce(Ethic.valueSum, 0) + this.value <= 3
 }
 
+const militarist    = Symbol('militarist')
+const xenophobe     = Symbol('xenophobe')
+const authoritarian = Symbol('authoritarian')
+const materialist   = Symbol('materialist')
+
 const ethics = {
-  Gestalt:              new Ethic('Gestalt', 3),
-  FanaticMilitarist:    new Ethic('Fanatic Militarist', 2),
-  FanaticPacifist:      new Ethic('Fanatic Pacifist', 2),
-  FanaticXenophobe:     new Ethic('Fanatic Xenophobe', 2),
-  FanaticXenophile:     new Ethic('Fanatic Xenophile', 2),
-  FanaticAuthoritarian: new Ethic('Fanatic Authoritarian', 2),
-  FanaticEgalitarian:   new Ethic('Fanatic Egalitarian', 2),
-  Militarist:           new Ethic('Militarist', 1),
-  Pacifist:             new Ethic('Pacifist', 1),
-  Xenophobe:            new Ethic('Xenophobe', 1),
-  Xenophile:            new Ethic('Xenophile', 1),
-  Authoritarian:        new Ethic('Authoritarian', 1),
-  Egalitarian:          new Ethic('Egalitarian', 1),
+  FanaticMilitarist:    () => new Ethic(2, militarist,    'Fanatic Militarist'),
+  FanaticPacifist:      () => new Ethic(2, militarist,    'Fanatic Pacifist'),
+  FanaticXenophobe:     () => new Ethic(2, xenophobe,     'Fanatic Xenophobe'),
+  FanaticXenophile:     () => new Ethic(2, xenophobe,     'Fanatic Xenophile'),
+  FanaticAuthoritarian: () => new Ethic(2, authoritarian, 'Fanatic Authoritarian'),
+  FanaticEgalitarian:   () => new Ethic(2, authoritarian, 'Fanatic Egalitarian'),
+  FanaticMaterialist:   () => new Ethic(2, materialist,   'Fanatic Materialist'),
+  FanaticSpiritualist:  () => new Ethic(2, materialist,   'Fanatic Spiritualist'),
+  Militarist:           () => new Ethic(1, militarist,    'Militarist'),
+  Pacifist:             () => new Ethic(1, militarist,    'Pacifist'),
+  Xenophobe:            () => new Ethic(1, xenophobe,     'Xenophobe'),
+  Xenophile:            () => new Ethic(1, xenophobe,     'Xenophile'),
+  Authoritarian:        () => new Ethic(1, authoritarian, 'Authoritarian'),
+  Egalitarian:          () => new Ethic(1, authoritarian, 'Egalitarian'),
+  Materialist:          () => new Ethic(1, materialist,   'Materialist'),
+  Spiritualist:         () => new Ethic(1, materialist,   'Spiritualist'),
+  Gestalt:              () => new Ethic(3, null,          'Gestalt'),
 }

@@ -1,49 +1,43 @@
-class Authority {
-  constructor(name, cannotHave, mustHave) {
-    this.name = name
-    this.cannotHave = cannotHave
-    this.mustHave = mustHave
+class Authority extends Item {
+  constructor(name, rules) {
+    super(name, rules)
   }
 
-  checked = () => empire.authority.includes(this)
-
-  valid = () => {
-    if (this.checked()) return true
-    return (empire.authority.length == 0)
-      && !this.cannotHave.some(x => nestedIncludes(empire, x))
-      && this.mustHave.every(x => nestedIncludes(empire, x))
-  }
+  genericConstraint = () => (this.empireList.length < 1)
 }
 
 const authority = {
-  Democratic: new Authority('Democratic', [
+  Democratic: () => new Authority('Democratic', () => none(
     ethics.Authoritarian,
     ethics.FanaticAuthoritarian,
     ethics.Gestalt
-  ], []),
-  Oligarchic: new Authority('Oligarchic', [
+  )),
+  Oligarchic: () => new Authority('Oligarchic', () => none(
     ethics.FanaticAuthoritarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
-  ], []),
-  Dictatorial: new Authority('Dictatorial', [
+  )),
+  Dictatorial: () => new Authority('Dictatorial', () => none(
     ethics.Egalitarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
-  ], []),
-  Imperial: new Authority('Imperial', [
+  )),
+  Imperial: () => new Authority('Imperial', () => none(
     ethics.Egalitarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
-  ], []),
-  HiveMind: new Authority('Hive Mind', [ pop.Mechanical ], [ ethics.Gestalt ]),
-  MachineIntelligence: new Authority('Machine Intelligence', [], [
+  )),
+  Corporate: () => new Authority('Corporate', () => none(
+    ethics.FanaticAuthoritarian,
+    ethics.FanaticEgalitarian,
+    ethics.Gestalt
+  )),
+  HiveMind: () => new Authority('Hive Mind', () => every(
+    none(pop.Mechanical),
+    every(ethics.Gestalt)
+  )),
+  MachineIntelligence: () => new Authority('Machine Intelligence', () => every(
     pop.Mechanical,
     ethics.Gestalt
-  ]),
-  Corporate: new Authority('Corporate', [
-    ethics.FanaticAuthoritarian,
-    ethics.FanaticEgalitarian,
-    ethics.Gestalt
-  ], []),
+  )),
 }
