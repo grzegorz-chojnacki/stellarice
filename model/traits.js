@@ -1,17 +1,24 @@
 class Trait extends Item {
-  static valueSum = (acc, { value }) => acc + value
+  static costSum = (acc, { cost }) => acc + cost
 
   constructor(value, kind, name, rules) {
     super(name, rules)
     this.empireName += 's'
-    this.value = -value
+    this.value = value
+    this.cost = -value
     this.kind = kind
+  }
+
+  invalid = () => {
+    const sum = this.empireList.reduce(Trait.costSum, 2)
+    if (sum < 0 && this.value > 0) return true
+    return false
   }
 
   genericConstraint = () => {
     return (this.empireList.length < 5)
      && !this.empireList.some(trait => trait.kind && trait.kind === this.kind)
-     && this.empireList.reduce(Trait.valueSum, 2) + this.value >= 0}
+     && this.empireList.reduce(Trait.costSum, 2) + this.cost >= 0}
 }
 
 const adaptive         = Symbol('adaptive')
