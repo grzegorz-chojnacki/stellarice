@@ -108,26 +108,26 @@ const sections = [
 ]
 
 const getColor = item => {
-  if (nestedIn(all.pop, item)) {
+  if (item instanceof Pop) {
     return ({
       Biological: 'tacao',
       Botanic: 'rosebud',
       Lithoid: 'apricot',
       Mechanical: 'turquoise',
     })[item.id]
-  } else if (nestedIn(all.traits, item)) {
+  } else if (item instanceof Trait) {
     if (nestedIn(traitsBotanic, item)) return 'rosebud'
     else if (nestedIn(traitsLithoid, item)) return 'apricot'
     else if (item.value > 0) return 'turquoise'
     else if (item.value < 0) return 'cranberry'
     return null
-  } else if (nestedIn(all.origin, item)) {
+  } else if (item instanceof Origin) {
     return 'tacao'
-  } else if (nestedIn(all.ethics, item)) {
+  } else if (item instanceof Ethic) {
     if (item.id.startsWith('Fanatic')) return 'cranberry'
     else if (item.id.startsWith('Gestalt')) return 'tacao'
     return 'apricot'
-  } else if (nestedIn(all.authority, item)) {
+  } else if (item instanceof Authority) {
     return ({
       Imperial:            'cranberry',
       Dictatorial:         'apricot',
@@ -137,7 +137,7 @@ const getColor = item => {
       HiveMind:            'lavender',
       MachineIntelligence: 'turquoise',
     })[item.id]
-  } else if (nestedIn(all.civics, item)) {
+  } else if (item instanceof Civic) {
     if (nestedIn(civicsCorporate, item)) return 'rosebud'
     else if (nestedIn(civicsHive, item)) return 'lavender'
     else if (nestedIn(civicsMachine, item)) return 'turquoise'
