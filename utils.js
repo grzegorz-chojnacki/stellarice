@@ -24,6 +24,16 @@ const checked  = item => htmlFlag(item.checked(), 'checked')
 const hidden   = item => htmlFlag(item.hidden(), 'hidden')
 const isOrigin = trait => htmlFlag(trait.origin(), 'origin')
 
+const nestedIn = (obj, item) => {
+  if (!obj) return false
+  if (obj === item) return true
+  if (obj instanceof Array)
+    return obj.some(x => nestedIn(x, item))
+  if (typeof(obj) === 'object')
+      return Object.values(obj).some(x => nestedIn(x, item))
+  return false
+}
+
 const toggleIncluded = (list, item) => {
   if (list.includes(item)) {
     list.splice(list.indexOf(item), 1)
@@ -32,16 +42,7 @@ const toggleIncluded = (list, item) => {
   }
 }
 
-const nestedIncludes = (obj, item) => {
-  for (const prop in obj) {
-    if (obj[prop] instanceof Array && obj[prop].includes(item)) {
-      return true
-    }
-  }
-  return false
-}
-
-const testRule = x => (typeof(x) === 'boolean') ? x : nestedIncludes(empire, x)
+const testRule = x => (typeof(x) === 'boolean') ? x : nestedIn(empire, x)
 const every    = (...items) => items.every(testRule)
 const some     = (...items) => items.some(testRule)
 const none     = (...items) => !some(...items)
