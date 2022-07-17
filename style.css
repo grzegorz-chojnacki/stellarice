@@ -18,8 +18,16 @@ input:disabled, input:disabled + label {
   opacity: 0.6;
 }
 
-input[invalid]:checked, input[invalid]:checked + label {
+input[invalid]:checked,
+input[invalid]:checked + label,
+input[invalid]:checked + label > * {
   text-decoration: line-through;
+}
+
+input[origin],
+input[origin] + label,
+input[origin] + label > * {
+  font-weight: bold;
 }
 
 .trait-point {

@@ -34,11 +34,12 @@ const sections = [
         Available points: ${empire.traits.reduce(Trait.costSum, 2)}
       </p>`,
     template: item => `
-      <div>
+      <div ${hidden(item)}>
         <input
           type="checkbox"
           id="${item.name}"
           name="${item.name}"
+          ${isOrigin(item)}
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>

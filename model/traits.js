@@ -9,7 +9,25 @@ class Trait extends Item {
     this.kind = kind
   }
 
+  origin = () => Object.values(traitsOrigin).includes(this)
+
+  originClash = () => (this.origin() && !this.rules())
+
+  normalClash = () => (Object.values(traitsNormal).includes(this)
+      && none(pop.Biological, pop.Botanic, pop.Lithoid))
+
+  botanicClash = () => (Object.values(traitsBotanic).includes(this)
+      && none(pop.Botanic))
+
+  lithoidClash = () => (Object.values(traitsLithoid).includes(this)
+      && none(pop.Lithoid))
+
+  clashes = () => this.normalClash() || this.botanicClash() || this.lithoidClash()
+
+  hidden = () => !this.checked() && (this.clashes() || this.originClash())
+
   invalid = () => {
+    if (!(this.rules()) || this.clashes()) return true
     const sum = this.empireList.reduce(Trait.costSum, 2)
     if (sum < 0 && this.value > 0) return true
     return false
@@ -33,8 +51,42 @@ const learners         = Symbol('learners')
 const breeders         = Symbol('breeders')
 const strong           = Symbol('strong')
 const traditional      = Symbol('traditional')
+const trophic          = Symbol('botanic')
+const gaseous          = Symbol('gaseous')
 
-const traits = nameItems({
+const traitsOrigin = {
+  CloneSoldier: new Trait(0, breeders, () => every(origin.CloneArmy)),
+  Survivor:     new Trait(0, null, () => every(origin.PostApocalyptic)),
+  VoidDweller:  new Trait(0, null, () => every(origin.VoidDwellers)),
+  Necrophages:  new Trait(0, null, () => every(
+    origin.Necrophage,
+    none(traits.Budding),
+  )),
+  CaveDweller:  new Trait(0, null, () => every(
+    origin.Subterranean,
+    none(traits.Phototrophic, traits.Aquatic),
+  )),
+}
+
+const traitsBotanic = {
+  Radiotrophic: new Trait(2, trophic),
+  Phototrophic: new Trait(1, trophic, () => every(
+    pop.Botanic,
+    none(origin.Subterranean)
+  )),
+  Budding:      new Trait(2, breeders, () => every(
+    pop.Botanic,
+    none(origin.CloneArmy, origin.Necrophage)
+  )),
+}
+
+const traitsLithoid = {
+  GaseousByproducts:  new Trait(2, gaseous),
+  ScintillatingSkin:  new Trait(2, gaseous),
+  VolatileExcretions: new Trait(2, gaseous),
+}
+
+const traitsNormal = {
   Adaptive:            new Trait( 2, adaptive),
   ExtremelyAdaptive:   new Trait( 4, adaptive),
   Nonadaptive:         new Trait(-2, adaptive),
@@ -73,4 +125,11 @@ const traits = nameItems({
   Traditional:         new Trait( 1, traditional),
   Quarrelsome:         new Trait(-1, traditional),
   Decadent:            new Trait(-1, null),
+}
+
+const traits = nameItems({
+  ...traitsOrigin,
+  ...traitsBotanic,
+  ...traitsLithoid,
+  ...traitsNormal,
 })

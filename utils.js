@@ -22,6 +22,7 @@ const disabled = item => htmlFlag(!item.valid(), 'disabled')
 const invalid  = item => htmlFlag(item.invalid(), 'invalid')
 const checked  = item => htmlFlag(item.checked(), 'checked')
 const hidden   = item => htmlFlag(item.hidden(), 'hidden')
+const isOrigin = trait => htmlFlag(trait.origin(), 'origin')
 
 const toggleIncluded = (list, item) => {
   if (list.includes(item)) {
