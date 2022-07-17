@@ -1,5 +1,3 @@
-const deepCopy = o => JSON.parse(JSON.stringify(o))
-
 const htmlToElement = html => {
   const template = document.createElement('template')
   template.innerHTML = html.trim()

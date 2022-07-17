@@ -1,15 +1,13 @@
-const template = {
-  ethics: [],
-  traits: [],
-  civics: [],
-  authority: [],
-  origin: [],
-  pop: []
-}
-
 const all = { pop, traits, origin, ethics, authority, civics }
 
-const empire = deepCopy(template)
+const empire = {
+  pop: [pop.Biological],
+  traits: [],
+  origin: [],
+  ethics: [],
+  authority: [],
+  civics: [],
+}
 
 const sections = [
   {
