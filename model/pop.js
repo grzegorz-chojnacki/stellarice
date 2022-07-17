@@ -10,5 +10,5 @@ const pop = nameItems({
   Biological: new Pop(),
   Botanic:    new Pop(),
   Lithoid:    new Pop(),
-  Mechanical: new Pop(() => every(ethics.Gestalt)),
+  Mechanical: new Pop(),
 })

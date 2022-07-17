@@ -11,21 +11,25 @@ class Ethic extends Item {
 }
 
 const militarist = () => one(
+  pop.Mechanical,
   ethics.FanaticMilitarist, ethics.Militarist,
   ethics.FanaticPacifist, ethics.Pacifist,
 )
 
 const xenophobe = () => one(
+  pop.Mechanical,
   ethics.FanaticXenophobe, ethics.Xenophobe,
   ethics.FanaticXenophile, ethics.Xenophile,
 )
 
 const authoritarian = () => one(
+  pop.Mechanical,
   ethics.FanaticAuthoritarian, ethics.Authoritarian,
   ethics.FanaticEgalitarian, ethics.Egalitarian,
 )
 
 const materialist = () => one(
+  pop.Mechanical,
   ethics.FanaticMaterialist, ethics.Materialist,
   ethics.FanaticSpiritualist, ethics.Spiritualist,
 )
