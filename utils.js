@@ -81,6 +81,7 @@ const nestedIn = (obj, item) => {
   return false
 }
 
+
 // Insert or remove item from list
 const toggleIncluded = (list, item) => {
   if (list.includes(item)) {
@@ -88,6 +89,26 @@ const toggleIncluded = (list, item) => {
   } else {
     list.push(item)
   }
+}
+
+
+// Helper partition function
+const partition = (arr, fn) =>
+  arr.reduce(
+    ([a, b], x) => (fn(x) ? [a.concat(x), b] : [a, b.concat(x)]),
+    [[], []])
+
+
+// Sort items depending on arbitrary rules
+// Lexical order:
+//   items = items.sort((a, b) => a.name.localeCompare(b.name))
+//
+// Move disabled last:
+//   items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
+const sort = items => {
+  // Move checked & invalid first
+  items = [...partition(items, x => x.invalid() && x.checked()).flatMap(x => x)]
+  return items
 }
 
 // Converts rule objects to HTML lists with coloring depending on pass/fail

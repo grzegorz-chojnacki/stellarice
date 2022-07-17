@@ -63,7 +63,7 @@ const render = (() => {
       if (summary) section.appendChild(htmlToElement(summary()))
 
       // Go through all items related to this section
-      Object.values(all[name]).forEach(item => {
+      sort(Object.values(all[name])).forEach(item => {
         const element = htmlToElement(template(item))
         const input = element.getElementsByTagName('input')[0]
 
