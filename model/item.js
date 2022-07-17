@@ -1,5 +1,5 @@
 class Item {
-  constructor(rules = () => true) {
+  constructor(rules) {
     this.rules = rules
     this.empireName = this.constructor.name.toLowerCase()
   }
@@ -8,7 +8,9 @@ class Item {
 
   genericConstraint = () => true
 
+  unmetRules = () => (this.rules && !this.rules())
+
   checked = () => this.empireList.includes(this)
-  invalid = () => !(this.rules())
-  valid   = () => this.checked() || (this.genericConstraint() && this.rules())
+  invalid = () => this.unmetRules()
+  valid   = () => this.checked() || (this.genericConstraint() && !this.unmetRules())
 }

@@ -24,7 +24,7 @@ class Civic extends Item {
 
   hidden = () => !this.checked() && this.clashes()
 
-  invalid = () => !(this.rules()) || this.clashes()
+  invalid = () => this.unmetRules() || this.clashes()
 
   genericConstraint = () => (this.empireList.length < 2)
 }

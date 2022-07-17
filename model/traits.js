@@ -11,7 +11,7 @@ class Trait extends Item {
 
   origin = () => Object.values(traitsOrigin).includes(this)
 
-  originClash = () => (this.origin() && !this.rules())
+  originClash = () => (this.origin() && this.unmetRules())
 
   normalClash = () => (Object.values(traitsNormal).includes(this)
       && none(pop.Biological, pop.Botanic, pop.Lithoid))
@@ -27,7 +27,7 @@ class Trait extends Item {
   hidden = () => !this.checked() && (this.clashes() || this.originClash())
 
   invalid = () => {
-    if (!(this.rules()) || this.clashes()) return true
+    if (this.unmetRules() || this.clashes()) return true
     const sum = this.empireList.reduce(Trait.costSum, 2)
     if (sum < 0 && this.value > 0) return true
     return false

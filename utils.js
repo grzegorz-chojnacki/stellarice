@@ -48,6 +48,19 @@ const testRule = x => {
   return (typeof(x) === 'boolean') ? x : nestedIn(empire, x)
 }
 
-const every    = (...items) => items.every(testRule)
-const some     = (...items) => items.some(testRule)
-const none     = (...items) => !some(...items)
+const every = (...items) => items.every(testRule)
+const some  = (...items) => items.some(testRule)
+const none  = (...items) => !some(...items)
+
+const getRules = item => {
+  if (item.rules) {
+    return item.rules.toString()
+      .replace(/\(\) => /g, '')
+      .replace(/every/g, 'must have')
+      .replace(/some/g, 'some of')
+      .replace(/none/g, 'cannot have')
+      .replace(/\(/g, ': ')
+      .replace(/[,\)]/g, '')
+  }
+  return ''
+}
