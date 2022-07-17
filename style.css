@@ -1,8 +1,20 @@
+:root {
+  --fg:         #BBBBBB;
+  --bg:         #16161C;
+  --gray:       #4C4D53;
+  --cranberry:  #E95678;
+  --apricot:    #F09483;
+  --rosebud:    #FAB795;
+  --tacao:      #FAC29A;
+  --turquoise:  #25B0BC;
+  --lavender:   #B877DB;
+}
+
 html {
   font-size: 16px;
   font-family: monospace;
-  background-color: #16161C;
-  color: #BBBBBB;
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
 main {
@@ -15,12 +27,14 @@ section {
 }
 
 input:disabled, input:disabled + label {
-  opacity: 0.6;
+  color: var(--gray);
 }
 
 input[invalid]:checked,
 input[invalid]:checked + label,
 input[invalid]:checked + label > * {
+  color: var(--cranberry);
+  font-weight: bold;
   text-decoration: line-through;
 }
 
@@ -35,3 +49,10 @@ input[origin] + label > * {
   width: 2ch;
   text-align: right;
 }
+
+.cranberry { color: var(--cranberry); }
+.apricot   { color: var(--apricot); }
+.rosebud   { color: var(--rosebud); }
+.tacao     { color: var(--tacao); }
+.turquoise { color: var(--turquoise); }
+.lavender  { color: var(--lavender); }

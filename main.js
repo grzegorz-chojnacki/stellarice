@@ -107,6 +107,46 @@ const sections = [
   },
 ]
 
+const getColor = item => {
+  if (nestedIn(all.pop, item)) {
+    return ({
+      Biological: 'tacao',
+      Botanic: 'rosebud',
+      Lithoid: 'apricot',
+      Mechanical: 'turquoise',
+    })[item.id]
+  } else if (nestedIn(all.traits, item)) {
+    if (nestedIn(traitsBotanic, item)) return 'rosebud'
+    else if (nestedIn(traitsLithoid, item)) return 'apricot'
+    else if (item.value > 0) return 'turquoise'
+    else if (item.value < 0) return 'cranberry'
+    return null
+  } else if (nestedIn(all.origin, item)) {
+    return 'tacao'
+  } else if (nestedIn(all.ethics, item)) {
+    if (item.id.startsWith('Fanatic')) return 'cranberry'
+    else if (item.id.startsWith('Gestalt')) return 'tacao'
+    return 'apricot'
+  } else if (nestedIn(all.authority, item)) {
+    return ({
+      Imperial:            'cranberry',
+      Dictatorial:         'apricot',
+      Oligarchic:          'rosebud',
+      Democratic:          'tacao',
+      Corporate:           'tacao',
+      HiveMind:            'lavender',
+      MachineIntelligence: 'turquoise',
+    })[item.id]
+  } else if (nestedIn(all.civics, item)) {
+    if (nestedIn(civicsCorporate, item)) return 'rosebud'
+    else if (nestedIn(civicsHive, item)) return 'lavender'
+    else if (nestedIn(civicsMachine, item)) return 'turquoise'
+    return 'apricot'
+  }
+
+  return null
+}
+
 const main = document.getElementsByTagName('main')[0]
 
 const render = () => {
@@ -126,6 +166,10 @@ const render = () => {
         toggleIncluded(empire[name], item)
         render()
       }
+
+      const color = getColor(item)
+      if (color) element.classList.add(color)
+
       section.appendChild(element)
     })
 
