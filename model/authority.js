@@ -7,13 +7,8 @@ class Authority extends Item {
 }
 
 const authority = nameItems({
-  Democratic: new Authority(() => none(
-    ethics.Authoritarian,
-    ethics.FanaticAuthoritarian,
-    ethics.Gestalt
-  )),
-  Oligarchic: new Authority(() => none(
-    ethics.FanaticAuthoritarian,
+  Imperial: new Authority(() => none(
+    ethics.Egalitarian,
     ethics.FanaticEgalitarian,
     ethics.Gestalt
   )),
@@ -22,9 +17,14 @@ const authority = nameItems({
     ethics.FanaticEgalitarian,
     ethics.Gestalt
   )),
-  Imperial: new Authority(() => none(
-    ethics.Egalitarian,
+  Oligarchic: new Authority(() => none(
+    ethics.FanaticAuthoritarian,
     ethics.FanaticEgalitarian,
+    ethics.Gestalt
+  )),
+  Democratic: new Authority(() => none(
+    ethics.Authoritarian,
+    ethics.FanaticAuthoritarian,
     ethics.Gestalt
   )),
   Corporate: new Authority(() => none(
