@@ -64,7 +64,7 @@ input[origin] + label > * {
   position: fixed;
   top: 1em;
   right: 1em;
-  border: 1px solid;
+  border: 2px solid var(--gray);
   padding: 0.5em;
   background-color: var(--bg);
 }
