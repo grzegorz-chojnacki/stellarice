@@ -44,7 +44,7 @@ const sectionTemplate = (inputType, attributes) => item => `
       name="${item.id}"
       ${attributes(item)}>
     <label for="${item.id}">${item.name}</label>
-    <div class="tooltip">${getRules(item)}</div>
+    <div class="tooltip">${rulesToHtml(getRules(item))}</div>
   </div>`
 
 const nestedIn = (obj, item) => {
@@ -74,16 +74,28 @@ const every = (...items) => items.every(testRule)
 const some  = (...items) => items.some(testRule)
 const none  = (...items) => !some(...items)
 
-const getRules = item => {
-  if (item.rules) {
-    return item.rules.toString()
-      .replace(/\(\) => /g, '')
-      .replace(/every\(/g, 'must have:')
-      .replace(/some\(/g, 'some of:')
-      .replace(/none\(/g, 'cannot have:')
-      .replace(/\n/g, '<br>')
-      .replace(/ /g, '&nbsp;')
-      .replace(/[,\)]/g, '').trim()
-  }
-  return ''
+const getRules = item => (!item.rules)
+  ? null
+  : JSON.parse(item.rules.toString()
+    .replace(/\(\) => /g, '')                // Drop arrow function
+    .replace(/[\n ]/g, '')                   // Drop whitespace
+    .replace(/\b([a-z]+)\(/g,                // Select rules starts and replace
+      (_, x) => `{ type: ${x}, content: [`)  // them with JSON structure starts
+    .replace(/\)/g, ']}')                    // Replace ends of rules with JSON
+    .replace(/,]/g, ']')                     // Drop trailing commas
+    .replace(/[.a-zA-Z]+/g, x => `"${x}"`))  // Surround words with quotes
+
+const ruleMap = {
+  some: 'Some of',
+  none: 'Cannot have',
+  every: 'Must have',
 }
+
+const rulesToHtml = x => (x === null)
+  ? 'No special rules'
+  : (typeof(x) === 'string')
+    ? `<li>${x}</li>`
+    : `${ruleMap[x.type]}:
+      <ul>
+        ${x.content.map(y => rulesToHtml(y)).join('')}
+      </ul>`

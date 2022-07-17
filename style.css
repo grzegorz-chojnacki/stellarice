@@ -71,3 +71,6 @@ input[origin] + label > * {
 div:hover > .tooltip {
   display: block;
 }
+
+ul, li { margin: 0; }
+li { list-style-type: disc; }

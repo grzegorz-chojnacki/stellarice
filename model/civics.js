@@ -58,7 +58,7 @@ const civicsNormal = {
     some(ethics.Militarist, ethics.FanaticMilitarist),
     none(ethics.FanaticXenophile, civics.Reanimators),
   )),
-  CorvéeSystem:           new Civic(() => none(
+  CorveeSystem:           new Civic(() => none(
     ethics.Egalitarian, ethics.FanaticEgalitarian,
     civics.FreeHaven,
   )),
@@ -79,7 +79,7 @@ const civicsNormal = {
   )),
   FreeHaven:              new Civic(() => every(
     some(ethics.Xenophile, ethics.FanaticXenophile),
-    none(civics.CorvéeSystem),
+    none(civics.CorveeSystem),
   )),
   IdealisticFoundation:   new Civic(() => every(
     some(ethics.Egalitarian, ethics.FanaticEgalitarian),
@@ -98,7 +98,7 @@ const civicsNormal = {
     authority.Democratic,
     authority.Oligarchic,
   )),
-  NationalisticZeal:      new Civic(() => every(
+  NationalisticZeal:      new Civic(() => some(
     some(ethics.Militarist, ethics.FanaticMilitarist),
   )),
   ParliamentarySystem:    new Civic(() => every(
