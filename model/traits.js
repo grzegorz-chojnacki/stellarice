@@ -64,7 +64,7 @@ const traitsOrigin = {
   )),
   CaveDweller:  new Trait(0, null, () => every(
     origin.Subterranean,
-    none(traits.Phototrophic, traits.Aquatic),
+    none(traits.Phototrophic),
   )),
 }
 
@@ -89,7 +89,7 @@ const traitsLithoid = {
 const traitsNormal = {
   Adaptive:            new Trait( 2, adaptive),
   ExtremelyAdaptive:   new Trait( 4, adaptive),
-  Agrarian:            new Trait( 2, null),
+  AgrarianIdyll:       new Trait( 2, null),
   Charismatic:         new Trait( 2, charismatic),
   Communal:            new Trait( 1, communal),
   Conformists:         new Trait( 2, conformists),

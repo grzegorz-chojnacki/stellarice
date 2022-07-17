@@ -43,7 +43,11 @@ const toggleIncluded = (list, item) => {
   }
 }
 
-const testRule = x => (typeof(x) === 'boolean') ? x : nestedIn(empire, x)
+const testRule = x => {
+  if (x === undefined) throw new Error('Undefined value in rule, check typos')
+  return (typeof(x) === 'boolean') ? x : nestedIn(empire, x)
+}
+
 const every    = (...items) => items.every(testRule)
 const some     = (...items) => items.some(testRule)
 const none     = (...items) => !some(...items)

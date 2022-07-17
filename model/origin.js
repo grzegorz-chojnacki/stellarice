@@ -24,7 +24,7 @@ const origin = nameItems({
     )),
   ResourceConsolidation: new Origin(() => every(
       authority.MachineIntelligence,
-      none(civics.RogueServitor, civics.OrganicReprocessing),
+      none(civics.RogueServitor, civics.MachineOrganicReprocessing),
     )),
   CloneArmy: new Origin(() => none(
       ethics.Gestalt,
@@ -35,7 +35,7 @@ const origin = nameItems({
     )),
   PostApocalyptic: new Origin(() => none(
       authority.MachineIntelligence,
-      civics.Agrarian,
+      civics.AgrarianIdyll,
       civics.Anglers, civics.CorporateAnglers,
     )),
   Remnants: new Origin(() => none(
@@ -45,15 +45,16 @@ const origin = nameItems({
       pop.Lithoid,
       none(
         civics.CatalyticProcessing,
-        civics.CorporateCatalyticProcessing,
-        civics.HiveCatalyticProcessing,
+        civics.CatalyticRecyclers,
+        civics.HiveOrganicReprocessing,
+        civics.MachineOrganicReprocessing,
       )
     )),
   CommonGround: new Origin(() => none(
       ethics.Xenophile, ethics.FanaticXenophile,
       ethics.Xenophobe, ethics.FanaticXenophobe,
       ethics.Gestalt,
-      civics.InwardsPerfection,
+      civics.InwardPerfection,
       civics.FanaticPurifiers,
       civics.BarbaricDespoilers,
     )),
@@ -61,7 +62,7 @@ const origin = nameItems({
       ethics.Xenophobe, ethics.FanaticXenophobe,
       ethics.Egalitarian, ethics.FanaticEgalitarian,
       ethics.Gestalt,
-      civics.InwardsPerfection,
+      civics.InwardPerfection,
       civics.FanaticPurifiers,
     )),
   Doomsday: new Origin(),
@@ -74,12 +75,12 @@ const origin = nameItems({
       civics.PompousPurists,
     )),
   ShatteredRing: new Origin(() => none(
-      civics.Agrarian,
+      civics.AgrarianIdyll,
       civics.Anglers, civics.CorporateAnglers,
     )),
   VoidDwellers: new Origin(() => none(
       ethics.Gestalt,
-      civics.Agrarian,
+      civics.AgrarianIdyll,
       civics.Anglers, civics.CorporateAnglers,
       civics.IdyllicBloom, civics.HiveIdyllicBloom
     )),
@@ -94,18 +95,18 @@ const origin = nameItems({
   HereBeDragons: new Origin(() => none(
       civics.FanaticPurifiers,
       civics.DevouringSwarm,
-      civics.MachineTerminator,
+      civics.DeterminedExterminator,
     )),
   OceanParadise: new Origin(() => none(
       authority.MachineIntelligence
     )),
   SlingshotToTheStars: new Origin(),
   ImperialFiefdom: new Origin(() => none(
-      civics.InwardsPerfection,
+      civics.InwardPerfection,
       civics.DrivenAssimilator,
       civics.FanaticPurifiers,
       civics.DevouringSwarm,
-      civics.MachineTerminator,
+      civics.DeterminedExterminator,
     )),
   Subterranean: new Origin(() => none(
       authority.MachineIntelligence
