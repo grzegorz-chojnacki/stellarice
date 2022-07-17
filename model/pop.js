@@ -3,12 +3,12 @@ class Pop extends Item {
     super(rules)
   }
 
-  generalTest = () => this.empireList.length < 1
+  generalRule = () => this.empireList.length < 1
 }
 
 const pop = nameItems({
   Biological: new Pop(),
-  Botanic:    new Pop(),
-  Lithoid:    new Pop(),
+  Botanic: new Pop(),
+  Lithoid: new Pop(),
   Mechanical: new Pop(),
 })
