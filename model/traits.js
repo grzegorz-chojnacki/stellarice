@@ -35,6 +35,15 @@ class Trait extends Item {
     this.empireList.reduce(Trait.costSum, 2) + this.cost >= 0
 }
 
+const bulky = () => one(traits.Bulky, traits.DoubleJointed)
+const maintenance = () => one(traits.HighMaintenance, traits.Durable)
+const uncanny = () => one(traits.Uncanny, traits.EmotionEmulators)
+const repurposed = () =>
+  one(traits.RepurposedHardware, traits.LearningAlgorithms)
+const custom = () => one(traits.CustomMade, traits.MassProduced)
+const luxurious = () => one(traits.Luxurious, traits.Recycled)
+const bandwith = () => one(traits.HighBandwidth, traits.StreamlinedProtocols)
+
 const charismatic = () => one(traits.Charismatic, traits.Repugnant)
 const communal = () => one(traits.Communal, traits.Solitary)
 const conformists = () => one(traits.Conformists, traits.Deviants)
@@ -128,7 +137,34 @@ const traitsNormal = {
   Decadent: new Trait(-1),
 }
 
-const traitsMechanic = {}
+const traitsMechanic = {
+  // Positive traits
+  DomesticProtocols: new Trait(2),
+  DoubleJointed: new Trait(1, bulky),
+  Durable: new Trait(1, maintenance),
+  EfficientProcessors: new Trait(3),
+  EmotionEmulators: new Trait(1, uncanny),
+  EnhancedMemory: new Trait(2),
+  Harvesters: new Trait(2),
+  LearningAlgorithms: new Trait(1, repurposed),
+  LogicEngines: new Trait(2),
+  LoyaltyCircuits: new Trait(2),
+  MassProduced: new Trait(1, custom),
+  PowerDrills: new Trait(2),
+  PropagandaMachines: new Trait(1),
+  Recycled: new Trait(2, luxurious),
+  StreamlinedProtocols: new Trait(2, bandwith),
+  Superconductiv: new Trait(2),
+
+  // Negative traits
+  Bulky: new Trait(-1, bulky),
+  HighMaintenance: new Trait(-1, maintenance),
+  Uncanny: new Trait(-1, uncanny),
+  RepurposedHardware: new Trait(-1, repurposed),
+  CustomMade: new Trait(-1, custom),
+  Luxurious: new Trait(-1, luxurious),
+  HighBandwidth: new Trait(-1, bandwith),
+}
 
 const traits = nameItems({
   ...traitsOrigin,
