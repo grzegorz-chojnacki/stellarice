@@ -18,12 +18,12 @@ const sections = [
       <div>
         <input
           type="radio"
-          id="${item.name}"
-          name="${item.name}"
+          id="${item.id}"
+          name="${item.id}"
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">${item.name}</label>
+        <label for="${item.id}">${item.name}</label>
       </div>`
   },
   {
@@ -37,13 +37,13 @@ const sections = [
       <div ${hidden(item)}>
         <input
           type="checkbox"
-          id="${item.name}"
-          name="${item.name}"
+          id="${item.id}"
+          name="${item.id}"
           ${isOrigin(item)}
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">
+        <label for="${item.id}">
           [<span class="trait-point">${item.value}</span>]
           ${item.name}
         </label>
@@ -55,12 +55,12 @@ const sections = [
       <div>
         <input
           type="radio"
-          id="${item.name}"
-          name="${item.name}"
+          id="${item.id}"
+          name="${item.id}"
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">${item.name}</label>
+        <label for="${item.id}">${item.name}</label>
       </div>`
   },
   {
@@ -69,12 +69,12 @@ const sections = [
       <div>
         <input
           type="checkbox"
-          id="${item.name}"
-          name="${item.name}"
+          id="${item.id}"
+          name="${item.id}"
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">${item.name}</label>
+        <label for="${item.id}">${item.name}</label>
       </div>`
   },
   {
@@ -83,12 +83,12 @@ const sections = [
       <div>
         <input
           type="radio"
-          id="${item.name}"
-          name="${item.name}"
+          id="${item.id}"
+          name="${item.id}"
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">${item.name}</label>
+        <label for="${item.id}">${item.name}</label>
       </div>`
   },
   {
@@ -97,12 +97,12 @@ const sections = [
       <div ${hidden(item)}>
         <input
           type="checkbox"
-          id="${item.name}"
-          name="${item.name}"
+          id="${item.id}"
+          name="${item.id}"
           ${checked(item)}
           ${invalid(item)}
           ${disabled(item)}>
-        <label for="${item.name}">${item.name}</label>
+        <label for="${item.id}">${item.name}</label>
       </div>`
   },
 ]

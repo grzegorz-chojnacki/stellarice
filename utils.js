@@ -7,11 +7,12 @@ const htmlToElement = html => {
 }
 
 const capitalize   = str => str[0].toUpperCase() + str.slice(1)
-const decapitalize = str => str.replace(/\<(be|the|of)\>/ig, x => x.toLowerCase())
+const decapitalize = str => str.replace(/\b(to|be|the|of)\b/ig, x => x.toLowerCase())
 const spacify      = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 
 const nameItems = obj => {
   Object.keys(obj).forEach(prop => {
+    obj[prop].id = prop
     obj[prop].name = decapitalize(capitalize(spacify(prop)))
   })
   return obj
