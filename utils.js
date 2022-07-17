@@ -9,11 +9,12 @@ const htmlToElement = html => {
 const capitalize   = str => str[0].toUpperCase() + str.slice(1)
 const decapitalize = str => str.replace(/\b(to|be|the|of)\b/ig, x => x.toLowerCase())
 const spacify      = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
+const prettify     = str => decapitalize(capitalize(spacify(str)))
 
 const nameItems = obj => {
   Object.keys(obj).forEach(prop => {
     obj[prop].id = prop
-    obj[prop].name = decapitalize(capitalize(spacify(prop)))
+    obj[prop].name = prettify(prop)
   })
   return obj
 }
@@ -94,7 +95,7 @@ const ruleMap = {
 const rulesToHtml = x => (x === null)
   ? 'No special rules'
   : (typeof(x) === 'string')
-    ? `<li>${x}</li>`
+    ? `<li>${prettify(x).replace('.', '')}</li>`
     : `${ruleMap[x.type]}:
       <ul>
         ${x.content.map(y => rulesToHtml(y)).join('')}
