@@ -17,13 +17,10 @@ class Item {
 
   get empireList() { return empire[this.empireName] }
 
+  hidden      = () => false
   generalTest = () => true
-
-  hidden = () => false
-
-  unmetRules = () => !!(this.rules && !this.test(this.rules()))
-
-  checked = () => this.empireList.includes(this)
-  invalid = () => this.unmetRules()
-  valid   = () => this.checked() || (this.generalTest() && !this.unmetRules())
+  invalid     = () => this.unmetRules()
+  checked     = () => this.empireList.includes(this)
+  disabled    = () => !(this.checked() || (this.generalTest() && !this.unmetRules()))
+  unmetRules  = () => !!(this.rules && !this.test(this.rules()))
 }

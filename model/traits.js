@@ -84,7 +84,7 @@ const traitsLithoid = {
 const traitsNormal = {
   Adaptive:            new Trait( 2, adaptive),
   ExtremelyAdaptive:   new Trait( 4, adaptive),
-  AgrarianIdyll:       new Trait( 2),
+  Agrarian:            new Trait( 2),
   Charismatic:         new Trait( 2, charismatic),
   Communal:            new Trait( 1, communal),
   Conformists:         new Trait( 2, conformists),

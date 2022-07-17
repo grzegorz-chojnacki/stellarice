@@ -18,10 +18,15 @@ const nameItems = obj => {
 }
 
 const htmlFlag = (enabled, flag) => enabled ? flag : ''
-const disabled = item => htmlFlag(!item.valid(), 'disabled')
+const disabled = item => htmlFlag(item.disabled(), 'disabled')
 const invalid  = item => htmlFlag(item.invalid(), 'invalid')
 const checked  = item => htmlFlag(item.checked(), 'checked')
 const hidden   = item => htmlFlag(item.hidden(), 'hidden')
+
+// Rules can fail/pass, items can only be present in the empire
+// Controls tooltip coloring
+const checkRule = value => value ? 'pass' : 'fail'
+const checkItem = value => value ? 'present' : ''
 
 const itemAttrributes = item => `
   ${checked(item)}
@@ -41,7 +46,7 @@ const sectionTemplate = (inputType, attributes, decorator = () => '') => item =>
       name="${item.id}"
       ${attributes(item)}>
     <label for="${item.id}">${decorator(item)}${item.name}</label>
-    <div class="tooltip">${rulesToHtml(item.rules ? item.rules() : null)}</div>
+    <div class="tooltip">${rulesToHtml(item, item.rules ? item.rules() : null)}</div>
   </div>`
 
 const nestedIn = (obj, item) => {
@@ -74,14 +79,18 @@ const ruleMap = {
   every: 'Must have',
 }
 
-const rulesToHtml = x => {
+const rulesToHtml = (item, x) => {
   if (x === null) return 'No special rules'
   else if (x instanceof Item) {
-    return `<li>${x.constructor.name} ${x.name}</li>`
+    return `<li ${checkItem(nestedIn(empire, x))}>${x.constructor.name} ${x.name}</li>`
   } else {
-    return `${ruleMap[x.type]}:
-      <ul>
-        ${x.items.map(y => rulesToHtml(y)).join('')}
+    const checkResult = checkRule(item.test(x))
+    return `
+      <li ${checkResult}>
+        <strong>${ruleMap[x.type]}:</strong>
+      </li>
+      <ul ${checkResult}>
+        ${x.items.map(y => rulesToHtml(item, y)).join('')}
       </ul>`
   }
 }

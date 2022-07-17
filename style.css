@@ -59,6 +59,7 @@ input[origin] + label > * {
 
 
 .tooltip {
+  color: var(--fg);
   display: none;
   position: fixed;
   top: 1em;
@@ -73,4 +74,13 @@ div:hover > .tooltip {
 }
 
 ul, li { margin: 0; }
+
 li { list-style-type: disc; }
+
+li[fail] { color: var(--cranberry); }
+li[pass] { color: var(--turquoise); }
+
+li[present] {
+  color: var(--rosebud);
+  font-weight: bold;
+}
