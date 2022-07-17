@@ -16,7 +16,7 @@ class Item {
 
   get empireList() { return empire[this.empireName] }
 
-  genericConstraint = () => true
+  generalTest = () => true
 
   hidden = () => false
 
@@ -24,5 +24,5 @@ class Item {
 
   checked = () => this.empireList.includes(this)
   invalid = () => this.unmetRules()
-  valid   = () => this.checked() || (this.genericConstraint() && !this.unmetRules())
+  valid   = () => this.checked() || (this.generalTest() && !this.unmetRules())
 }

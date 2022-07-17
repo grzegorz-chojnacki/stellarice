@@ -33,7 +33,7 @@ class Trait extends Item {
     return false
   }
 
-  genericConstraint = () => {
+  generalTest = () => {
     return (this.empireList.length < 5)
      && !this.empireList.some(trait => trait.kind && trait.kind === this.kind)
      && this.empireList.reduce(Trait.costSum, 2) + this.cost >= 0}

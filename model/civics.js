@@ -25,7 +25,7 @@ class Civic extends Item {
 
   invalid = () => this.unmetRules() //|| this.clashes()
 
-  genericConstraint = () => (this.empireList.length < 2)
+  generalTest = () => (this.empireList.length < 2)
 }
 
 const civicsNormal = {

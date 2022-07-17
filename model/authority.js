@@ -3,7 +3,7 @@ class Authority extends Item {
     super(rules)
   }
 
-  genericConstraint = () => (this.empireList.length < 1)
+  generalTest = () => (this.empireList.length < 1)
 }
 
 const authority = nameItems({

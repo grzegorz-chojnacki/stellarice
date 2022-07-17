@@ -3,7 +3,7 @@ class Origin extends Item {
     super(rules)
   }
 
-  genericConstraint = () => (empire.origin.length === 0)
+  generalTest = () => (empire.origin.length === 0)
 }
 
 const origin = nameItems({
