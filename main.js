@@ -24,6 +24,7 @@ const sections = [
           ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.id}">${item.name}</label>
+        <div class="tooltip">${getRules(item)}</div>
       </div>`
   },
   {
@@ -47,6 +48,7 @@ const sections = [
           [<span class="trait-point">${item.value}</span>]
           ${item.name}
         </label>
+        <div class="tooltip">${getRules(item)}</div>
       </div>`
   },
   {
@@ -61,6 +63,7 @@ const sections = [
           ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.id}">${item.name}</label>
+        <div class="tooltip">${getRules(item)}</div>
       </div>`
   },
   {
@@ -75,6 +78,7 @@ const sections = [
           ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.id}">${item.name}</label>
+        <div class="tooltip">${getRules(item)}</div>
       </div>`
   },
   {
@@ -89,6 +93,7 @@ const sections = [
           ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.id}">${item.name}</label>
+        <div class="tooltip">${getRules(item)}</div>
       </div>`
   },
   {
@@ -103,6 +108,7 @@ const sections = [
           ${invalid(item)}
           ${disabled(item)}>
         <label for="${item.id}">${item.name}</label>
+        <div class="tooltip">${getRules(item)}</div>
       </div>`
   },
 ]

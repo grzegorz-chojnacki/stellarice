@@ -128,9 +128,14 @@ const traitsNormal = {
   Decadent:            new Trait(-1, null),
 }
 
+const traitsMechanic = {
+
+}
+
 const traits = nameItems({
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
   ...traitsNormal,
+  ...traitsMechanic,
 })

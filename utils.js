@@ -56,11 +56,12 @@ const getRules = item => {
   if (item.rules) {
     return item.rules.toString()
       .replace(/\(\) => /g, '')
-      .replace(/every/g, 'must have')
-      .replace(/some/g, 'some of')
-      .replace(/none/g, 'cannot have')
-      .replace(/\(/g, ': ')
-      .replace(/[,\)]/g, '')
+      .replace(/every\(/g, 'must have:')
+      .replace(/some\(/g, 'some of:')
+      .replace(/none\(/g, 'cannot have:')
+      .replace(/\n/g, '<br>')
+      .replace(/ /g, '&nbsp;')
+      .replace(/[,\)]/g, '').trim()
   }
   return ''
 }

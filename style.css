@@ -56,3 +56,18 @@ input[origin] + label > * {
 .tacao     { color: var(--tacao); }
 .turquoise { color: var(--turquoise); }
 .lavender  { color: var(--lavender); }
+
+
+.tooltip {
+  display: none;
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  border: 1px solid;
+  padding: 0.5em;
+  background-color: var(--bg);
+}
+
+div:hover > .tooltip {
+  display: block;
+}
