@@ -24,15 +24,13 @@ const disabled = item => htmlFlag(!item.valid(), 'disabled')
 const invalid  = item => htmlFlag(item.invalid(), 'invalid')
 const checked  = item => htmlFlag(item.checked(), 'checked')
 const hidden   = item => htmlFlag(item.hidden(), 'hidden')
-const isOrigin = trait => htmlFlag(trait.origin(), 'origin')
 
 const itemAttrributes = item => `
   ${checked(item)}
   ${invalid(item)}
   ${disabled(item)}`
 
-const traitAttrributes = trait => `
-  ${isOrigin(trait)}
+  const traitAttrributes = trait => `
   ${checked(trait)}
   ${invalid(trait)}
   ${disabled(trait)}`

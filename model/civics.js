@@ -4,26 +4,18 @@ class Civic extends Item {
     this.empireName += 's'
   }
 
-  // normalClash = () => (Object.values(civicsNormal).includes(this) && some(
-  //     ethics.Gestalt,
-  //     authority.Corporate,
-  //     authority.HiveMind,
-  //     authority.MachineIntelligence))
-
-  // corporateClash = () => (Object.values(civicsCorporate).includes(this)
-  //     && none(authority.Corporate))
-
-  // hiveClash = () => (Object.values(civicsHive).includes(this)
-  //     && none(authority.HiveMind))
-
-  // machineClash = () => (Object.values(civicsMachine).includes(this)
-  //     && none(authority.MachineIntelligence))
-
-  clashes = () => false //this.normalClash() || this.corporateClash() || this.hiveClash() || this.machineClash()
+  testClash      = (list, rules) => nestedIn(list, this) && this.test(rules)
+  clashes        = () => this.normalClash() || this.corporateClash()
+                      || this.hiveClash() || this.machineClash()
+  corporateClash = () => this.testClash(civicsCorporate, none(authority.Corporate))
+  hiveClash      = () => this.testClash(civicsHive, none(authority.HiveMind))
+  machineClash   = () => this.testClash(civicsMachine, none(authority.MachineIntelligence))
+  normalClash    = () => this.testClash(civicsNormal, some(ethics.Gestalt,
+    authority.Corporate, authority.HiveMind, authority.MachineIntelligence))
 
   hidden = () => !this.checked() && this.clashes()
 
-  invalid = () => this.unmetRules() //|| this.clashes()
+  invalid = () => this.unmetRules() || this.clashes()
 
   generalTest = () => (this.empireList.length < 2)
 }

@@ -1,33 +1,26 @@
 class Trait extends Item {
   static costSum = (acc, { cost }) => acc + cost
 
-  constructor(value, kind, rules) {
+  constructor(value, rules) {
     super(rules)
     this.empireName += 's'
     this.value = value
     this.cost = -value
-    this.kind = kind
   }
 
-  origin = () => Object.values(traitsOrigin).includes(this)
-
-  originClash = () => (this.origin() && this.unmetRules())
-
-  normalClash = () => (Object.values(traitsNormal).includes(this)
-      && none(pop.Biological, pop.Botanic, pop.Lithoid))
-
-  botanicClash = () => (Object.values(traitsBotanic).includes(this)
-      && none(pop.Botanic))
-
-  lithoidClash = () => (Object.values(traitsLithoid).includes(this)
-      && none(pop.Lithoid))
-
-  clashes = () => this.normalClash() || this.botanicClash() || this.lithoidClash()
+  testClash     = (list, rules) => nestedIn(list, this) && this.test(rules)
+  originClash   = () => this.testClash(traitsOrigin, none()) && this.unmetRules()
+  normalClash   = () => this.testClash(traitsNormal, none(pop.Botanic, pop.Lithoid, pop.Biological))
+  botanicClash  = () => this.testClash(traitsBotanic, none(pop.Botanic))
+  lithoidClash  = () => this.testClash(traitsLithoid, none(pop.Lithoid))
+  mechanicClash = () => this.testClash(traitsMechanic, none(pop.Mechanical))
+  clashes       = () => this.normalClash() || this.botanicClash()
+                     || this.lithoidClash() || this.mechanicClash()
 
   hidden = () => !this.checked() && (this.clashes() || this.originClash())
 
   invalid = () => {
-    if (this.unmetRules() || this.clashes()) return true
+    if (this.unmetRules()) return true
     const sum = this.empireList.reduce(Trait.costSum, 2)
     if (sum < 0 && this.value > 0) return true
     return false
@@ -39,30 +32,30 @@ class Trait extends Item {
      && this.empireList.reduce(Trait.costSum, 2) + this.cost >= 0}
 }
 
-const adaptive         = Symbol('adaptive')
-const charismatic      = Symbol('charismatic')
-const communal         = Symbol('communal')
-const conformists      = Symbol('conformists')
-const conservationists = Symbol('conservationists')
-const docile           = Symbol('docile')
-const enduring         = Symbol('enduring')
-const nomadic          = Symbol('nomadic')
-const learners         = Symbol('learners')
-const breeders         = Symbol('breeders')
-const strong           = Symbol('strong')
-const traditional      = Symbol('traditional')
-const trophic          = Symbol('botanic')
-const gaseous          = Symbol('gaseous')
+const adaptive         = () => one(traits.Adaptive, traits.ExtremelyAdaptive, traits.Nonadaptive)
+const charismatic      = () => one(traits.Charismatic, traits.Repugnant)
+const communal         = () => one(traits.Communal, traits.Solitary)
+const conformists      = () => one(traits.Conformists, traits.Deviants)
+const conservationists = () => one(traits.Conservationist, traits.Wasteful)
+const docile           = () => one(traits.Docile, traits.Unruly)
+const enduring         = () => one(traits.Enduring, traits.Venerable, traits.Fleeting)
+const nomadic          = () => one(traits.Nomadic, traits.Sedentary)
+const learners         = () => one(traits.QuickLearners, traits.SlowLearners)
+const breeders         = () => one(traits.RapidBreeders, traits.SlowBreeders)
+const strong           = () => one(traits.Strong, traits.VeryStrong, traits.Weak)
+const traditional      = () => one(traits.Traditional, traits.Quarrelsome)
+const trophic          = () => one(traits.Phototrophic, traits.Radiotrophic)
+const gaseous          = () => one(traits.GaseousByproducts, traits.ScintillatingSkin, traits.VolatileExcretions)
 
 const traitsOrigin = {
-  CloneSoldier: new Trait(0, breeders, () => every(origin.CloneArmy)),
-  Survivor:     new Trait(0, null, () => every(origin.PostApocalyptic)),
-  VoidDweller:  new Trait(0, null, () => every(origin.VoidDwellers)),
-  Necrophages:  new Trait(0, null, () => every(
+  CloneSoldier: new Trait(0, () => every(origin.CloneArmy, breeders())),
+  Survivor:     new Trait(0, () => every(origin.PostApocalyptic)),
+  VoidDweller:  new Trait(0, () => every(origin.VoidDwellers)),
+  Necrophages:  new Trait(0, () => every(
     origin.Necrophage,
     none(traits.Budding),
   )),
-  CaveDweller:  new Trait(0, null, () => every(
+  CaveDweller:  new Trait(0, () => every(
     origin.Subterranean,
     none(traits.Phototrophic),
   )),
@@ -70,26 +63,28 @@ const traitsOrigin = {
 
 const traitsBotanic = {
   Radiotrophic: new Trait(2, trophic),
-  Phototrophic: new Trait(1, trophic, () => every(
+  Phototrophic: new Trait(1, () => every(
     pop.Botanic,
+    trophic(),
     none(origin.Subterranean)
   )),
-  Budding:      new Trait(2, breeders, () => every(
+  Budding:      new Trait(2, () => every(
     pop.Botanic,
+    breeders(),
     none(origin.CloneArmy, origin.Necrophage)
   )),
 }
 
 const traitsLithoid = {
-  GaseousByproducts:  new Trait(2, gaseous),
-  ScintillatingSkin:  new Trait(2, gaseous),
-  VolatileExcretions: new Trait(2, gaseous),
+  GaseousByproducts:  new Trait(2, () => every(pop.Lithoid, gaseous())),
+  ScintillatingSkin:  new Trait(2, () => every(pop.Lithoid, gaseous())),
+  VolatileExcretions: new Trait(2, () => every(pop.Lithoid, gaseous())),
 }
 
 const traitsNormal = {
   Adaptive:            new Trait( 2, adaptive),
   ExtremelyAdaptive:   new Trait( 4, adaptive),
-  AgrarianIdyll:       new Trait( 2, null),
+  AgrarianIdyll:       new Trait( 2),
   Charismatic:         new Trait( 2, charismatic),
   Communal:            new Trait( 1, communal),
   Conformists:         new Trait( 2, conformists),
@@ -97,20 +92,20 @@ const traitsNormal = {
   Docile:              new Trait( 2, docile),
   Enduring:            new Trait( 1, enduring),
   Venerable:           new Trait( 4, enduring),
-  Industrious:         new Trait( 2, null),
-  Ingenious:           new Trait( 2, null),
-  Intelligent:         new Trait( 2, null),
-  NaturalEngineers:    new Trait( 1, null),
-  NaturalPhysicists:   new Trait( 1, null),
-  NaturalSociologists: new Trait( 1, null),
+  Industrious:         new Trait( 2),
+  Ingenious:           new Trait( 2),
+  Intelligent:         new Trait( 2),
+  NaturalEngineers:    new Trait( 1),
+  NaturalPhysicists:   new Trait( 1),
+  NaturalSociologists: new Trait( 1),
   Nomadic:             new Trait( 1, nomadic),
   QuickLearners:       new Trait( 1, learners),
   RapidBreeders:       new Trait( 2, breeders),
-  Resilient:           new Trait( 1, null),
+  Resilient:           new Trait( 1),
   Strong:              new Trait( 1, strong),
   VeryStrong:          new Trait( 3, strong),
-  Talented:            new Trait( 1, null),
-  Thrifty:             new Trait( 2, null),
+  Talented:            new Trait( 1),
+  Thrifty:             new Trait( 2),
   Traditional:         new Trait( 1, traditional),
 
   Nonadaptive:         new Trait(-2, adaptive),
@@ -125,7 +120,7 @@ const traitsNormal = {
   SlowBreeders:        new Trait(-2, breeders),
   Weak:                new Trait(-1, strong),
   Quarrelsome:         new Trait(-1, traditional),
-  Decadent:            new Trait(-1, null),
+  Decadent:            new Trait(-1),
 }
 
 const traitsMechanic = {
