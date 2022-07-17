@@ -14,18 +14,7 @@ const empire = deepCopy(template)
 const sections = [
   {
     name: 'pop',
-    template: item => `
-      <div>
-        <input
-          type="radio"
-          id="${item.id}"
-          name="${item.id}"
-          ${checked(item)}
-          ${invalid(item)}
-          ${disabled(item)}>
-        <label for="${item.id}">${item.name}</label>
-        <div class="tooltip">${getRules(item)}</div>
-      </div>`
+    template: sectionTemplate('radio', itemAttrributes)
   },
   {
     name: 'traits',
@@ -34,82 +23,23 @@ const sections = [
         Available traits: ${5 - empire.traits.length}<br>
         Available points: ${empire.traits.reduce(Trait.costSum, 2)}
       </p>`,
-    template: item => `
-      <div ${hidden(item)}>
-        <input
-          type="checkbox"
-          id="${item.id}"
-          name="${item.id}"
-          ${isOrigin(item)}
-          ${checked(item)}
-          ${invalid(item)}
-          ${disabled(item)}>
-        <label for="${item.id}">
-          [<span class="trait-point">${item.value}</span>]
-          ${item.name}
-        </label>
-        <div class="tooltip">${getRules(item)}</div>
-      </div>`
+    template: sectionTemplate('checkbox', traitAttrributes)
   },
   {
     name: 'origin',
-    template: item => `
-      <div>
-        <input
-          type="radio"
-          id="${item.id}"
-          name="${item.id}"
-          ${checked(item)}
-          ${invalid(item)}
-          ${disabled(item)}>
-        <label for="${item.id}">${item.name}</label>
-        <div class="tooltip">${getRules(item)}</div>
-      </div>`
+    template: sectionTemplate('checkbox', itemAttrributes)
   },
   {
     name: 'ethics',
-    template: item => `
-      <div>
-        <input
-          type="checkbox"
-          id="${item.id}"
-          name="${item.id}"
-          ${checked(item)}
-          ${invalid(item)}
-          ${disabled(item)}>
-        <label for="${item.id}">${item.name}</label>
-        <div class="tooltip">${getRules(item)}</div>
-      </div>`
+    template: sectionTemplate('checkbox', itemAttrributes)
   },
   {
     name: 'authority',
-    template: item => `
-      <div>
-        <input
-          type="radio"
-          id="${item.id}"
-          name="${item.id}"
-          ${checked(item)}
-          ${invalid(item)}
-          ${disabled(item)}>
-        <label for="${item.id}">${item.name}</label>
-        <div class="tooltip">${getRules(item)}</div>
-      </div>`
+    template: sectionTemplate('radio', itemAttrributes)
   },
   {
     name: 'civics',
-    template: item => `
-      <div ${hidden(item)}>
-        <input
-          type="checkbox"
-          id="${item.id}"
-          name="${item.id}"
-          ${checked(item)}
-          ${invalid(item)}
-          ${disabled(item)}>
-        <label for="${item.id}">${item.name}</label>
-        <div class="tooltip">${getRules(item)}</div>
-      </div>`
+    template: sectionTemplate('checkbox', itemAttrributes)
   },
 ]
 

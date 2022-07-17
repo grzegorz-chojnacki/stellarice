@@ -8,6 +8,8 @@ class Item {
 
   genericConstraint = () => true
 
+  hidden = () => false
+
   unmetRules = () => (this.rules && !this.rules())
 
   checked = () => this.empireList.includes(this)

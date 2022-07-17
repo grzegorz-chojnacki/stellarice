@@ -25,6 +25,28 @@ const checked  = item => htmlFlag(item.checked(), 'checked')
 const hidden   = item => htmlFlag(item.hidden(), 'hidden')
 const isOrigin = trait => htmlFlag(trait.origin(), 'origin')
 
+const itemAttrributes = item => `
+  ${checked(item)}
+  ${invalid(item)}
+  ${disabled(item)}`
+
+const traitAttrributes = trait => `
+  ${isOrigin(trait)}
+  ${checked(trait)}
+  ${invalid(trait)}
+  ${disabled(trait)}`
+
+const sectionTemplate = (inputType, attributes) => item => `
+  <div ${hidden(item)}>
+    <input
+      type="${inputType}"
+      id="${item.id}"
+      name="${item.id}"
+      ${attributes(item)}>
+    <label for="${item.id}">${item.name}</label>
+    <div class="tooltip">${getRules(item)}</div>
+  </div>`
+
 const nestedIn = (obj, item) => {
   if (!obj) return false
   if (obj === item) return true
