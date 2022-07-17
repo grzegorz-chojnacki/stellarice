@@ -1,22 +1,34 @@
 class Ethic extends Item {
   static valueSum = (acc, { value }) => acc + value
 
-  constructor(value, kind) {
-    super()
+  constructor(value, rules) {
+    super(rules)
     this.empireName += 's'
     this.value = value
-    this.kind = kind
   }
 
-  generalTest = () => this.empireList.length < 3
-     && !this.empireList.some(ethic => ethic.kind && ethic.kind === this.kind)
-     && this.empireList.reduce(Ethic.valueSum, 0) + this.value <= 3
+  generalTest = () => this.empireList.reduce(Ethic.valueSum, 0) + this.value <= 3
 }
 
-const militarist    = Symbol('militarist')
-const xenophobe     = Symbol('xenophobe')
-const authoritarian = Symbol('authoritarian')
-const materialist   = Symbol('materialist')
+const militarist = () => one(
+  ethics.FanaticMilitarist, ethics.Militarist,
+  ethics.FanaticPacifist, ethics.Pacifist,
+)
+
+const xenophobe = () => one(
+  ethics.FanaticXenophobe, ethics.Xenophobe,
+  ethics.FanaticXenophile, ethics.Xenophile,
+)
+
+const authoritarian = () => one(
+  ethics.FanaticAuthoritarian, ethics.Authoritarian,
+  ethics.FanaticEgalitarian, ethics.Egalitarian,
+)
+
+const materialist = () => one(
+  ethics.FanaticMaterialist, ethics.Materialist,
+  ethics.FanaticSpiritualist, ethics.Spiritualist,
+)
 
 const ethics = nameItems({
   FanaticMilitarist:    new Ethic(2, militarist),
@@ -35,5 +47,5 @@ const ethics = nameItems({
   Egalitarian:          new Ethic(1, authoritarian),
   Materialist:          new Ethic(1, materialist),
   Spiritualist:         new Ethic(1, materialist),
-  Gestalt:              new Ethic(3, null),
+  Gestalt:              new Ethic(3, () => one(ethics.Gestalt)),
 })

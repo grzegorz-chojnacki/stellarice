@@ -11,6 +11,7 @@ class Item {
       case 'every': return  x.items.every(this.test)
       case 'some':  return  x.items.some(this.test)
       case 'none':  return !x.items.some(this.test)
+      case 'one':   return !x.items.filter(i => i !== this).some(this.test)
     }
   }
 

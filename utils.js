@@ -69,8 +69,10 @@ const toggleIncluded = (list, item) => {
 const every = (...items) => ({ type: 'every', items })
 const some  = (...items) => ({ type: 'some',  items })
 const none  = (...items) => ({ type: 'none',  items })
+const one   = (...items) => ({ type: 'one',   items })
 
 const ruleMap = {
+  one:   'One of',
   some:  'Some of',
   none:  'Cannot have',
   every: 'Must have',
