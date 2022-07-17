@@ -35,14 +35,14 @@ const itemAttrributes = item => `
   ${invalid(trait)}
   ${disabled(trait)}`
 
-const sectionTemplate = (inputType, attributes) => item => `
+const sectionTemplate = (inputType, attributes, decorator = () => '') => item => `
   <div ${hidden(item)}>
     <input
       type="${inputType}"
       id="${item.id}"
       name="${item.id}"
       ${attributes(item)}>
-    <label for="${item.id}">${item.name}</label>
+    <label for="${item.id}">${decorator(item)}${item.name}</label>
     <div class="tooltip">${rulesToHtml(item.rules ? item.rules() : null)}</div>
   </div>`
 

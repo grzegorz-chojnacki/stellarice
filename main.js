@@ -23,7 +23,8 @@ const sections = [
         Available traits: ${5 - empire.traits.length}<br>
         Available points: ${empire.traits.reduce(Trait.costSum, 2)}
       </p>`,
-    template: sectionTemplate('checkbox', traitAttrributes)
+    template: sectionTemplate('checkbox', traitAttrributes,
+      item => `[<span class="trait-point">${item.value}</span>] `)
   },
   {
     name: 'origin',
