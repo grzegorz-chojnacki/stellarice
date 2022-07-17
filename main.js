@@ -1,7 +1,7 @@
 const all = { pop, traits, origin, ethics, authority, civics }
 
 const empire = {
-  pop: [pop.Biological],
+  pop: [],
   traits: [],
   origin: [],
   ethics: [],
