@@ -97,8 +97,8 @@ const rulesToHtml = (() => {
   const checkItem = value => (value ? 'present' : '')
 
   const ruleMap = {
-    one: 'One of',
-    some: 'Some of',
+    one: 'At most one of',
+    some: 'At least one of',
     none: 'Cannot have',
     every: 'Must have',
   }
@@ -106,9 +106,9 @@ const rulesToHtml = (() => {
   return (item, x) => {
     if (x === null) return 'No special rules'
     else if (x instanceof Item) {
-      return `<li ${checkItem(nestedIn(empire, x))}>${x.constructor.name} ${
-        x.name
-      }</li>`
+      return `<li ${checkItem(nestedIn(empire, x))}>
+          ${x.constructor.name} ${x.name}
+        </li>`
     } else {
       const checkResult = checkRule(item.test(x))
       return `
