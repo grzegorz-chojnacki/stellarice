@@ -43,13 +43,13 @@ const uncanny = () => none('Uncanny', 'EmotionEmulators')
 const repurposed = () => none('RepurposedHardware', 'LearningAlgorithms')
 const custom = () => none('CustomMade', 'MassProduced')
 const luxurious = () => none('Luxurious', 'Recycled')
-const bandwith = () => none('HighBandwidth', 'StreamlinedProtocols')
+const bandwidth = () => none('HighBandwidth', 'StreamlinedProtocols')
 
 const traitsOrigin = Item.create(Trait, [
   {
     id: 'CloneSoldier',
     cost: 0,
-    rule: every('CloneArmy', breeders),
+    rule: every('CloneArmy', breeders()),
   },
   {
     id: 'Survivor',
@@ -361,7 +361,7 @@ const traitsMechanic = Item.create(Trait, [
   {
     cost: 2,
     id: 'StreamlinedProtocols',
-    rule: bandwith(),
+    rule: bandwidth(),
   },
   {
     cost: 2,
@@ -402,7 +402,7 @@ const traitsMechanic = Item.create(Trait, [
   {
     cost: -1,
     id: 'HighBandwidth',
-    rule: bandwith(),
+    rule: bandwidth(),
   },
 ]).map(Item.withRule(every('Mechanical')))
 
@@ -410,6 +410,8 @@ const traits = [
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
-  ...traitsNormal,
-  ...traitsMechanic,
+  ...traitsNormal.filter(x => x.cost > 0),
+  ...traitsMechanic.filter(x => x.cost > 0),
+  ...traitsNormal.filter(x => x.cost < 0),
+  ...traitsMechanic.filter(x => x.cost < 0),
 ]
