@@ -34,7 +34,8 @@ section {
 }
 
 input:disabled, input:disabled + label {
-  color: var(--gray);
+  color: var(--fg);
+  opacity: 0.4;
 }
 
 /* Items which should not be checked */
