@@ -7,17 +7,12 @@ const htmlToElement = html => {
 
 // String helper functions
 const capitalize = str => str[0].toUpperCase() + str.slice(1)
-const decapitalize = str => str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
+const decapitalize = str =>
+  str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
 const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 
 // Convert PascalCase to normal wording, with specific capitalization rules
 const prettify = str => decapitalize(capitalize(spacify(str)))
-
-// Syntax sugar for creating rule objects
-const every = (...items) => ({ type: 'every', items })
-const some = (...items) => ({ type: 'some', items })
-const none = (...items) => ({ type: 'none', items })
-const one = (...items) => ({ type: 'one', items })
 
 // Helper function for generating HTML flags (attributes without values)
 const htmlFlag = (enabled, flag) => (enabled ? flag : '')
@@ -44,8 +39,7 @@ const traitAttrributes = trait => `
 const sectionTemplate =
   (inputType, attributes, decorator = () => '') =>
   item =>
-    `
-    <div ${hidden(item)}>
+    `<div ${hidden(item)}>
       <input
         type="${inputType}"
         id="${item.id}"
@@ -54,7 +48,6 @@ const sectionTemplate =
       <label for="${item.id}">${decorator(item)}${item.name}</label>
       <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
     </div>`
-
 
 // Helper function for getting item by id from all items
 const getItem = id => {
@@ -70,8 +63,8 @@ const injectItems = x => {
   if (!x) return x
   if (x instanceof Item) return x
   if (typeof x === 'string') return getItem(x)
-  if (x.type) {
-    x.items = x.items.map(injectItems);
+  if (x instanceof Rule) {
+    x.items = x.items.map(injectItems)
     return x
   }
   return x
@@ -86,13 +79,12 @@ const toggleIncluded = (list, item) => {
   }
 }
 
-
 // Helper partition function
 const partition = (arr, fn) =>
   arr.reduce(
     ([a, b], x) => (fn(x) ? [a.concat(x), b] : [a, b.concat(x)]),
-    [[], []])
-
+    [[], []]
+  )
 
 // Sort items depending on arbitrary rules
 const sort = items => {
@@ -105,30 +97,19 @@ const sort = items => {
 
 // Converts rule objects to HTML lists with coloring depending on pass/fail
 const rulesToHtml = (() => {
-  // Rules can fail/pass, items are just 'present' in the empire
-  const checkRule = value => (value ? 'pass' : 'fail')
-  const checkItem = value => (value ? 'present' : '')
-
-  const ruleMap = {
-    one: 'At most one of',
-    some: 'At least one of',
-    none: 'Cannot have',
-    every: 'Must have',
-  }
-
   return (item, x) => {
-    if (x === null) return 'No special rules'
-    else if (x instanceof Item) {
-      return `<li ${checkItem(x.checked())}>
+    if (x instanceof Item) {
+      return `<li ${x.checked() ? 'present' : ''}>
           ${x.constructor.name} ${x.name}
         </li>`
-    } else if (x.type) {
-      const checkResult = checkRule(item.test(x))
+    } else if (x.constructor === Rule) {
+      return `<strong>${x.text}</strong>`
+    } else if (x instanceof Rule) {
       return `
-        <li ${checkResult}>
-          <strong>${ruleMap[x.type]}:</strong>
+        <li ${item.rule.test() ? 'pass' : 'fail'}>
+          <strong>${x.text}:</strong>
         </li>
-        <ul ${checkResult}>
+        <ul>
           ${x.items.map(y => rulesToHtml(item, y)).join('')}
         </ul>`
     }

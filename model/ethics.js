@@ -10,7 +10,7 @@ class Ethic extends Item {
   generalRule = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3
 }
 
-const militarist = one(
+const militarist = () => none(
   'Mechanical',
   'FanaticMilitarist',
   'Militarist',
@@ -18,7 +18,7 @@ const militarist = one(
   'Pacifist'
 )
 
-const xenophobe = one(
+const xenophobe = () => none(
   'Mechanical',
   'FanaticXenophobe',
   'Xenophobe',
@@ -26,7 +26,7 @@ const xenophobe = one(
   'Xenophile'
 )
 
-const authoritarian = one(
+const authoritarian = () => none(
   'Mechanical',
   'FanaticAuthoritarian',
   'Authoritarian',
@@ -34,7 +34,7 @@ const authoritarian = one(
   'Egalitarian'
 )
 
-const materialist = one(
+const materialist = () => none(
   'Mechanical',
   'FanaticMaterialist',
   'Materialist',
@@ -42,92 +42,92 @@ const materialist = one(
   'Spiritualist'
 )
 
-const gestalt = one('Gestalt')
+const gestalt = () => none('Gestalt')
 
 const ethics = Item.create(Ethic, [
   {
     cost: 2,
     id: 'FanaticMilitarist',
-    rule: militarist,
+    rule: militarist(),
   },
   {
     cost: 2,
     id: 'FanaticPacifist',
-    rule: militarist,
+    rule: militarist(),
   },
   {
     cost: 2,
     id: 'FanaticXenophobe',
-    rule: xenophobe,
+    rule: xenophobe(),
   },
   {
     cost: 2,
     id: 'FanaticXenophile',
-    rule: xenophobe,
+    rule: xenophobe(),
   },
   {
     cost: 2,
     id: 'FanaticAuthoritarian',
-    rule: authoritarian,
+    rule: authoritarian(),
   },
   {
     cost: 2,
     id: 'FanaticEgalitarian',
-    rule: authoritarian,
+    rule: authoritarian(),
   },
   {
     cost: 2,
     id: 'FanaticMaterialist',
-    rule: materialist,
+    rule: materialist(),
   },
   {
     cost: 2,
     id: 'FanaticSpiritualist',
-    rule: materialist,
+    rule: materialist(),
   },
   {
     cost: 1,
     id: 'Militarist',
-    rule: militarist,
+    rule: militarist(),
   },
   {
     cost: 1,
     id: 'Pacifist',
-    rule: militarist,
+    rule: militarist(),
   },
   {
     cost: 1,
     id: 'Xenophobe',
-    rule: xenophobe,
+    rule: xenophobe(),
   },
   {
     cost: 1,
     id: 'Xenophile',
-    rule: xenophobe,
+    rule: xenophobe(),
   },
   {
     cost: 1,
     id: 'Authoritarian',
-    rule: authoritarian,
+    rule: authoritarian(),
   },
   {
     cost: 1,
     id: 'Egalitarian',
-    rule: authoritarian,
+    rule: authoritarian(),
   },
   {
     cost: 1,
     id: 'Materialist',
-    rule: materialist,
+    rule: materialist(),
   },
   {
     cost: 1,
     id: 'Spiritualist',
-    rule: materialist,
+    rule: materialist(),
   },
   {
     cost: 3,
     id: 'Gestalt',
-    rule: gestalt,
+    rule: gestalt(),
   },
 ])
