@@ -41,14 +41,9 @@ main {
   flex-wrap: wrap;
 }
 
-section {
-  margin: 0 1em 1em;
-}
+section { margin: 0 1em 1em; }
 
-input:disabled, input:disabled + label {
-  color: var(--fg);
-  opacity: 0.4;
-}
+input:disabled, input:disabled + label { opacity: 0.4; }
 
 /* Items which should not be checked */
 input[invalid]:checked,
