@@ -47,6 +47,7 @@ const render = (() => {
     {
       name: 'civics',
       template: sectionTemplate('checkbox', itemAttrributes),
+      summary: () => `<p>Available slots: ${2 - empire.civics.length}</p>`,
     },
   ]
 
