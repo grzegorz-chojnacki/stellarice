@@ -10,7 +10,7 @@ class Trait extends Item {
   invalid = () => {
     if (this.unmetRule()) return true
     const sum = this.empireList.reduce(Trait.costSum, 2)
-    if (sum < 0 && this.cost <= 0) return true
+    if (sum < 0 && this.cost >= 0) return true
     return false
   }
 
