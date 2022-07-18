@@ -6,9 +6,9 @@ class Pop extends Item {
   generalRule = () => this.empireList.length < 1
 }
 
-const pop = nameItems({
-  Biological: new Pop(),
-  Botanic: new Pop(),
-  Lithoid: new Pop(),
-  Mechanical: new Pop(),
-})
+const pop = Item.create(Pop, [
+  { name: 'Biological' },
+  { name: 'Botanic' },
+  { name: 'Lithoid' },
+  { name: 'Mechanical' },
+])

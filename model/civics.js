@@ -4,23 +4,17 @@ class Civic extends Item {
     this.makeEmpireNamePlural()
   }
 
-  corporateClash = () =>
-    this.testClash(civicsCorporate, none(authority.Corporate))
+  corporateClash = () => this.testClash(civicsCorporate, none('Corporate'))
 
-  hiveClash = () => this.testClash(civicsHive, none(authority.HiveMind))
+  hiveClash = () => this.testClash(civicsHive, none('HiveMind'))
 
   machineClash = () =>
-    this.testClash(civicsMachine, none(authority.MachineIntelligence))
+    this.testClash(civicsMachine, none('MachineIntelligence'))
 
   normalClash = () =>
     this.testClash(
       civicsNormal,
-      some(
-        ethics.Gestalt,
-        authority.Corporate,
-        authority.HiveMind,
-        authority.MachineIntelligence
-      )
+      some('Gestalt', 'Corporate', 'HiveMind', 'MachineIntelligence')
     )
 
   clashes = () =>
@@ -34,326 +28,397 @@ class Civic extends Item {
   generalRule = () => this.empireList.length < 2
 }
 
-const civicsNormal = {
-  CutthroatPolitics: new Civic(),
-  EfficientBureaucracy: new Civic(),
-  Environmentalist: new Civic(),
-  FunctionalArchitecture: new Civic(),
-  MiningGuilds: new Civic(),
-  AgrarianIdyll: new Civic(() =>
-    every(
-      some(ethics.Pacifist, ethics.FanaticPacifist),
-      none(civics.Anglers, origin.PostApocalyptic, origin.Remnants)
-    )
-  ),
-  AristocraticElite: new Civic(() =>
-    every(
-      some(authority.Oligarchic, authority.Imperial),
+const civicsNormal = [
+  { name: 'CutthroatPolitics' },
+  { name: 'EfficientBureaucracy' },
+  { name: 'Environmentalist' },
+  { name: 'FunctionalArchitecture' },
+  { name: 'MiningGuilds' },
+  {
+    name: 'AgrarianIdyll',
+    rule: every(
+      some('Pacifist', 'FanaticPacifist'),
+      none('Anglers', 'PostApocalyptic', 'Remnants')
+    ),
+  },
+  {
+    name: 'AristocraticElite',
+    rule: every(
+      some('Oligarchic', 'Imperial'),
       none(
-        ethics.Egalitarian,
-        ethics.FanaticEgalitarian,
-        civics.ExaltedPriesthood,
-        civics.MerchantGuilds,
-        civics.Technocracy
+        'Egalitarian',
+        'FanaticEgalitarian',
+        'ExaltedPriesthood',
+        'MerchantGuilds',
+        'Technocracy'
       )
-    )
-  ),
-  BeaconOfLiberty: new Civic(() =>
-    every(
-      some(authority.Oligarchic, authority.Imperial),
-      some(ethics.Egalitarian, ethics.FanaticEgalitarian),
-      none(ethics.Xenophobe, ethics.FanaticXenophobe)
-    )
-  ),
-  CitizenService: new Civic(() =>
-    every(
-      some(authority.Democratic, authority.Oligarchic),
-      some(ethics.Militarist, ethics.FanaticMilitarist),
-      none(ethics.FanaticXenophile, civics.Reanimators)
-    )
-  ),
-  CorveeSystem: new Civic(() =>
-    none(ethics.Egalitarian, ethics.FanaticEgalitarian, civics.FreeHaven)
-  ),
-  DistinguishedAdmiralty: new Civic(() =>
-    some(ethics.Militarist, ethics.FanaticMilitarist)
-  ),
-  ExaltedPriesthood: new Civic(() =>
-    every(
-      some(authority.Oligarchic, authority.Dictatorial),
-      some(ethics.Spiritualist, ethics.FanaticSpiritualist),
-      none(civics.MerchantGuilds, civics.AristocraticElite, civics.Technocracy)
-    )
-  ),
-  FeudalSociety: new Civic(() => every(authority.Imperial)),
-  FreeHaven: new Civic(() =>
-    every(
-      some(ethics.Xenophile, ethics.FanaticXenophile),
-      none(civics.CorveeSystem)
-    )
-  ),
-  IdealisticFoundation: new Civic(() =>
-    every(some(ethics.Egalitarian, ethics.FanaticEgalitarian))
-  ),
-  ImperialCult: new Civic(() =>
-    every(
-      authority.Imperial,
-      some(ethics.Spiritualist, ethics.FanaticSpiritualist),
-      some(ethics.Authoritarian, ethics.FanaticAuthoritarian)
-    )
-  ),
-  InwardPerfection: new Civic(() =>
-    every(
-      some(ethics.Pacifist, ethics.FanaticPacifist),
-      some(ethics.Xenophobe, ethics.FanaticXenophobe),
-      none(civics.PompousPurists)
-    )
-  ),
-  Meritocracy: new Civic(() =>
-    some(authority.Democratic, authority.Oligarchic)
-  ),
-  NationalisticZeal: new Civic(() =>
-    some(ethics.Militarist, ethics.FanaticMilitarist)
-  ),
-  ParliamentarySystem: new Civic(() => every(authority.Democratic)),
-  PhilosopherKing: new Civic(() =>
-    some(authority.Dictatorial, authority.Imperial)
-  ),
-  PoliceState: new Civic(() => none(ethics.FanaticEgalitarian)),
-  ShadowCouncil: new Civic(() => none(authority.Imperial)),
-  SlaverGuilds: new Civic(() =>
-    every(
-      some(ethics.Authoritarian, ethics.FanaticAuthoritarian),
-      none(civics.PleasureSeekers)
-    )
-  ),
-  Technocracy: new Civic(() =>
-    every(
-      some(ethics.Materialist, ethics.FanaticMaterialist),
+    ),
+  },
+  {
+    name: 'BeaconOfLiberty',
+    rule: every(
+      some('Oligarchic', 'Imperial'),
+      some('Egalitarian', 'FanaticEgalitarian'),
+      none('Xenophobe', 'FanaticXenophobe')
+    ),
+  },
+  {
+    name: 'CitizenService',
+    rule: every(
+      some('Democratic', 'Oligarchic'),
+      some('Militarist', 'FanaticMilitarist'),
+      none('FanaticXenophile', 'Reanimators')
+    ),
+  },
+  {
+    name: 'CorveeSystem',
+    rule: none('Egalitarian', 'FanaticEgalitarian', 'FreeHaven'),
+  },
+  {
+    name: 'DistinguishedAdmiralty',
+    rule: some('Militarist', 'FanaticMilitarist'),
+  },
+  {
+    name: 'ExaltedPriesthood',
+    rule: every(
+      some('Oligarchic', 'Dictatorial'),
+      some('Spiritualist', 'FanaticSpiritualist'),
+      none('MerchantGuilds', 'AristocraticElite', 'Technocracy')
+    ),
+  },
+  {
+    name: 'FeudalSociety',
+    rule: every('Imperial'),
+  },
+  {
+    name: 'FreeHaven',
+    rule: every(some('Xenophile', 'FanaticXenophile'), none('CorveeSystem')),
+  },
+  {
+    name: 'IdealisticFoundation',
+    rule: every(some('Egalitarian', 'FanaticEgalitarian')),
+  },
+  {
+    name: 'ImperialCult',
+    rule: every(
+      'Imperial',
+      some('Spiritualist', 'FanaticSpiritualist'),
+      some('Authoritarian', 'FanaticAuthoritarian')
+    ),
+  },
+  {
+    name: 'InwardPerfection',
+    rule: every(
+      some('Pacifist', 'FanaticPacifist'),
+      some('Xenophobe', 'FanaticXenophobe'),
+      none('PompousPurists')
+    ),
+  },
+  {
+    name: 'Meritocracy',
+    rule: some('Democratic', 'Oligarchic'),
+  },
+  {
+    name: 'NationalisticZeal',
+    rule: some('Militarist', 'FanaticMilitarist'),
+  },
+  {
+    name: 'ParliamentarySystem',
+    rule: every('Democratic'),
+  },
+  {
+    name: 'PhilosopherKing',
+    rule: some('Dictatorial', 'Imperial'),
+  },
+  {
+    name: 'PoliceState',
+    rule: none('FanaticEgalitarian'),
+  },
+  {
+    name: 'ShadowCouncil',
+    rule: none('Imperial'),
+  },
+  {
+    name: 'SlaverGuilds',
+    rule: every(
+      some('Authoritarian', 'FanaticAuthoritarian'),
+      none('PleasureSeekers')
+    ),
+  },
+  {
+    name: 'Technocracy',
+    rule: every(
+      some('Materialist', 'FanaticMaterialist'),
       none(
-        civics.AristocraticElite,
-        civics.ExaltedPriesthood,
-        civics.MerchantGuilds,
-        civics.SharedBurdens
+        'AristocraticElite',
+        'ExaltedPriesthood',
+        'MerchantGuilds',
+        'SharedBurdens'
       )
-    )
-  ),
-  WarriorCulture: new Civic(() =>
-    every(some(ethics.Militarist, ethics.FanaticMilitarist))
-  ),
-  CatalyticProcessing: new Civic(() => none(origin.CalamitousBirth)),
-  IdyllicBloom: new Civic(() => every(pop.Botanic, none(origin.VoidDwellers))),
-  FanaticPurifiers: new Civic(() =>
-    every(
-      ethics.FanaticXenophobe,
-      some(ethics.Militarist, ethics.Spiritualist),
+    ),
+  },
+  {
+    name: 'WarriorCulture',
+    rule: every(some('Militarist', 'FanaticMilitarist')),
+  },
+  {
+    name: 'CatalyticProcessing',
+    rule: none('CalamitousBirth'),
+  },
+  {
+    name: 'IdyllicBloom',
+    rule: every('Botanic', none('VoidDwellers')),
+  },
+  {
+    name: 'FanaticPurifiers',
+    rule: every(
+      'FanaticXenophobe',
+      some('Militarist', 'Spiritualist'),
       none(
-        civics.BarbaricDespoilers,
-        civics.PompousPurists,
-        origin.SyncreticEvolution,
-        origin.CommonGround,
-        origin.Hegemon
+        'BarbaricDespoilers',
+        'PompousPurists',
+        'SyncreticEvolution',
+        'CommonGround',
+        'Hegemon'
       )
-    )
-  ),
-  MasterfulCrafters: new Civic(),
-  PleasureSeekers: new Civic(() =>
-    none(civics.SlaverGuilds, civics.WarriorCulture, civics.SharedBurdens)
-  ),
-  PompousPurists: new Civic(() =>
-    every(
-      some(ethics.Xenophobe, ethics.FanaticXenophobe),
-      none(
-        civics.InwardPerfection,
-        civics.FanaticPurifiers,
-        origin.CommonGround
-      )
-    )
-  ),
-  BarbaricDespoilers: new Civic(() =>
-    every(
-      some(ethics.Militarist, ethics.Spiritualist),
+    ),
+  },
+  { name: 'MasterfulCrafters' },
+  {
+    name: 'PleasureSeekers',
+    rule: none('SlaverGuilds', 'WarriorCulture', 'SharedBurdens'),
+  },
+  {
+    name: 'PompousPurists',
+    rule: every(
+      some('Xenophobe', 'FanaticXenophobe'),
+      none('InwardPerfection', 'FanaticPurifiers', 'CommonGround')
+    ),
+  },
+  {
+    name: 'BarbaricDespoilers',
+    rule: every(
+      some('Militarist', 'Spiritualist'),
       some(
-        ethics.Authoritarian,
-        ethics.FanaticAuthoritarian,
-        ethics.Xenophobe,
-        ethics.FanaticXenophobe
+        'Authoritarian',
+        'FanaticAuthoritarian',
+        'Xenophobe',
+        'FanaticXenophobe'
       ),
-      none(
-        ethics.Xenophile,
-        ethics.FanaticXenophile,
-        civics.FanaticPurifiers,
-        origin.CommonGround
-      )
-    )
-  ),
-  ByzantineBureaucracy: new Civic(() =>
-    none(ethics.Spiritualist, ethics.FanaticSpiritualist)
-  ),
-  MerchantGuilds: new Civic(() =>
-    none(civics.ExaltedPriesthood, civics.AristocraticElite, civics.Technocracy)
-  ),
-  SharedBurdens: new Civic(() =>
-    every(
-      ethics.FanaticEgalitarian,
-      none(
-        ethics.Xenophobe,
-        ethics.FanaticXenophobe,
-        civics.Technocracy,
-        civics.PleasureSeekers
-      )
-    )
-  ),
-  DiplomaticCorps: new Civic(() =>
-    none(civics.InwardPerfection, civics.FanaticPurifiers)
-  ),
-  Memorialists: new Civic(() => none(civics.FanaticPurifiers)),
-  Reanimators: new Civic(() =>
-    none(ethics.Pacifist, ethics.FanaticPacifist, civics.CitizenService)
-  ),
-  DeathCult: new Civic(() =>
-    every(
-      some(ethics.Spiritualist, ethics.FanaticSpiritualist),
-      none(civics.InwardPerfection, civics.FanaticPurifiers, origin.Necrophage)
-    )
-  ),
-  Anglers: new Civic(() =>
-    none(
-      civics.AgrarianIdyll,
-      origin.PostApocalyptic,
-      origin.ShatteredRing,
-      origin.VoidDwellers,
-      origin.Subterranean
-    )
-  ),
-}
+      none('Xenophile', 'FanaticXenophile', 'FanaticPurifiers', 'CommonGround')
+    ),
+  },
+  {
+    name: 'ByzantineBureaucracy',
+    rule: none('Spiritualist', 'FanaticSpiritualist'),
+  },
+  {
+    name: 'MerchantGuilds',
+    rule: none('ExaltedPriesthood', 'AristocraticElite', 'Technocracy'),
+  },
+  {
+    name: 'SharedBurdens',
+    rule: every(
+      'FanaticEgalitarian',
+      none('Xenophobe', 'FanaticXenophobe', 'Technocracy', 'PleasureSeekers')
+    ),
+  },
+  {
+    name: 'DiplomaticCorps',
+    rule: none('InwardPerfection', 'FanaticPurifiers'),
+  },
+  {
+    name: 'Memorialists',
+    rule: none('FanaticPurifiers'),
+  },
+  {
+    name: 'Reanimators',
+    rule: none('Pacifist', 'FanaticPacifist', 'CitizenService'),
+  },
+  {
+    name: 'DeathCult',
+    rule: every(
+      some('Spiritualist', 'FanaticSpiritualist'),
+      none('InwardPerfection', 'FanaticPurifiers', 'Necrophage')
+    ),
+  },
+  {
+    name: 'Anglers',
+    rule: none(
+      'AgrarianIdyll',
+      'PostApocalyptic',
+      'ShatteredRing',
+      'VoidDwellers',
+      'Subterranean'
+    ),
+  },
+]
 
-const civicsCorporate = {
-  CriminalHeritage: new Civic(),
-  Franchising: new Civic(),
-  FreeTraders: new Civic(),
-  PrivateProspectors: new Civic(),
-  TradingPosts: new Civic(),
-  BrandLoyalty: new Civic(() => none(civics.BeaconOfLiberty)),
-  GospelOfTheMasses: new Civic(() =>
-    every(some(ethics.Spiritualist, ethics.FanaticSpiritualist))
-  ),
-  IndenturedAssets: new Civic(() =>
-    every(
-      some(ethics.Authoritarian, ethics.FanaticAuthoritarian),
-      none(
-        civics.CorporateHedonism,
-        civics.PleasureSeekers,
-        civics.SlaverGuilds
-      )
-    )
-  ),
-  MediaConglomerate: new Civic(() => none(civics.IdealisticFoundation)),
-  NavalContractors: new Civic(() =>
-    every(
-      some(ethics.Militarist, ethics.FanaticMilitarist),
-      none(civics.CitizenService)
-    )
-  ),
-  PrivateMilitaryCompanies: new Civic(() =>
-    every(
-      some(ethics.Militarist, ethics.FanaticMilitarist),
-      none(civics.WarriorCulture)
-    )
-  ),
-  RuthlessCompetition: new Civic(() => none(civics.Meritocracy)),
-  CatalyticRecyclers: new Civic(() =>
-    none(civics.CatalyticProcessing, origin.CalamitousBirth)
-  ),
-  MastercraftInc: new Civic(() => none(civics.MasterfulCrafters)),
-  CorporateHedonism: new Civic(() =>
-    none(civics.IndenturedAssets, civics.PleasureSeekers, civics.SlaverGuilds)
-  ),
-  PublicRelationsSpecialists: new Civic(() => none(civics.DiplomaticCorps)),
-  CorporateDeathCult: new Civic(() =>
-    every(
-      some(ethics.Spiritualist, ethics.FanaticSpiritualist),
-      none(origin.Necrophage, civics.InwardPerfection, civics.FanaticPurifiers)
-    )
-  ),
-  PermanentEmployment: new Civic(() =>
-    none(
-      ethics.Egalitarian,
-      ethics.FanaticEgalitarian,
-      origin.Mechanist,
-      origin.CloneArmy,
-      origin.Necrophage
-    )
-  ),
-  CorporateAnglers: new Civic(() =>
-    none(
-      civics.AgrarianIdyll,
-      origin.PostApocalyptic,
-      origin.ShatteredRing,
-      origin.VoidDwellers,
-      origin.Subterranean
-    )
-  ),
-}
+const civicsCorporate = [
+  { name: 'CriminalHeritage' },
+  { name: 'Franchising' },
+  { name: 'FreeTraders' },
+  { name: 'PrivateProspectors' },
+  { name: 'TradingPosts' },
+  {
+    name: 'BrandLoyalty',
+    rule: none('BeaconOfLiberty'),
+  },
+  {
+    name: 'GospelOfTheMasses',
+    rule: every(some('Spiritualist', 'FanaticSpiritualist')),
+  },
+  {
+    name: 'IndenturedAssets',
+    rule: every(
+      some('Authoritarian', 'FanaticAuthoritarian'),
+      none('CorporateHedonism', 'PleasureSeekers', 'SlaverGuilds')
+    ),
+  },
+  {
+    name: 'MediaConglomerate',
+    rule: none('IdealisticFoundation'),
+  },
+  {
+    name: 'NavalContractors',
+    rule: every(
+      some('Militarist', 'FanaticMilitarist'),
+      none('CitizenService')
+    ),
+  },
+  {
+    name: 'PrivateMilitaryCompanies',
+    rule: every(
+      some('Militarist', 'FanaticMilitarist'),
+      none('WarriorCulture')
+    ),
+  },
+  {
+    name: 'RuthlessCompetition',
+    rule: none('Meritocracy'),
+  },
+  {
+    name: 'CatalyticRecyclers',
+    rule: none('CatalyticProcessing', 'CalamitousBirth'),
+  },
+  {
+    name: 'MastercraftInc',
+    rule: none('MasterfulCrafters'),
+  },
+  {
+    name: 'CorporateHedonism',
+    rule: none('IndenturedAssets', 'PleasureSeekers', 'SlaverGuilds'),
+  },
+  {
+    name: 'PublicRelationsSpecialists',
+    rule: none('DiplomaticCorps'),
+  },
+  {
+    name: 'CorporateDeathCult',
+    rule: every(
+      some('Spiritualist', 'FanaticSpiritualist'),
+      none('Necrophage', 'InwardPerfection', 'FanaticPurifiers')
+    ),
+  },
+  {
+    name: 'PermanentEmployment',
+    rule: none(
+      'Egalitarian',
+      'FanaticEgalitarian',
+      'Mechanist',
+      'CloneArmy',
+      'Necrophage'
+    ),
+  },
+  {
+    name: 'CorporateAnglers',
+    rule: none(
+      'AgrarianIdyll',
+      'PostApocalyptic',
+      'ShatteredRing',
+      'VoidDwellers',
+      'Subterranean'
+    ),
+  },
+]
 
-const civicsHive = {
-  Ascetic: new Civic(),
-  DividedAttention: new Civic(),
-  NaturalNeuralNetwork: new Civic(),
-  OneMind: new Civic(),
-  PooledKnowledge: new Civic(),
-  StrengthOfLegions: new Civic(),
-  SubspaceEphapse: new Civic(),
-  SubsumedWill: new Civic(),
-  DevouringSwarm: new Civic(() => none(pop.Lithoid)),
-  HiveOrganicReprocessing: new Civic(() => none(origin.CalamitousBirth)),
-  HiveIdyllicBloom: new Civic(() => every(pop.Botanic)),
-  Terravore: new Civic(() => every(pop.Lithoid)),
-  Empath: new Civic(() =>
-    none(civics.DevouringSwarm, civics.Terravore, origin.Necrophage)
-  ),
-  HiveMemorialist: new Civic(() =>
-    none(civics.DevouringSwarm, civics.Terravore)
-  ),
-}
+const civicsHive = [
+  { name: 'Ascetic' },
+  { name: 'DividedAttention' },
+  { name: 'NaturalNeuralNetwork' },
+  { name: 'OneMind' },
+  { name: 'PooledKnowledge' },
+  { name: 'StrengthOfLegions' },
+  { name: 'SubspaceEphapse' },
+  { name: 'SubsumedWill' },
+  {
+    name: 'DevouringSwarm',
+    rule: none('Lithoid'),
+  },
+  {
+    name: 'HiveOrganicReprocessing',
+    rule: none('CalamitousBirth'),
+  },
+  {
+    name: 'HiveIdyllicBloom',
+    rule: every('Botanic'),
+  },
+  {
+    name: 'Terravore',
+    rule: every('Lithoid'),
+  },
+  {
+    name: 'Empath',
+    rule: none('DevouringSwarm', 'Terravore', 'Necrophage'),
+  },
+  {
+    name: 'HiveMemorialist',
+    rule: none('DevouringSwarm', 'Terravore'),
+  },
+]
 
-const civicsMachine = {
-  Constructobot: new Civic(),
-  DelegatedFunctions: new Civic(),
-  FactoryOverclocking: new Civic(),
-  Introspective: new Civic(),
-  MaintenanceProtocols: new Civic(),
-  OTAUpdates: new Civic(),
-  RapidReplicator: new Civic(),
-  Rockbreakers: new Civic(),
-  StaticResearchAnalysis: new Civic(),
-  UnitaryCohesion: new Civic(),
-  Warbots: new Civic(),
-  ZeroWasteProtocols: new Civic(),
-  DeterminedExterminator: new Civic(() =>
-    none(civics.DrivenAssimilator, civics.RogueServitor)
-  ),
-  DrivenAssimilator: new Civic(() =>
-    none(civics.DeterminedExterminator, civics.RogueServitor)
-  ),
-  RogueServitor: new Civic(() =>
-    none(
-      civics.DeterminedExterminator,
-      civics.DrivenAssimilator,
-      origin.ResourceConsolidation
-    )
-  ),
-  MachineOrganicReprocessing: new Civic(() =>
-    none(origin.ResourceConsolidation)
-  ),
-  MachineMemorialist: new Civic(() =>
-    none(civics.DeterminedExterminator, civics.DrivenAssimilator)
-  ),
-}
+const civicsMachine = [
+  { name: 'Constructobot' },
+  { name: 'DelegatedFunctions' },
+  { name: 'FactoryOverclocking' },
+  { name: 'Introspective' },
+  { name: 'MaintenanceProtocols' },
+  { name: 'OTAUpdates' },
+  { name: 'RapidReplicator' },
+  { name: 'Rockbreakers' },
+  { name: 'StaticResearchAnalysis' },
+  { name: 'UnitaryCohesion' },
+  { name: 'Warbots' },
+  { name: 'ZeroWasteProtocols' },
+  {
+    name: 'DeterminedExterminator',
+    rule: none('DrivenAssimilator', 'RogueServitor'),
+  },
+  {
+    name: 'DrivenAssimilator',
+    rule: none('DeterminedExterminator', 'RogueServitor'),
+  },
+  {
+    name: 'RogueServitor',
+    rule: none(
+      'DeterminedExterminator',
+      'DrivenAssimilator',
+      'ResourceConsolidation'
+    ),
+  },
+  {
+    name: 'MachineOrganicReprocessing',
+    rule: none('ResourceConsolidation'),
+  },
+  {
+    name: 'MachineMemorialist',
+    rule: none('DeterminedExterminator', 'DrivenAssimilator'),
+  },
+]
 
-const civics = nameItems({
+const civics = Item.create(Civic, [
   ...civicsNormal,
   ...civicsCorporate,
   ...civicsHive,
   ...civicsMachine,
-})
+])

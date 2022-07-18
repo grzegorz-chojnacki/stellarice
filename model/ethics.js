@@ -13,58 +13,126 @@ class Ethic extends Item {
 
 const militarist = () =>
   one(
-    pop.Mechanical,
-    ethics.FanaticMilitarist,
-    ethics.Militarist,
-    ethics.FanaticPacifist,
-    ethics.Pacifist
+    'Mechanical',
+    'FanaticMilitarist',
+    'Militarist',
+    'FanaticPacifist',
+    'Pacifist'
   )
 
 const xenophobe = () =>
   one(
-    pop.Mechanical,
-    ethics.FanaticXenophobe,
-    ethics.Xenophobe,
-    ethics.FanaticXenophile,
-    ethics.Xenophile
+    'Mechanical',
+    'FanaticXenophobe',
+    'Xenophobe',
+    'FanaticXenophile',
+    'Xenophile'
   )
 
 const authoritarian = () =>
   one(
-    pop.Mechanical,
-    ethics.FanaticAuthoritarian,
-    ethics.Authoritarian,
-    ethics.FanaticEgalitarian,
-    ethics.Egalitarian
+    'Mechanical',
+    'FanaticAuthoritarian',
+    'Authoritarian',
+    'FanaticEgalitarian',
+    'Egalitarian'
   )
 
 const materialist = () =>
   one(
-    pop.Mechanical,
-    ethics.FanaticMaterialist,
-    ethics.Materialist,
-    ethics.FanaticSpiritualist,
-    ethics.Spiritualist
+    'Mechanical',
+    'FanaticMaterialist',
+    'Materialist',
+    'FanaticSpiritualist',
+    'Spiritualist'
   )
 
 const gestalt = () => one(ethics.Gestalt)
 
-const ethics = nameItems({
-  FanaticMilitarist:    new Ethic(2, militarist),
-  FanaticPacifist:      new Ethic(2, militarist),
-  FanaticXenophobe:     new Ethic(2, xenophobe),
-  FanaticXenophile:     new Ethic(2, xenophobe),
-  FanaticAuthoritarian: new Ethic(2, authoritarian),
-  FanaticEgalitarian:   new Ethic(2, authoritarian),
-  FanaticMaterialist:   new Ethic(2, materialist),
-  FanaticSpiritualist:  new Ethic(2, materialist),
-  Militarist:           new Ethic(1, militarist),
-  Pacifist:             new Ethic(1, militarist),
-  Xenophobe:            new Ethic(1, xenophobe),
-  Xenophile:            new Ethic(1, xenophobe),
-  Authoritarian:        new Ethic(1, authoritarian),
-  Egalitarian:          new Ethic(1, authoritarian),
-  Materialist:          new Ethic(1, materialist),
-  Spiritualist:         new Ethic(1, materialist),
-  Gestalt:              new Ethic(3, gestalt),
-})
+const ethics = Item.create(Ethic, [
+  {
+    cost: 2,
+    name: 'FanaticMilitarist',
+    rule: militarist,
+  },
+  {
+    cost: 2,
+    name: 'FanaticPacifist',
+    rule: militarist,
+  },
+  {
+    cost: 2,
+    name: 'FanaticXenophobe',
+    rule: xenophobe,
+  },
+  {
+    cost: 2,
+    name: 'FanaticXenophile',
+    rule: xenophobe,
+  },
+  {
+    cost: 2,
+    name: 'FanaticAuthoritarian',
+    rule: authoritarian,
+  },
+  {
+    cost: 2,
+    name: 'FanaticEgalitarian',
+    rule: authoritarian,
+  },
+  {
+    cost: 2,
+    name: 'FanaticMaterialist',
+    rule: materialist,
+  },
+  {
+    cost: 2,
+    name: 'FanaticSpiritualist',
+    rule: materialist,
+  },
+  {
+    cost: 1,
+    name: 'Militarist',
+    rule: militarist,
+  },
+  {
+    cost: 1,
+    name: 'Pacifist',
+    rule: militarist,
+  },
+  {
+    cost: 1,
+    name: 'Xenophobe',
+    rule: xenophobe,
+  },
+  {
+    cost: 1,
+    name: 'Xenophile',
+    rule: xenophobe,
+  },
+  {
+    cost: 1,
+    name: 'Authoritarian',
+    rule: authoritarian,
+  },
+  {
+    cost: 1,
+    name: 'Egalitarian',
+    rule: authoritarian,
+  },
+  {
+    cost: 1,
+    name: 'Materialist',
+    rule: materialist,
+  },
+  {
+    cost: 1,
+    name: 'Spiritualist',
+    rule: materialist,
+  },
+  {
+    cost: 3,
+    name: 'Gestalt',
+    rule: gestalt,
+  },
+])

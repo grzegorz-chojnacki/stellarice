@@ -1,10 +1,13 @@
 class Item {
-  makeEmpireNamePlural = () => (this.empireName += 's')
+  // Helper method for constructing items from simple objects
+  static create = (classRef, objects) => objects.map(o => new classRef(o))
 
   constructor(rules) {
     this.rules = rules
     this.empireName = this.constructor.name.toLowerCase()
   }
+
+  makeEmpireNamePlural = () => (this.empireName += 's')
 
   // Test x in the context of this item, x can be either another Item or a rule.
   //   - When x is an Item tests if it is selected (is in the empire)

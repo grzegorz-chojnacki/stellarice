@@ -9,11 +9,11 @@ class Trait extends Item {
   }
 
   originClash = () => this.testClash(traitsOrigin, none()) && this.unmetRules()
-  botanicClash = () => this.testClash(traitsBotanic, none(pop.Botanic))
-  lithoidClash = () => this.testClash(traitsLithoid, none(pop.Lithoid))
-  mechanicClash = () => this.testClash(traitsMechanic, none(pop.Mechanical))
+  botanicClash = () => this.testClash(traitsBotanic, none('Botanic'))
+  lithoidClash = () => this.testClash(traitsLithoid, none('Lithoid'))
+  mechanicClash = () => this.testClash(traitsMechanic, none('Mechanical'))
   normalClash = () =>
-    this.testClash(traitsNormal, none(pop.Botanic, pop.Lithoid, pop.Biological))
+    this.testClash(traitsNormal, none('Botanic', 'Lithoid', 'Biological'))
 
   clashes = () =>
     this.normalClash() ||
@@ -35,141 +35,400 @@ class Trait extends Item {
     this.empireList.reduce(Trait.costSum, 2) + this.cost >= 0
 }
 
-const bulky = () => one(traits.Bulky, traits.DoubleJointed)
-const maintenance = () => one(traits.HighMaintenance, traits.Durable)
-const uncanny = () => one(traits.Uncanny, traits.EmotionEmulators)
-const repurposed = () =>
-  one(traits.RepurposedHardware, traits.LearningAlgorithms)
-const custom = () => one(traits.CustomMade, traits.MassProduced)
-const luxurious = () => one(traits.Luxurious, traits.Recycled)
-const bandwith = () => one(traits.HighBandwidth, traits.StreamlinedProtocols)
+// Biological
+const charismatic = one('Charismatic', 'Repugnant')
+const communal = one('Communal', 'Solitary')
+const conformists = one('Conformists', 'Deviants')
+const conservationists = one('Conservationist', 'Wasteful')
+const docile = one('Docile', 'Unruly')
+const nomadic = one('Nomadic', 'Sedentary')
+const learners = one('QuickLearners', 'SlowLearners')
+const breeders = one('RapidBreeders', 'SlowBreeders')
+const traditional = one('Traditional', 'Quarrelsome')
+const trophic = one('Phototrophic', 'Radiotrophic')
+const strong = one('Strong', 'VeryStrong', 'Weak')
+const enduring = one('Enduring', 'Venerable', 'Fleeting')
+const adaptive = one('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
+const gaseous = one(
+  'GaseousByproducts',
+  'ScintillatingSkin',
+  'VolatileExcretions'
+)
 
-const charismatic = () => one(traits.Charismatic, traits.Repugnant)
-const communal = () => one(traits.Communal, traits.Solitary)
-const conformists = () => one(traits.Conformists, traits.Deviants)
-const conservationists = () => one(traits.Conservationist, traits.Wasteful)
-const docile = () => one(traits.Docile, traits.Unruly)
-const nomadic = () => one(traits.Nomadic, traits.Sedentary)
-const learners = () => one(traits.QuickLearners, traits.SlowLearners)
-const breeders = () => one(traits.RapidBreeders, traits.SlowBreeders)
-const traditional = () => one(traits.Traditional, traits.Quarrelsome)
-const trophic = () => one(traits.Phototrophic, traits.Radiotrophic)
-const strong = () => one(traits.Strong, traits.VeryStrong, traits.Weak)
-const enduring = () => one(traits.Enduring, traits.Venerable, traits.Fleeting)
-const adaptive = () =>
-  one(traits.Adaptive, traits.ExtremelyAdaptive, traits.Nonadaptive)
-const gaseous = () =>
-  one(
-    traits.GaseousByproducts,
-    traits.ScintillatingSkin,
-    traits.VolatileExcretions
-  )
+// Mechanical
+const bulky = one('Bulky', 'DoubleJointed')
+const maintenance = one('HighMaintenance', 'Durable')
+const uncanny = one('Uncanny', 'EmotionEmulators')
+const repurposed = one('RepurposedHardware', 'LearningAlgorithms')
+const custom = one('CustomMade', 'MassProduced')
+const luxurious = one('Luxurious', 'Recycled')
+const bandwith = one('HighBandwidth', 'StreamlinedProtocols')
 
-const traitsOrigin = {
-  CloneSoldier: new Trait(0, () => every(origin.CloneArmy, breeders())),
-  Survivor: new Trait(0, () => every(origin.PostApocalyptic)),
-  VoidDweller: new Trait(0, () => every(origin.VoidDwellers)),
-  Necrophages: new Trait(0, () =>
-    every(origin.Necrophage, none(traits.Budding))
-  ),
-  CaveDweller: new Trait(0, () =>
-    every(origin.Subterranean, none(traits.Phototrophic))
-  ),
-}
+const traitsOrigin = [
+  {
+    name: 'CloneSoldier',
+    cost: 0,
+    rule: every('CloneArmy', breeders()),
+  },
+  {
+    name: 'Survivor',
+    cost: 0,
+    rule: every('PostApocalyptic'),
+  },
+  {
+    name: 'VoidDweller',
+    cost: 0,
+    rule: every('VoidDwellers'),
+  },
+  {
+    name: 'Necrophages',
+    cost: 0,
+    rule: every('Necrophage', none('Budding')),
+  },
+  {
+    name: 'CaveDweller',
+    cost: 0,
+    rule: every('Subterranean', none('Phototrophic')),
+  },
+]
 
-const traitsBotanic = {
-  Radiotrophic: new Trait(2, trophic),
-  Phototrophic: new Trait(1, () =>
-    every(pop.Botanic, trophic(), none(origin.Subterranean))
-  ),
-  Budding: new Trait(2, () =>
-    every(pop.Botanic, breeders(), none(origin.CloneArmy, origin.Necrophage))
-  ),
-}
+const traitsBotanic = [
+  {
+    name: 'Radiotrophic',
+    cost: 2,
+    rule: trophic,
+  },
+  {
+    name: 'Phototrophic',
+    cost: 1,
+    rule: every('Botanic', trophic, none('Subterranean')),
+  },
+  {
+    name: 'Budding',
+    cost: 2,
+    rule: every('Botanic', breeders, none('CloneArmy', 'Necrophage')),
+  },
+]
 
-const traitsLithoid = {
-  GaseousByproducts: new Trait(2, () => every(pop.Lithoid, gaseous())),
-  ScintillatingSkin: new Trait(2, () => every(pop.Lithoid, gaseous())),
-  VolatileExcretions: new Trait(2, () => every(pop.Lithoid, gaseous())),
-}
+const traitsLithoid = [
+  {
+    name: 'GaseousByproducts',
+    cost: 2,
+    rule: every('Lithoid', gaseous),
+  },
+  {
+    name: 'ScintillatingSkin',
+    cost: 2,
+    rule: every('Lithoid', gaseous),
+  },
+  {
+    name: 'VolatileExcretions',
+    cost: 2,
+    rule: every('Lithoid', gaseous),
+  },
+]
 
-const traitsNormal = {
+const traitsNormal = [
   // Positive traits
-  Adaptive: new Trait(2, adaptive),
-  ExtremelyAdaptive: new Trait(4, adaptive),
-  Agrarian: new Trait(2),
-  Charismatic: new Trait(2, charismatic),
-  Communal: new Trait(1, communal),
-  Conformists: new Trait(2, conformists),
-  Conservationist: new Trait(1, conservationists),
-  Docile: new Trait(2, docile),
-  Enduring: new Trait(1, enduring),
-  Venerable: new Trait(4, enduring),
-  Industrious: new Trait(2),
-  Ingenious: new Trait(2),
-  Intelligent: new Trait(2),
-  NaturalEngineers: new Trait(1),
-  NaturalPhysicists: new Trait(1),
-  NaturalSociologists: new Trait(1),
-  Nomadic: new Trait(1, nomadic),
-  QuickLearners: new Trait(1, learners),
-  RapidBreeders: new Trait(2, breeders),
-  Resilient: new Trait(1),
-  Strong: new Trait(1, strong),
-  VeryStrong: new Trait(3, strong),
-  Talented: new Trait(1),
-  Thrifty: new Trait(2),
-  Traditional: new Trait(1, traditional),
+  {
+    cost: 2,
+    name: 'Adaptive',
+    rule: adaptive,
+  },
+  {
+    cost: 4,
+    name: 'ExtremelyAdaptive',
+    rule: adaptive,
+  },
+  {
+    cost: 2,
+    name: 'Agrarian',
+  },
+  {
+    cost: 2,
+    name: 'Charismatic',
+    rule: charismatic,
+  },
+  {
+    cost: 1,
+    name: 'Communal',
+    rule: communal,
+  },
+  {
+    cost: 2,
+    name: 'Conformists',
+    rule: conformists,
+  },
+  {
+    cost: 1,
+    name: 'Conservationist',
+    rule: conservationists,
+  },
+  {
+    cost: 2,
+    name: 'Docile',
+    rule: docile,
+  },
+  {
+    cost: 1,
+    name: 'Enduring',
+    rule: enduring,
+  },
+  {
+    cost: 4,
+    name: 'Venerable',
+    rule: enduring,
+  },
+  {
+    cost: 2,
+    name: 'Industrious',
+  },
+  {
+    cost: 2,
+    name: 'Ingenious',
+  },
+  {
+    cost: 2,
+    name: 'Intelligent',
+  },
+  {
+    cost: 1,
+    name: 'NaturalEngineers',
+  },
+  {
+    cost: 1,
+    name: 'NaturalPhysicists',
+  },
+  {
+    cost: 1,
+    name: 'NaturalSociologists',
+  },
+  {
+    cost: 1,
+    name: 'Nomadic',
+    rule: nomadic,
+  },
+  {
+    cost: 1,
+    name: 'QuickLearners',
+    rule: learners,
+  },
+  {
+    cost: 2,
+    name: 'RapidBreeders',
+    rule: breeders,
+  },
+  {
+    cost: 1,
+    name: 'Resilient',
+  },
+  {
+    cost: 1,
+    name: 'Strong',
+    rule: strong,
+  },
+  {
+    cost: 3,
+    name: 'VeryStrong',
+    rule: strong,
+  },
+  {
+    cost: 1,
+    name: 'Talented',
+  },
+  {
+    cost: 2,
+    name: 'Thrifty',
+  },
+  {
+    cost: 1,
+    name: 'Traditional',
+    rule: traditional,
+  },
 
   // Negative traits
-  Nonadaptive: new Trait(-2, adaptive),
-  Repugnant: new Trait(-2, charismatic),
-  Solitary: new Trait(-2, communal),
-  Deviants: new Trait(-1, conformists),
-  Wasteful: new Trait(-1, conservationists),
-  Unruly: new Trait(-2, docile),
-  Fleeting: new Trait(-1, enduring),
-  Sedentary: new Trait(-1, nomadic),
-  SlowLearners: new Trait(-1, learners),
-  SlowBreeders: new Trait(-2, breeders),
-  Weak: new Trait(-1, strong),
-  Quarrelsome: new Trait(-1, traditional),
-  Decadent: new Trait(-1),
-}
+  {
+    cost: -2,
+    name: 'Nonadaptive',
+    rule: adaptive,
+  },
+  {
+    cost: -2,
+    name: 'Repugnant',
+    rule: charismatic,
+  },
+  {
+    cost: -2,
+    name: 'Solitary',
+    rule: communal,
+  },
+  {
+    cost: -1,
+    name: 'Deviants',
+    rule: conformists,
+  },
+  {
+    cost: -1,
+    name: 'Wasteful',
+    rule: conservationists,
+  },
+  {
+    cost: -2,
+    name: 'Unruly',
+    rule: docile,
+  },
+  {
+    cost: -1,
+    name: 'Fleeting',
+    rule: enduring,
+  },
+  {
+    cost: -1,
+    name: 'Sedentary',
+    rule: nomadic,
+  },
+  {
+    cost: -1,
+    name: 'SlowLearners',
+    rule: learners,
+  },
+  {
+    cost: -2,
+    name: 'SlowBreeders',
+    rule: breeders,
+  },
+  {
+    cost: -1,
+    name: 'Weak',
+    rule: strong,
+  },
+  {
+    cost: -1,
+    name: 'Quarrelsome',
+    rule: traditional,
+  },
+  {
+    cost: -1,
+    name: 'Decadent',
+  },
+]
 
-const traitsMechanic = {
+const traitsMechanic = [
   // Positive traits
-  DomesticProtocols: new Trait(2),
-  DoubleJointed: new Trait(1, bulky),
-  Durable: new Trait(1, maintenance),
-  EfficientProcessors: new Trait(3),
-  EmotionEmulators: new Trait(1, uncanny),
-  EnhancedMemory: new Trait(2),
-  Harvesters: new Trait(2),
-  LearningAlgorithms: new Trait(1, repurposed),
-  LogicEngines: new Trait(2),
-  LoyaltyCircuits: new Trait(2),
-  MassProduced: new Trait(1, custom),
-  PowerDrills: new Trait(2),
-  PropagandaMachines: new Trait(1),
-  Recycled: new Trait(2, luxurious),
-  StreamlinedProtocols: new Trait(2, bandwith),
-  Superconductiv: new Trait(2),
+  {
+    cost: 2,
+    name: 'DomesticProtocols',
+  },
+  {
+    cost: 1,
+    name: 'DoubleJointed',
+    rule: bulky,
+  },
+  {
+    cost: 1,
+    name: 'Durable',
+    rule: maintenance,
+  },
+  {
+    cost: 3,
+    name: 'EfficientProcessors',
+  },
+  {
+    cost: 1,
+    name: 'EmotionEmulators',
+    rule: uncanny,
+  },
+  {
+    cost: 2,
+    name: 'EnhancedMemory',
+  },
+  {
+    cost: 2,
+    name: 'Harvesters',
+  },
+  {
+    cost: 1,
+    name: 'LearningAlgorithms',
+    rule: repurposed,
+  },
+  {
+    cost: 2,
+    name: 'LogicEngines',
+  },
+  {
+    cost: 2,
+    name: 'LoyaltyCircuits',
+  },
+  {
+    cost: 1,
+    name: 'MassProduced',
+    rule: custom,
+  },
+  {
+    cost: 2,
+    name: 'PowerDrills',
+  },
+  {
+    cost: 1,
+    name: 'PropagandaMachines',
+  },
+  {
+    cost: 2,
+    name: 'Recycled',
+    rule: luxurious,
+  },
+  {
+    cost: 2,
+    name: 'StreamlinedProtocols',
+    rule: bandwith,
+  },
+  {
+    cost: 2,
+    name: 'Superconductiv',
+  },
 
   // Negative traits
-  Bulky: new Trait(-1, bulky),
-  HighMaintenance: new Trait(-1, maintenance),
-  Uncanny: new Trait(-1, uncanny),
-  RepurposedHardware: new Trait(-1, repurposed),
-  CustomMade: new Trait(-1, custom),
-  Luxurious: new Trait(-1, luxurious),
-  HighBandwidth: new Trait(-1, bandwith),
-}
+  {
+    cost: -1,
+    name: 'Bulky',
+    rule: bulky,
+  },
+  {
+    cost: -1,
+    name: 'HighMaintenance',
+    rule: maintenance,
+  },
+  {
+    cost: -1,
+    name: 'Uncanny',
+    rule: uncanny,
+  },
+  {
+    cost: -1,
+    name: 'RepurposedHardware',
+    rule: repurposed,
+  },
+  {
+    cost: -1,
+    name: 'CustomMade',
+    rule: custom,
+  },
+  {
+    cost: -1,
+    name: 'Luxurious',
+    rule: luxurious,
+  },
+  {
+    cost: -1,
+    name: 'HighBandwidth',
+    rule: bandwith,
+  },
+]
 
-const traits = nameItems({
+const traits = Item.create(Trait, [
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
   ...traitsNormal,
   ...traitsMechanic,
-})
+])
