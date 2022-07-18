@@ -34,7 +34,7 @@ const render = (() => {
     },
     {
       name: 'origin',
-      template: sectionTemplate('checkbox', itemAttrributes),
+      template: sectionTemplate('radio', itemAttrributes),
     },
     {
       name: 'ethics',

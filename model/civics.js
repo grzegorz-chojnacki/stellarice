@@ -113,7 +113,7 @@ const civicsNormal = {
     some(authority.Democratic, authority.Oligarchic)
   ),
   NationalisticZeal: new Civic(() =>
-    some(some(ethics.Militarist, ethics.FanaticMilitarist))
+    some(ethics.Militarist, ethics.FanaticMilitarist)
   ),
   ParliamentarySystem: new Civic(() => every(authority.Democratic)),
   PhilosopherKing: new Civic(() =>
