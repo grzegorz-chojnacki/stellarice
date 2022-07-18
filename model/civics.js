@@ -231,7 +231,9 @@ const civicsNormal = Item.create(Civic, [
       'Subterranean'
     ),
   },
-])
+]).map(
+  Item.withRule(none('Corporate', 'HiveMind', 'MachineIntelligence'))
+)
 
 const civicsCorporate = Item.create(Civic, [
   { id: 'CriminalHeritage' },
@@ -319,7 +321,7 @@ const civicsCorporate = Item.create(Civic, [
       'Subterranean'
     ),
   },
-])
+]).map(Item.withRule(some('Corporate')))
 
 const civicsHive = Item.create(Civic, [
   { id: 'Ascetic' },
@@ -354,7 +356,7 @@ const civicsHive = Item.create(Civic, [
     id: 'HiveMemorialist',
     rule: none('DevouringSwarm', 'Terravore'),
   },
-])
+]).map(Item.withRule(some('HiveMind')))
 
 const civicsMachine = Item.create(Civic, [
   { id: 'Constructobot' },
@@ -393,7 +395,7 @@ const civicsMachine = Item.create(Civic, [
     id: 'MachineMemorialist',
     rule: none('DeterminedExterminator', 'DrivenAssimilator'),
   },
-])
+]).map(Item.withRule(some('MachineIntelligence')))
 
 const civics = [
   ...civicsNormal,

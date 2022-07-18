@@ -82,32 +82,32 @@ const traitsBotanic = Item.create(Trait, [
   {
     id: 'Phototrophic',
     cost: 1,
-    rule: every('Botanic', trophic(), none('Subterranean')),
+    rule: every(trophic(), none('Subterranean')),
   },
   {
     id: 'Budding',
     cost: 2,
-    rule: every('Botanic', breeders(), none('CloneArmy', 'Necrophage')),
+    rule: every(breeders(), none('CloneArmy', 'Necrophage')),
   },
-])
+]).map(Item.withRule(every('Botanic')))
 
 const traitsLithoid = Item.create(Trait, [
   {
     id: 'GaseousByproducts',
     cost: 2,
-    rule: every('Lithoid', gaseous()),
+    rule: gaseous(),
   },
   {
     id: 'ScintillatingSkin',
     cost: 2,
-    rule: every('Lithoid', gaseous()),
+    rule: gaseous(),
   },
   {
     id: 'VolatileExcretions',
     cost: 2,
-    rule: every('Lithoid', gaseous()),
+    rule: gaseous(),
   },
-])
+]).map(Item.withRule(every('Lithoid')))
 
 const traitsNormal = Item.create(Trait, [
   // Positive traits
@@ -292,7 +292,7 @@ const traitsNormal = Item.create(Trait, [
     cost: -1,
     id: 'Decadent',
   },
-])
+]).map(Item.withRule(some('Biological', 'Lithoid', 'Botanic')))
 
 const traitsMechanic = Item.create(Trait, [
   // Positive traits
@@ -404,7 +404,7 @@ const traitsMechanic = Item.create(Trait, [
     id: 'HighBandwidth',
     rule: bandwith(),
   },
-])
+]).map(Item.withRule(every('Mechanical')))
 
 const traits = [
   ...traitsOrigin,

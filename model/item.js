@@ -6,6 +6,21 @@ class Item {
     return objects.map(o => new classRef(o))
   }
 
+  static withRule = rule => item => {
+    if (item.rule.constructor === Rule) {
+      item.rule = rule
+    } else if (rule.constructor === item.rule.constructor) {
+      item.rule.items = rule.items.concat(item.rule.items)
+    } else if (rule instanceof Every) {
+      item.rule = every(...rule.items, item.rule)
+    } else if (item.rule instanceof Every) {
+      item.rule = every(rule, ...item.rule.items)
+    } else {
+      item.rule = every(rule, item.rule)
+    }
+    return item
+  }
+
   constructor({ id, rule = new Rule() }) {
     this.id = id
     this.name = prettify(id)
