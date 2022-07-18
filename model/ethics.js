@@ -1,138 +1,133 @@
 class Ethic extends Item {
-  static valueSum = (acc, { value }) => acc + value
+  static costSum = (acc, { cost }) => acc + cost
 
-  constructor(value, rules) {
-    super(rules)
+  constructor(item) {
+    super(item)
     this.makeEmpireNamePlural()
-    this.value = value
+    this.cost = item.cost
   }
 
-  generalRule = () =>
-    this.empireList.reduce(Ethic.valueSum, 0) + this.value <= 3
+  generalRule = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3
 }
 
-const militarist = () =>
-  one(
-    'Mechanical',
-    'FanaticMilitarist',
-    'Militarist',
-    'FanaticPacifist',
-    'Pacifist'
-  )
+const militarist = one(
+  'Mechanical',
+  'FanaticMilitarist',
+  'Militarist',
+  'FanaticPacifist',
+  'Pacifist'
+)
 
-const xenophobe = () =>
-  one(
-    'Mechanical',
-    'FanaticXenophobe',
-    'Xenophobe',
-    'FanaticXenophile',
-    'Xenophile'
-  )
+const xenophobe = one(
+  'Mechanical',
+  'FanaticXenophobe',
+  'Xenophobe',
+  'FanaticXenophile',
+  'Xenophile'
+)
 
-const authoritarian = () =>
-  one(
-    'Mechanical',
-    'FanaticAuthoritarian',
-    'Authoritarian',
-    'FanaticEgalitarian',
-    'Egalitarian'
-  )
+const authoritarian = one(
+  'Mechanical',
+  'FanaticAuthoritarian',
+  'Authoritarian',
+  'FanaticEgalitarian',
+  'Egalitarian'
+)
 
-const materialist = () =>
-  one(
-    'Mechanical',
-    'FanaticMaterialist',
-    'Materialist',
-    'FanaticSpiritualist',
-    'Spiritualist'
-  )
+const materialist = one(
+  'Mechanical',
+  'FanaticMaterialist',
+  'Materialist',
+  'FanaticSpiritualist',
+  'Spiritualist'
+)
 
-const gestalt = () => one(ethics.Gestalt)
+const gestalt = one('Gestalt')
 
 const ethics = Item.create(Ethic, [
   {
     cost: 2,
-    name: 'FanaticMilitarist',
+    id: 'FanaticMilitarist',
     rule: militarist,
   },
   {
     cost: 2,
-    name: 'FanaticPacifist',
+    id: 'FanaticPacifist',
     rule: militarist,
   },
   {
     cost: 2,
-    name: 'FanaticXenophobe',
+    id: 'FanaticXenophobe',
     rule: xenophobe,
   },
   {
     cost: 2,
-    name: 'FanaticXenophile',
+    id: 'FanaticXenophile',
     rule: xenophobe,
   },
   {
     cost: 2,
-    name: 'FanaticAuthoritarian',
+    id: 'FanaticAuthoritarian',
     rule: authoritarian,
   },
   {
     cost: 2,
-    name: 'FanaticEgalitarian',
+    id: 'FanaticEgalitarian',
     rule: authoritarian,
   },
   {
     cost: 2,
-    name: 'FanaticMaterialist',
+    id: 'FanaticMaterialist',
     rule: materialist,
   },
   {
     cost: 2,
-    name: 'FanaticSpiritualist',
+    id: 'FanaticSpiritualist',
     rule: materialist,
   },
   {
     cost: 1,
-    name: 'Militarist',
+    id: 'Militarist',
     rule: militarist,
   },
   {
     cost: 1,
-    name: 'Pacifist',
+    id: 'Pacifist',
     rule: militarist,
   },
   {
     cost: 1,
-    name: 'Xenophobe',
+    id: 'Xenophobe',
     rule: xenophobe,
   },
   {
     cost: 1,
-    name: 'Xenophile',
+    id: 'Xenophile',
     rule: xenophobe,
   },
   {
     cost: 1,
-    name: 'Authoritarian',
+    id: 'Authoritarian',
     rule: authoritarian,
   },
   {
     cost: 1,
-    name: 'Egalitarian',
+    id: 'Egalitarian',
     rule: authoritarian,
   },
   {
     cost: 1,
-    name: 'Materialist',
+    id: 'Materialist',
     rule: materialist,
   },
   {
     cost: 1,
-    name: 'Spiritualist',
+    id: 'Spiritualist',
     rule: materialist,
   },
   {
     cost: 3,
-    name: 'Gestalt',
+    id: 'Gestalt',
     rule: gestalt,
   },
 ])

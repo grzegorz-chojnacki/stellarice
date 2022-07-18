@@ -1,38 +1,22 @@
 class Trait extends Item {
-  static costSum = (acc, { cost }) => acc + cost
+  static costSum = (acc, { cost }) => acc - cost
 
-  constructor(value, rules) {
-    super(rules)
+  constructor(item) {
+    super(item)
     this.makeEmpireNamePlural()
-    this.value = value
-    this.cost = -value
+    this.cost = item.cost
   }
 
-  originClash = () => this.testClash(traitsOrigin, none()) && this.unmetRules()
-  botanicClash = () => this.testClash(traitsBotanic, none('Botanic'))
-  lithoidClash = () => this.testClash(traitsLithoid, none('Lithoid'))
-  mechanicClash = () => this.testClash(traitsMechanic, none('Mechanical'))
-  normalClash = () =>
-    this.testClash(traitsNormal, none('Botanic', 'Lithoid', 'Biological'))
-
-  clashes = () =>
-    this.normalClash() ||
-    this.botanicClash() ||
-    this.lithoidClash() ||
-    this.mechanicClash()
-
-  hidden = () => !this.checked() && (this.clashes() || this.originClash())
-
   invalid = () => {
-    if (this.unmetRules()) return true
+    if (this.unmetRule()) return true
     const sum = this.empireList.reduce(Trait.costSum, 2)
-    if (sum < 0 && this.value > 0) return true
+    if (sum < 0 && this.cost <= 0) return true
     return false
   }
 
   generalRule = () =>
     this.empireList.length < 5 &&
-    this.empireList.reduce(Trait.costSum, 2) + this.cost >= 0
+    this.empireList.reduce(Trait.costSum, 2) - this.cost >= 0
 }
 
 // Biological
@@ -64,371 +48,371 @@ const custom = one('CustomMade', 'MassProduced')
 const luxurious = one('Luxurious', 'Recycled')
 const bandwith = one('HighBandwidth', 'StreamlinedProtocols')
 
-const traitsOrigin = [
+const traitsOrigin = Item.create(Trait, [
   {
-    name: 'CloneSoldier',
+    id: 'CloneSoldier',
     cost: 0,
-    rule: every('CloneArmy', breeders()),
+    rule: every('CloneArmy', breeders),
   },
   {
-    name: 'Survivor',
+    id: 'Survivor',
     cost: 0,
     rule: every('PostApocalyptic'),
   },
   {
-    name: 'VoidDweller',
+    id: 'VoidDweller',
     cost: 0,
     rule: every('VoidDwellers'),
   },
   {
-    name: 'Necrophages',
+    id: 'Necrophages',
     cost: 0,
     rule: every('Necrophage', none('Budding')),
   },
   {
-    name: 'CaveDweller',
+    id: 'CaveDweller',
     cost: 0,
     rule: every('Subterranean', none('Phototrophic')),
   },
-]
+])
 
-const traitsBotanic = [
+const traitsBotanic = Item.create(Trait, [
   {
-    name: 'Radiotrophic',
+    id: 'Radiotrophic',
     cost: 2,
     rule: trophic,
   },
   {
-    name: 'Phototrophic',
+    id: 'Phototrophic',
     cost: 1,
     rule: every('Botanic', trophic, none('Subterranean')),
   },
   {
-    name: 'Budding',
+    id: 'Budding',
     cost: 2,
     rule: every('Botanic', breeders, none('CloneArmy', 'Necrophage')),
   },
-]
+])
 
-const traitsLithoid = [
+const traitsLithoid = Item.create(Trait, [
   {
-    name: 'GaseousByproducts',
+    id: 'GaseousByproducts',
     cost: 2,
     rule: every('Lithoid', gaseous),
   },
   {
-    name: 'ScintillatingSkin',
+    id: 'ScintillatingSkin',
     cost: 2,
     rule: every('Lithoid', gaseous),
   },
   {
-    name: 'VolatileExcretions',
+    id: 'VolatileExcretions',
     cost: 2,
     rule: every('Lithoid', gaseous),
   },
-]
+])
 
-const traitsNormal = [
+const traitsNormal = Item.create(Trait, [
   // Positive traits
   {
     cost: 2,
-    name: 'Adaptive',
+    id: 'Adaptive',
     rule: adaptive,
   },
   {
     cost: 4,
-    name: 'ExtremelyAdaptive',
+    id: 'ExtremelyAdaptive',
     rule: adaptive,
   },
   {
     cost: 2,
-    name: 'Agrarian',
+    id: 'Agrarian',
   },
   {
     cost: 2,
-    name: 'Charismatic',
+    id: 'Charismatic',
     rule: charismatic,
   },
   {
     cost: 1,
-    name: 'Communal',
+    id: 'Communal',
     rule: communal,
   },
   {
     cost: 2,
-    name: 'Conformists',
+    id: 'Conformists',
     rule: conformists,
   },
   {
     cost: 1,
-    name: 'Conservationist',
+    id: 'Conservationist',
     rule: conservationists,
   },
   {
     cost: 2,
-    name: 'Docile',
+    id: 'Docile',
     rule: docile,
   },
   {
     cost: 1,
-    name: 'Enduring',
+    id: 'Enduring',
     rule: enduring,
   },
   {
     cost: 4,
-    name: 'Venerable',
+    id: 'Venerable',
     rule: enduring,
   },
   {
     cost: 2,
-    name: 'Industrious',
+    id: 'Industrious',
   },
   {
     cost: 2,
-    name: 'Ingenious',
+    id: 'Ingenious',
   },
   {
     cost: 2,
-    name: 'Intelligent',
+    id: 'Intelligent',
   },
   {
     cost: 1,
-    name: 'NaturalEngineers',
+    id: 'NaturalEngineers',
   },
   {
     cost: 1,
-    name: 'NaturalPhysicists',
+    id: 'NaturalPhysicists',
   },
   {
     cost: 1,
-    name: 'NaturalSociologists',
+    id: 'NaturalSociologists',
   },
   {
     cost: 1,
-    name: 'Nomadic',
+    id: 'Nomadic',
     rule: nomadic,
   },
   {
     cost: 1,
-    name: 'QuickLearners',
+    id: 'QuickLearners',
     rule: learners,
   },
   {
     cost: 2,
-    name: 'RapidBreeders',
+    id: 'RapidBreeders',
     rule: breeders,
   },
   {
     cost: 1,
-    name: 'Resilient',
+    id: 'Resilient',
   },
   {
     cost: 1,
-    name: 'Strong',
+    id: 'Strong',
     rule: strong,
   },
   {
     cost: 3,
-    name: 'VeryStrong',
+    id: 'VeryStrong',
     rule: strong,
   },
   {
     cost: 1,
-    name: 'Talented',
+    id: 'Talented',
   },
   {
     cost: 2,
-    name: 'Thrifty',
+    id: 'Thrifty',
   },
   {
     cost: 1,
-    name: 'Traditional',
+    id: 'Traditional',
     rule: traditional,
   },
 
   // Negative traits
   {
     cost: -2,
-    name: 'Nonadaptive',
+    id: 'Nonadaptive',
     rule: adaptive,
   },
   {
     cost: -2,
-    name: 'Repugnant',
+    id: 'Repugnant',
     rule: charismatic,
   },
   {
     cost: -2,
-    name: 'Solitary',
+    id: 'Solitary',
     rule: communal,
   },
   {
     cost: -1,
-    name: 'Deviants',
+    id: 'Deviants',
     rule: conformists,
   },
   {
     cost: -1,
-    name: 'Wasteful',
+    id: 'Wasteful',
     rule: conservationists,
   },
   {
     cost: -2,
-    name: 'Unruly',
+    id: 'Unruly',
     rule: docile,
   },
   {
     cost: -1,
-    name: 'Fleeting',
+    id: 'Fleeting',
     rule: enduring,
   },
   {
     cost: -1,
-    name: 'Sedentary',
+    id: 'Sedentary',
     rule: nomadic,
   },
   {
     cost: -1,
-    name: 'SlowLearners',
+    id: 'SlowLearners',
     rule: learners,
   },
   {
     cost: -2,
-    name: 'SlowBreeders',
+    id: 'SlowBreeders',
     rule: breeders,
   },
   {
     cost: -1,
-    name: 'Weak',
+    id: 'Weak',
     rule: strong,
   },
   {
     cost: -1,
-    name: 'Quarrelsome',
+    id: 'Quarrelsome',
     rule: traditional,
   },
   {
     cost: -1,
-    name: 'Decadent',
+    id: 'Decadent',
   },
-]
+])
 
-const traitsMechanic = [
+const traitsMechanic = Item.create(Trait, [
   // Positive traits
   {
     cost: 2,
-    name: 'DomesticProtocols',
+    id: 'DomesticProtocols',
   },
   {
     cost: 1,
-    name: 'DoubleJointed',
+    id: 'DoubleJointed',
     rule: bulky,
   },
   {
     cost: 1,
-    name: 'Durable',
+    id: 'Durable',
     rule: maintenance,
   },
   {
     cost: 3,
-    name: 'EfficientProcessors',
+    id: 'EfficientProcessors',
   },
   {
     cost: 1,
-    name: 'EmotionEmulators',
+    id: 'EmotionEmulators',
     rule: uncanny,
   },
   {
     cost: 2,
-    name: 'EnhancedMemory',
+    id: 'EnhancedMemory',
   },
   {
     cost: 2,
-    name: 'Harvesters',
+    id: 'Harvesters',
   },
   {
     cost: 1,
-    name: 'LearningAlgorithms',
+    id: 'LearningAlgorithms',
     rule: repurposed,
   },
   {
     cost: 2,
-    name: 'LogicEngines',
+    id: 'LogicEngines',
   },
   {
     cost: 2,
-    name: 'LoyaltyCircuits',
+    id: 'LoyaltyCircuits',
   },
   {
     cost: 1,
-    name: 'MassProduced',
+    id: 'MassProduced',
     rule: custom,
   },
   {
     cost: 2,
-    name: 'PowerDrills',
+    id: 'PowerDrills',
   },
   {
     cost: 1,
-    name: 'PropagandaMachines',
+    id: 'PropagandaMachines',
   },
   {
     cost: 2,
-    name: 'Recycled',
+    id: 'Recycled',
     rule: luxurious,
   },
   {
     cost: 2,
-    name: 'StreamlinedProtocols',
+    id: 'StreamlinedProtocols',
     rule: bandwith,
   },
   {
     cost: 2,
-    name: 'Superconductiv',
+    id: 'Superconductiv',
   },
 
   // Negative traits
   {
     cost: -1,
-    name: 'Bulky',
+    id: 'Bulky',
     rule: bulky,
   },
   {
     cost: -1,
-    name: 'HighMaintenance',
+    id: 'HighMaintenance',
     rule: maintenance,
   },
   {
     cost: -1,
-    name: 'Uncanny',
+    id: 'Uncanny',
     rule: uncanny,
   },
   {
     cost: -1,
-    name: 'RepurposedHardware',
+    id: 'RepurposedHardware',
     rule: repurposed,
   },
   {
     cost: -1,
-    name: 'CustomMade',
+    id: 'CustomMade',
     rule: custom,
   },
   {
     cost: -1,
-    name: 'Luxurious',
+    id: 'Luxurious',
     rule: luxurious,
   },
   {
     cost: -1,
-    name: 'HighBandwidth',
+    id: 'HighBandwidth',
     rule: bandwith,
   },
-]
+])
 
-const traits = Item.create(Trait, [
+const traits = [
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
   ...traitsNormal,
   ...traitsMechanic,
-])
+]

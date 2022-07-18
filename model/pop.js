@@ -1,14 +1,14 @@
 class Pop extends Item {
-  constructor(rules) {
-    super(rules)
+  constructor(item) {
+    super(item)
   }
 
   generalRule = () => this.empireList.length < 1
 }
 
 const pop = Item.create(Pop, [
-  { name: 'Biological' },
-  { name: 'Botanic' },
-  { name: 'Lithoid' },
-  { name: 'Mechanical' },
+  { id: 'Biological' },
+  { id: 'Botanic' },
+  { id: 'Lithoid' },
+  { id: 'Mechanical' },
 ])

@@ -7,8 +7,7 @@ const htmlToElement = html => {
 
 // String helper functions
 const capitalize = str => str[0].toUpperCase() + str.slice(1)
-const decapitalize = str =>
-  str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
+const decapitalize = str => str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
 const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 
 // Convert PascalCase to normal wording, with specific capitalization rules
@@ -19,16 +18,6 @@ const every = (...items) => ({ type: 'every', items })
 const some = (...items) => ({ type: 'some', items })
 const none = (...items) => ({ type: 'none', items })
 const one = (...items) => ({ type: 'one', items })
-
-// Item decorator - names each item in a map, dependeing on the name of a prop
-// to which that item was assigned
-const nameItems = obj => {
-  Object.keys(obj).forEach(prop => {
-    obj[prop].id = prop
-    obj[prop].name = prettify(prop)
-  })
-  return obj
-}
 
 // Helper function for generating HTML flags (attributes without values)
 const htmlFlag = (enabled, flag) => (enabled ? flag : '')
@@ -63,24 +52,30 @@ const sectionTemplate =
         name="${item.id}"
         ${attributes(item)}>
       <label for="${item.id}">${decorator(item)}${item.name}</label>
-      <div class="tooltip">${rulesToHtml(
-        item,
-        item.rules ? item.rules() : null
-      )}</div>
+      <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
     </div>`
 
-// Search through object for an item
-const nestedIn = (obj, item) => {
-  if (!obj) return false
-  if (obj === item) return true
-  if (obj instanceof Array) {
-    return obj.some(x => nestedIn(x, item))
-  } else if (typeof obj === 'object') {
-    return Object.values(obj).some(x => nestedIn(x, item))
-  }
-  return false
+
+// Helper function for getting item by id from all items
+const getItem = id => {
+  const item = all.find(item => item.id === id)
+  if (!item) throw new Error(`Couldn't find '${id}'!`)
+  return item
 }
 
+// Recursively inject items, essentialy replacing their id's to themselves
+//   - When passed an item id, it will get the item nd return it
+//   - When passed a rule object it will return it back with injected items
+const injectItems = x => {
+  if (!x) return x
+  if (x instanceof Item) return x
+  if (typeof x === 'string') return getItem(x)
+  if (x.type) {
+    x.items = x.items.map(injectItems);
+    return x
+  }
+  return x
+}
 
 // Insert or remove item from list
 const toggleIncluded = (list, item) => {
@@ -124,10 +119,10 @@ const rulesToHtml = (() => {
   return (item, x) => {
     if (x === null) return 'No special rules'
     else if (x instanceof Item) {
-      return `<li ${checkItem(nestedIn(empire, x))}>
+      return `<li ${checkItem(x.checked())}>
           ${x.constructor.name} ${x.name}
         </li>`
-    } else {
+    } else if (x.type) {
       const checkResult = checkRule(item.test(x))
       return `
         <li ${checkResult}>
@@ -151,10 +146,10 @@ const getColor = item => {
       Mechanical: 'turquoise',
     }[item.id]
   } else if (item instanceof Trait) {
-    if (nestedIn(traitsBotanic, item)) return 'rosebud'
-    else if (nestedIn(traitsLithoid, item)) return 'apricot'
-    else if (item.value > 0) return 'turquoise'
-    else if (item.value < 0) return 'cranberry'
+    if (traitsBotanic.includes(item)) return 'rosebud'
+    else if (traitsLithoid.includes(item)) return 'apricot'
+    else if (item.cost > 0) return 'turquoise'
+    else if (item.cost < 0) return 'cranberry'
     return null
   } else if (item instanceof Origin) {
     return 'tacao'
@@ -173,9 +168,9 @@ const getColor = item => {
       MachineIntelligence: 'turquoise',
     }[item.id]
   } else if (item instanceof Civic) {
-    if (nestedIn(civicsCorporate, item)) return 'rosebud'
-    else if (nestedIn(civicsHive, item)) return 'lavender'
-    else if (nestedIn(civicsMachine, item)) return 'turquoise'
+    if (civicsCorporate.includes(item)) return 'rosebud'
+    else if (civicsHive.includes(item)) return 'lavender'
+    else if (civicsMachine.includes(item)) return 'turquoise'
     return 'apricot'
   }
 

@@ -1,4 +1,5 @@
-const all = { pop, traits, origin, ethics, authority, civics }
+const all = [...pop, ...traits, ...origin, ...ethics, ...authority, ...civics]
+all.forEach(item => injectItems(item.rule))
 
 const empire = {
   pop: [],
@@ -17,10 +18,12 @@ const render = (() => {
   const sections = [
     {
       name: 'pop',
+      items: pop,
       template: sectionTemplate('radio', itemAttrributes),
     },
     {
       name: 'traits',
+      items: traits,
       summary: () => `
         <p>
           Available traits: ${5 - empire.traits.length}<br>
@@ -29,23 +32,27 @@ const render = (() => {
       template: sectionTemplate(
         'checkbox',
         traitAttrributes,
-        item => `[<span class="trait-point">${item.value}</span>] `
+        item => `[<span class="trait-point">${item.cost}</span>] `
       ),
     },
     {
       name: 'origin',
+      items: origin,
       template: sectionTemplate('radio', itemAttrributes),
     },
     {
       name: 'ethics',
+      items: ethics,
       template: sectionTemplate('checkbox', itemAttrributes),
     },
     {
       name: 'authority',
+      items: authority,
       template: sectionTemplate('radio', itemAttrributes),
     },
     {
       name: 'civics',
+      items: civics,
       template: sectionTemplate('checkbox', itemAttrributes),
       summary: () => `<p>Available slots: ${2 - empire.civics.length}</p>`,
     },
@@ -57,14 +64,14 @@ const render = (() => {
     //   name     - both the section name and related item map (from `all` items)
     //   summary  - a special section for traits
     //   tamplate - HTML tamplate dependent on a given item
-    sections.forEach(({ name, summary, template }) => {
+    sections.forEach(({ name, summary, template, items }) => {
       const section = htmlToElement('<section></section>')
       section.appendChild(htmlToElement(`<h2>${capitalize(name)}</h2>`))
 
       if (summary) section.appendChild(htmlToElement(summary()))
 
       // Go through all items related to this section
-      sort(Object.values(all[name])).forEach(item => {
+      sort(items).forEach(item => {
         const element = htmlToElement(template(item))
         const input = element.getElementsByTagName('input')[0]
 

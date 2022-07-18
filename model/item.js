@@ -1,9 +1,14 @@
 class Item {
   // Helper method for constructing items from simple objects
-  static create = (classRef, objects) => objects.map(o => new classRef(o))
+  static create = (classRef, objects) => {
+    if (!Item.isPrototypeOf(classRef)) throw new Error('Supplied class does not extend Item')
+    return objects.map(o => new classRef(o))
+  }
 
-  constructor(rules) {
-    this.rules = rules
+  constructor({ id, rule = null }) {
+    this.id = id
+    this.name = prettify(id)
+    this.rule = rule
     this.empireName = this.constructor.name.toLowerCase()
   }
 
@@ -14,9 +19,7 @@ class Item {
   //   - When x has a 'type' property we assume that it is a rule object and
   //     we can test the rule according to that type
   test = x => {
-    if (x === undefined)
-      throw new Error('Encountered undefined value while testing rules')
-    if (x instanceof Item) return nestedIn(empire, x)
+    if (x instanceof Item) return x.checked()
     switch (x.type) {
       case 'every': // Every subitem is true
         return x.items.every(this.test)
@@ -34,17 +37,14 @@ class Item {
     return empire[this.empireName]
   }
 
-  // Abstract, test if the item from the list meets special rules
-  testClash = (list, rules) => nestedIn(list, this) && this.test(rules)
-
   // A general rule for every item in class
   generalRule = () => true
 
   // Logic & HTML formatting helper methods
   hidden = () => false
-  unmetRules = () => !!(this.rules && !this.test(this.rules()))
-  invalid = () => this.unmetRules()
+  unmetRule = () => !!(this.rule && !this.test(this.rule))
+  invalid = () => this.unmetRule()
   checked = () => this.empireList.includes(this)
   disabled = () =>
-    !(this.checked() || (this.generalRule() && !this.unmetRules()))
+    !(this.checked() || (this.generalRule() && !this.unmetRule()))
 }

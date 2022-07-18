@@ -1,48 +1,27 @@
 class Civic extends Item {
-  constructor(rules) {
-    super(rules)
+  constructor(item) {
+    super(item)
     this.makeEmpireNamePlural()
   }
 
-  corporateClash = () => this.testClash(civicsCorporate, none('Corporate'))
-
-  hiveClash = () => this.testClash(civicsHive, none('HiveMind'))
-
-  machineClash = () =>
-    this.testClash(civicsMachine, none('MachineIntelligence'))
-
-  normalClash = () =>
-    this.testClash(
-      civicsNormal,
-      some('Gestalt', 'Corporate', 'HiveMind', 'MachineIntelligence')
-    )
-
-  clashes = () =>
-    this.normalClash() ||
-    this.corporateClash() ||
-    this.hiveClash() ||
-    this.machineClash()
-
-  hidden = () => !this.checked() && this.clashes()
-  invalid = () => this.unmetRules() || this.clashes()
   generalRule = () => this.empireList.length < 2
 }
 
-const civicsNormal = [
-  { name: 'CutthroatPolitics' },
-  { name: 'EfficientBureaucracy' },
-  { name: 'Environmentalist' },
-  { name: 'FunctionalArchitecture' },
-  { name: 'MiningGuilds' },
+const civicsNormal = Item.create(Civic, [
+  { id: 'CutthroatPolitics' },
+  { id: 'EfficientBureaucracy' },
+  { id: 'Environmentalist' },
+  { id: 'FunctionalArchitecture' },
+  { id: 'MiningGuilds' },
   {
-    name: 'AgrarianIdyll',
+    id: 'AgrarianIdyll',
     rule: every(
       some('Pacifist', 'FanaticPacifist'),
       none('Anglers', 'PostApocalyptic', 'Remnants')
     ),
   },
   {
-    name: 'AristocraticElite',
+    id: 'AristocraticElite',
     rule: every(
       some('Oligarchic', 'Imperial'),
       none(
@@ -55,7 +34,7 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'BeaconOfLiberty',
+    id: 'BeaconOfLiberty',
     rule: every(
       some('Oligarchic', 'Imperial'),
       some('Egalitarian', 'FanaticEgalitarian'),
@@ -63,7 +42,7 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'CitizenService',
+    id: 'CitizenService',
     rule: every(
       some('Democratic', 'Oligarchic'),
       some('Militarist', 'FanaticMilitarist'),
@@ -71,15 +50,15 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'CorveeSystem',
+    id: 'CorveeSystem',
     rule: none('Egalitarian', 'FanaticEgalitarian', 'FreeHaven'),
   },
   {
-    name: 'DistinguishedAdmiralty',
+    id: 'DistinguishedAdmiralty',
     rule: some('Militarist', 'FanaticMilitarist'),
   },
   {
-    name: 'ExaltedPriesthood',
+    id: 'ExaltedPriesthood',
     rule: every(
       some('Oligarchic', 'Dictatorial'),
       some('Spiritualist', 'FanaticSpiritualist'),
@@ -87,19 +66,19 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'FeudalSociety',
+    id: 'FeudalSociety',
     rule: every('Imperial'),
   },
   {
-    name: 'FreeHaven',
+    id: 'FreeHaven',
     rule: every(some('Xenophile', 'FanaticXenophile'), none('CorveeSystem')),
   },
   {
-    name: 'IdealisticFoundation',
+    id: 'IdealisticFoundation',
     rule: every(some('Egalitarian', 'FanaticEgalitarian')),
   },
   {
-    name: 'ImperialCult',
+    id: 'ImperialCult',
     rule: every(
       'Imperial',
       some('Spiritualist', 'FanaticSpiritualist'),
@@ -107,7 +86,7 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'InwardPerfection',
+    id: 'InwardPerfection',
     rule: every(
       some('Pacifist', 'FanaticPacifist'),
       some('Xenophobe', 'FanaticXenophobe'),
@@ -115,38 +94,38 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'Meritocracy',
+    id: 'Meritocracy',
     rule: some('Democratic', 'Oligarchic'),
   },
   {
-    name: 'NationalisticZeal',
+    id: 'NationalisticZeal',
     rule: some('Militarist', 'FanaticMilitarist'),
   },
   {
-    name: 'ParliamentarySystem',
+    id: 'ParliamentarySystem',
     rule: every('Democratic'),
   },
   {
-    name: 'PhilosopherKing',
+    id: 'PhilosopherKing',
     rule: some('Dictatorial', 'Imperial'),
   },
   {
-    name: 'PoliceState',
+    id: 'PoliceState',
     rule: none('FanaticEgalitarian'),
   },
   {
-    name: 'ShadowCouncil',
+    id: 'ShadowCouncil',
     rule: none('Imperial'),
   },
   {
-    name: 'SlaverGuilds',
+    id: 'SlaverGuilds',
     rule: every(
       some('Authoritarian', 'FanaticAuthoritarian'),
       none('PleasureSeekers')
     ),
   },
   {
-    name: 'Technocracy',
+    id: 'Technocracy',
     rule: every(
       some('Materialist', 'FanaticMaterialist'),
       none(
@@ -158,19 +137,19 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'WarriorCulture',
+    id: 'WarriorCulture',
     rule: every(some('Militarist', 'FanaticMilitarist')),
   },
   {
-    name: 'CatalyticProcessing',
+    id: 'CatalyticProcessing',
     rule: none('CalamitousBirth'),
   },
   {
-    name: 'IdyllicBloom',
+    id: 'IdyllicBloom',
     rule: every('Botanic', none('VoidDwellers')),
   },
   {
-    name: 'FanaticPurifiers',
+    id: 'FanaticPurifiers',
     rule: every(
       'FanaticXenophobe',
       some('Militarist', 'Spiritualist'),
@@ -183,20 +162,20 @@ const civicsNormal = [
       )
     ),
   },
-  { name: 'MasterfulCrafters' },
+  { id: 'MasterfulCrafters' },
   {
-    name: 'PleasureSeekers',
+    id: 'PleasureSeekers',
     rule: none('SlaverGuilds', 'WarriorCulture', 'SharedBurdens'),
   },
   {
-    name: 'PompousPurists',
+    id: 'PompousPurists',
     rule: every(
       some('Xenophobe', 'FanaticXenophobe'),
       none('InwardPerfection', 'FanaticPurifiers', 'CommonGround')
     ),
   },
   {
-    name: 'BarbaricDespoilers',
+    id: 'BarbaricDespoilers',
     rule: every(
       some('Militarist', 'Spiritualist'),
       some(
@@ -209,41 +188,41 @@ const civicsNormal = [
     ),
   },
   {
-    name: 'ByzantineBureaucracy',
+    id: 'ByzantineBureaucracy',
     rule: none('Spiritualist', 'FanaticSpiritualist'),
   },
   {
-    name: 'MerchantGuilds',
+    id: 'MerchantGuilds',
     rule: none('ExaltedPriesthood', 'AristocraticElite', 'Technocracy'),
   },
   {
-    name: 'SharedBurdens',
+    id: 'SharedBurdens',
     rule: every(
       'FanaticEgalitarian',
       none('Xenophobe', 'FanaticXenophobe', 'Technocracy', 'PleasureSeekers')
     ),
   },
   {
-    name: 'DiplomaticCorps',
+    id: 'DiplomaticCorps',
     rule: none('InwardPerfection', 'FanaticPurifiers'),
   },
   {
-    name: 'Memorialists',
+    id: 'Memorialists',
     rule: none('FanaticPurifiers'),
   },
   {
-    name: 'Reanimators',
+    id: 'Reanimators',
     rule: none('Pacifist', 'FanaticPacifist', 'CitizenService'),
   },
   {
-    name: 'DeathCult',
+    id: 'DeathCult',
     rule: every(
       some('Spiritualist', 'FanaticSpiritualist'),
       none('InwardPerfection', 'FanaticPurifiers', 'Necrophage')
     ),
   },
   {
-    name: 'Anglers',
+    id: 'Anglers',
     rule: none(
       'AgrarianIdyll',
       'PostApocalyptic',
@@ -252,76 +231,76 @@ const civicsNormal = [
       'Subterranean'
     ),
   },
-]
+])
 
-const civicsCorporate = [
-  { name: 'CriminalHeritage' },
-  { name: 'Franchising' },
-  { name: 'FreeTraders' },
-  { name: 'PrivateProspectors' },
-  { name: 'TradingPosts' },
+const civicsCorporate = Item.create(Civic, [
+  { id: 'CriminalHeritage' },
+  { id: 'Franchising' },
+  { id: 'FreeTraders' },
+  { id: 'PrivateProspectors' },
+  { id: 'TradingPosts' },
   {
-    name: 'BrandLoyalty',
+    id: 'BrandLoyalty',
     rule: none('BeaconOfLiberty'),
   },
   {
-    name: 'GospelOfTheMasses',
+    id: 'GospelOfTheMasses',
     rule: every(some('Spiritualist', 'FanaticSpiritualist')),
   },
   {
-    name: 'IndenturedAssets',
+    id: 'IndenturedAssets',
     rule: every(
       some('Authoritarian', 'FanaticAuthoritarian'),
       none('CorporateHedonism', 'PleasureSeekers', 'SlaverGuilds')
     ),
   },
   {
-    name: 'MediaConglomerate',
+    id: 'MediaConglomerate',
     rule: none('IdealisticFoundation'),
   },
   {
-    name: 'NavalContractors',
+    id: 'NavalContractors',
     rule: every(
       some('Militarist', 'FanaticMilitarist'),
       none('CitizenService')
     ),
   },
   {
-    name: 'PrivateMilitaryCompanies',
+    id: 'PrivateMilitaryCompanies',
     rule: every(
       some('Militarist', 'FanaticMilitarist'),
       none('WarriorCulture')
     ),
   },
   {
-    name: 'RuthlessCompetition',
+    id: 'RuthlessCompetition',
     rule: none('Meritocracy'),
   },
   {
-    name: 'CatalyticRecyclers',
+    id: 'CatalyticRecyclers',
     rule: none('CatalyticProcessing', 'CalamitousBirth'),
   },
   {
-    name: 'MastercraftInc',
+    id: 'MastercraftInc',
     rule: none('MasterfulCrafters'),
   },
   {
-    name: 'CorporateHedonism',
+    id: 'CorporateHedonism',
     rule: none('IndenturedAssets', 'PleasureSeekers', 'SlaverGuilds'),
   },
   {
-    name: 'PublicRelationsSpecialists',
+    id: 'PublicRelationsSpecialists',
     rule: none('DiplomaticCorps'),
   },
   {
-    name: 'CorporateDeathCult',
+    id: 'CorporateDeathCult',
     rule: every(
       some('Spiritualist', 'FanaticSpiritualist'),
       none('Necrophage', 'InwardPerfection', 'FanaticPurifiers')
     ),
   },
   {
-    name: 'PermanentEmployment',
+    id: 'PermanentEmployment',
     rule: none(
       'Egalitarian',
       'FanaticEgalitarian',
@@ -331,7 +310,7 @@ const civicsCorporate = [
     ),
   },
   {
-    name: 'CorporateAnglers',
+    id: 'CorporateAnglers',
     rule: none(
       'AgrarianIdyll',
       'PostApocalyptic',
@@ -340,66 +319,66 @@ const civicsCorporate = [
       'Subterranean'
     ),
   },
-]
+])
 
-const civicsHive = [
-  { name: 'Ascetic' },
-  { name: 'DividedAttention' },
-  { name: 'NaturalNeuralNetwork' },
-  { name: 'OneMind' },
-  { name: 'PooledKnowledge' },
-  { name: 'StrengthOfLegions' },
-  { name: 'SubspaceEphapse' },
-  { name: 'SubsumedWill' },
+const civicsHive = Item.create(Civic, [
+  { id: 'Ascetic' },
+  { id: 'DividedAttention' },
+  { id: 'NaturalNeuralNetwork' },
+  { id: 'OneMind' },
+  { id: 'PooledKnowledge' },
+  { id: 'StrengthOfLegions' },
+  { id: 'SubspaceEphapse' },
+  { id: 'SubsumedWill' },
   {
-    name: 'DevouringSwarm',
+    id: 'DevouringSwarm',
     rule: none('Lithoid'),
   },
   {
-    name: 'HiveOrganicReprocessing',
+    id: 'HiveOrganicReprocessing',
     rule: none('CalamitousBirth'),
   },
   {
-    name: 'HiveIdyllicBloom',
+    id: 'HiveIdyllicBloom',
     rule: every('Botanic'),
   },
   {
-    name: 'Terravore',
+    id: 'Terravore',
     rule: every('Lithoid'),
   },
   {
-    name: 'Empath',
+    id: 'Empath',
     rule: none('DevouringSwarm', 'Terravore', 'Necrophage'),
   },
   {
-    name: 'HiveMemorialist',
+    id: 'HiveMemorialist',
     rule: none('DevouringSwarm', 'Terravore'),
   },
-]
+])
 
-const civicsMachine = [
-  { name: 'Constructobot' },
-  { name: 'DelegatedFunctions' },
-  { name: 'FactoryOverclocking' },
-  { name: 'Introspective' },
-  { name: 'MaintenanceProtocols' },
-  { name: 'OTAUpdates' },
-  { name: 'RapidReplicator' },
-  { name: 'Rockbreakers' },
-  { name: 'StaticResearchAnalysis' },
-  { name: 'UnitaryCohesion' },
-  { name: 'Warbots' },
-  { name: 'ZeroWasteProtocols' },
+const civicsMachine = Item.create(Civic, [
+  { id: 'Constructobot' },
+  { id: 'DelegatedFunctions' },
+  { id: 'FactoryOverclocking' },
+  { id: 'Introspective' },
+  { id: 'MaintenanceProtocols' },
+  { id: 'OTAUpdates' },
+  { id: 'RapidReplicator' },
+  { id: 'Rockbreakers' },
+  { id: 'StaticResearchAnalysis' },
+  { id: 'UnitaryCohesion' },
+  { id: 'Warbots' },
+  { id: 'ZeroWasteProtocols' },
   {
-    name: 'DeterminedExterminator',
+    id: 'DeterminedExterminator',
     rule: none('DrivenAssimilator', 'RogueServitor'),
   },
   {
-    name: 'DrivenAssimilator',
+    id: 'DrivenAssimilator',
     rule: none('DeterminedExterminator', 'RogueServitor'),
   },
   {
-    name: 'RogueServitor',
+    id: 'RogueServitor',
     rule: none(
       'DeterminedExterminator',
       'DrivenAssimilator',
@@ -407,18 +386,18 @@ const civicsMachine = [
     ),
   },
   {
-    name: 'MachineOrganicReprocessing',
+    id: 'MachineOrganicReprocessing',
     rule: none('ResourceConsolidation'),
   },
   {
-    name: 'MachineMemorialist',
+    id: 'MachineMemorialist',
     rule: none('DeterminedExterminator', 'DrivenAssimilator'),
   },
-]
+])
 
-const civics = Item.create(Civic, [
+const civics = [
   ...civicsNormal,
   ...civicsCorporate,
   ...civicsHive,
   ...civicsMachine,
-])
+]

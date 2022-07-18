@@ -1,6 +1,6 @@
 class Authority extends Item {
-  constructor(rules) {
-    super(rules)
+  constructor(item) {
+    super(item)
   }
 
   generalRule = () => this.empireList.length < 1
@@ -8,31 +8,31 @@ class Authority extends Item {
 
 const authority = Item.create(Authority, [
   {
-    name: 'Imperial',
+    id: 'Imperial',
     rule: none('Egalitarian', 'FanaticEgalitarian', 'Gestalt'),
   },
   {
-    name: 'Dictatorial',
+    id: 'Dictatorial',
     rule: none('Egalitarian', 'FanaticEgalitarian', 'Gestalt'),
   },
   {
-    name: 'Oligarchic',
+    id: 'Oligarchic',
     rule: none('FanaticAuthoritarian', 'FanaticEgalitarian', 'Gestalt'),
   },
   {
-    name: 'Democratic',
+    id: 'Democratic',
     rule: none('Authoritarian', 'FanaticAuthoritarian', 'Gestalt'),
   },
   {
-    name: 'Corporate',
+    id: 'Corporate',
     rule: none('FanaticAuthoritarian', 'FanaticEgalitarian', 'Gestalt'),
   },
   {
-    name: 'HiveMind',
+    id: 'HiveMind',
     rule: every('Gestalt', none('Mechanical')),
   },
   {
-    name: 'MachineIntelligence',
+    id: 'MachineIntelligence',
     rule: every('Mechanical', 'Gestalt'),
   },
 ])

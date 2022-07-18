@@ -1,6 +1,6 @@
 class Origin extends Item {
-  constructor(rules) {
-    super(rules)
+  constructor(item) {
+    super(item)
   }
 
   generalRule = () => empire.origin.length === 0
@@ -8,47 +8,47 @@ class Origin extends Item {
 
 const origin = Item.create(Origin, [
   {
-    name: 'ProsperousUnification',
+    id: 'ProsperousUnification',
   },
   {
-    name: 'GalacticDoorstep',
+    id: 'GalacticDoorstep',
   },
   {
-    name: 'LostColony',
+    id: 'LostColony',
     rule: none('Gestalt'),
   },
   {
-    name: 'Mechanist',
+    id: 'Mechanist',
     rule: every(
       some('Materialist', 'FanaticMaterialist'),
       none('Gestalt', 'PermanentEmployment')
     ),
   },
   {
-    name: 'SyncreticEvolution',
+    id: 'SyncreticEvolution',
     rule: none('Gestalt', 'FanaticPurifiers'),
   },
   {
-    name: 'TreeOfLife',
+    id: 'TreeOfLife',
     rule: every('HiveMind', none('DevouringSwarm', 'Terravore')),
   },
   {
-    name: 'ResourceConsolidation',
+    id: 'ResourceConsolidation',
     rule: every(
       'MachineIntelligence',
       none('RogueServitor', 'MachineOrganicReprocessing')
     ),
   },
   {
-    name: 'CloneArmy',
+    id: 'CloneArmy',
     rule: none('Gestalt', 'PermanentEmployment'),
   },
   {
-    name: 'LifeSeeded',
+    id: 'LifeSeeded',
     rule: none('MachineIntelligence'),
   },
   {
-    name: 'PostApocalyptic',
+    id: 'PostApocalyptic',
     rule: none(
       'MachineIntelligence',
       'AgrarianIdyll',
@@ -57,11 +57,11 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'Remnants',
+    id: 'Remnants',
     rule: none('AgrarianIdyll'),
   },
   {
-    name: 'CalamitousBirth',
+    id: 'CalamitousBirth',
     rule: every(
       'Lithoid',
       none(
@@ -73,7 +73,7 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'CommonGround',
+    id: 'CommonGround',
     rule: none(
       'Xenophile',
       'FanaticXenophile',
@@ -86,7 +86,7 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'Hegemon',
+    id: 'Hegemon',
     rule: none(
       'Xenophobe',
       'FanaticXenophobe',
@@ -98,22 +98,22 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'Doomsday',
+    id: 'Doomsday',
   },
   {
-    name: 'OnTheShouldersOfGiants',
+    id: 'OnTheShouldersOfGiants',
     rule: none('Gestalt'),
   },
   {
-    name: 'Scion',
+    id: 'Scion',
     rule: none('Gestalt', 'FanaticXenophobe', 'PompousPurists'),
   },
   {
-    name: 'ShatteredRing',
+    id: 'ShatteredRing',
     rule: none('AgrarianIdyll', 'Anglers', 'CorporateAnglers'),
   },
   {
-    name: 'VoidDwellers',
+    id: 'VoidDwellers',
     rule: none(
       'Gestalt',
       'AgrarianIdyll',
@@ -124,7 +124,7 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'Necrophage',
+    id: 'Necrophage',
     rule: none(
       'MachineIntelligence',
       'Xenophile',
@@ -137,18 +137,18 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'HereBeDragons',
+    id: 'HereBeDragons',
     rule: none('FanaticPurifiers', 'DevouringSwarm', 'DeterminedExterminator'),
   },
   {
-    name: 'OceanParadise',
+    id: 'OceanParadise',
     rule: none('MachineIntelligence'),
   },
   {
-    name: 'SlingshotToTheStars',
+    id: 'SlingshotToTheStars',
   },
   {
-    name: 'ImperialFiefdom',
+    id: 'ImperialFiefdom',
     rule: none(
       'InwardPerfection',
       'DrivenAssimilator',
@@ -158,18 +158,18 @@ const origin = Item.create(Origin, [
     ),
   },
   {
-    name: 'Subterranean',
+    id: 'Subterranean',
     rule: none('MachineIntelligence'),
   },
   {
-    name: 'TeachersOfTheShroud',
+    id: 'TeachersOfTheShroud',
     rule: every(
       some('Spiritualist', 'FanaticSpiritualist'),
       none('FanaticPurifiers')
     ),
   },
   {
-    name: 'ProgenitorHive',
+    id: 'ProgenitorHive',
     rule: every('HiveMind'),
   },
 ])
