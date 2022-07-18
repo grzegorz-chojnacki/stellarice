@@ -95,20 +95,16 @@ const sort = items => {
   return items
 }
 
-// Converts rule objects to HTML lists with coloring depending on pass/fail
+// Converts rules to HTML lists with coloring depending on pass/fail
 const rulesToHtml = (() => {
   return (item, x) => {
     if (x instanceof Item) {
       return `<li ${x.checked() ? 'present' : ''}>
           ${x.constructor.name} ${x.name}
         </li>`
-    } else if (x.constructor === Rule) {
-      return `<strong>${x.text}</strong>`
     } else if (x instanceof Rule) {
       return `
-        <li ${item.rule.test() ? 'pass' : 'fail'}>
-          <strong>${x.text}:</strong>
-        </li>
+        <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
         <ul>
           ${x.items.map(y => rulesToHtml(item, y)).join('')}
         </ul>`

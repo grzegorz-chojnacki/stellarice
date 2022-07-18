@@ -81,12 +81,16 @@ div:hover > .tooltip {
   display: block;
 }
 
-ul, li { margin: 0; }
+ul {
+  margin: 0;
+  padding-left: 1.5em;
+}
 
 li { list-style-type: disc; }
 
-li[fail] { color: var(--cranberry); }
-li[pass] { color: var(--turquoise); }
+span[fail], span[pass] { font-weight: bold; }
+span[fail] { color: var(--cranberry); }
+span[pass] { color: var(--turquoise); }
 
 li[present] {
   color: var(--rosebud);
