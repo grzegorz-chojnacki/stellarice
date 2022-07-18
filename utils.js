@@ -100,13 +100,10 @@ const partition = (arr, fn) =>
 
 
 // Sort items depending on arbitrary rules
-// Lexical order:
-//   items = items.sort((a, b) => a.name.localeCompare(b.name))
-//
-// Move disabled last:
-//   items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
 const sort = items => {
-  // Move checked & invalid first
+  // Place disabled as last
+  items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
+  // Place checked & invalid as first
   items = [...partition(items, x => x.invalid() && x.checked()).flatMap(x => x)]
   return items
 }
