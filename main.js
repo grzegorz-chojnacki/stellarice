@@ -32,7 +32,7 @@ const render = (() => {
       template: sectionTemplate(
         'checkbox',
         traitAttrributes,
-        item => `[<span class="trait-point">${item.cost}</span>] `
+        item => `[${item.cost.toString().padStart(2)}] `
       ),
     },
     {
