@@ -6,10 +6,13 @@ class Rule {
   }
 
   // Remove elements from rules recursively
-  remove = x => this.items.forEach((item, i) => {
-      if (item === x) this.items.splice(i, 1)
-      if (x instanceof Rule) i.remove(x)
-    })
+  without = x => {
+      this.items.forEach((item, i) => {
+        if (item === x) this.items.splice(i, 1)
+        if (x instanceof Rule) i.without(x)
+      })
+      return this
+    }
 
   // Checks if rule is passing, should call match for every item
   test = () => true

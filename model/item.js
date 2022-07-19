@@ -24,8 +24,7 @@ class Item {
   constructor({ id, rule = new Rule() }) {
     this.id = id
     this.name = prettify(id)
-    this.rule = rule
-    this.rule.remove(this.id)
+    this.rule = rule.without(this.id)
     this.empireName = this.constructor.name.toLowerCase()
   }
 
