@@ -29,6 +29,10 @@ class Item {
     this.empireName = this.constructor.name.toLowerCase()
   }
 
+  get fullName() {
+    return `${this.constructor.name} ${this.name}`
+  }
+
   // Empire is not initialized before the creation of Items, so we have to defer
   get empireList() {
     return empire[

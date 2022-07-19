@@ -228,9 +228,7 @@ const civicsNormal = Item.create(Civic, [
       'Subterranean'
     ),
   },
-]).map(
-  Item.withRule(none('Corporate', 'HiveMind', 'MachineIntelligence'))
-)
+]).map(Item.withRule(none('Corporate', 'HiveMind', 'MachineIntelligence')))
 
 const civicsCorporate = Item.create(Civic, [
   { id: 'CriminalHeritage' },

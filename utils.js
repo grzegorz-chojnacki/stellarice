@@ -56,7 +56,7 @@ const getItemById = id => {
 }
 
 // Recursively inject items, essentialy replacing their id's to themselves
-//   - When passed an item id, it will get the item nd return it
+//   - When passed an item id, it will get the item and return it
 //   - When passed a rule object it will return it back with injected items
 const injectItems = x => {
   if (!x) return x
@@ -86,7 +86,7 @@ const partition = (arr, fn) =>
   )
 
 // Sort items depending on arbitrary rules
-const sort = items => {
+const sortItems = items => {
   // Place disabled as last
   items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
   // Place checked & invalid as first
@@ -94,18 +94,25 @@ const sort = items => {
   return items
 }
 
+// Sort rules alphabetically and hoist single items to the top
+const sortRules = rule => {
+  if (rule.items) {
+    const [items, rules] = partition(rule.items, x => x instanceof Item)
+    items.sort((a, b) => a.fullName.localeCompare(b.fullName))
+    return [...items, ...sortRules(rules)]
+  } else return rule
+}
+
 // Converts rules to HTML lists with coloring depending on pass/fail
 const rulesToHtml = (() => {
   return (item, x) => {
     if (x instanceof Item) {
-      return `<li ${x.checked() ? 'present' : ''}>
-          ${x.constructor.name} ${x.name}
-        </li>`
+      return `<li ${x.checked() ? 'present' : ''}>${x.fullName}</li>`
     } else if (x instanceof Rule) {
       return `
         <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
         <ul>
-          ${x.items.map(y => rulesToHtml(item, y)).join('')}
+          ${sortRules(x).map(y => rulesToHtml(item, y)).join('')}
         </ul>`
     }
   }
