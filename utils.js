@@ -49,7 +49,7 @@ const sectionTemplate =
     </div>`
 
 // Helper function for getting item by id from all items
-const getItem = id => {
+const getItemById = id => {
   const item = all.find(item => item.id === id)
   if (!item) throw new Error(`Couldn't find '${id}'!`)
   return item
@@ -61,7 +61,7 @@ const getItem = id => {
 const injectItems = x => {
   if (!x) return x
   if (x instanceof Item) return x
-  if (typeof x === 'string') return getItem(x)
+  if (typeof x === 'string') return getItemById(x)
   if (x instanceof Rule) {
     x.items = x.items.map(injectItems)
     return x
