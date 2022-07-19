@@ -39,7 +39,6 @@ class Item {
   generalRule = () => true
 
   // Logic & HTML formatting helper methods
-  hidden = () => false
   unmetRule = () => !this.rule.test()
   invalid = () => this.unmetRule()
   checked = () => this.empireList.includes(this)

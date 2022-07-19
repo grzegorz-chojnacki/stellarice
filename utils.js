@@ -19,7 +19,6 @@ const htmlFlag = (enabled, flag) => (enabled ? flag : '')
 const disabled = item => htmlFlag(item.disabled(), 'disabled')
 const invalid = item => htmlFlag(item.invalid(), 'invalid')
 const checked = item => htmlFlag(item.checked(), 'checked')
-const hidden = item => htmlFlag(item.hidden(), 'hidden')
 
 // Helper functions for sectionTemplate
 const itemAttrributes = item => `
@@ -39,7 +38,7 @@ const traitAttrributes = trait => `
 const sectionTemplate =
   (inputType, attributes, decorator = () => '') =>
   item =>
-    `<div ${hidden(item)}>
+    `<div>
       <input
         type="${inputType}"
         id="${item.id}"
