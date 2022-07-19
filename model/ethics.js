@@ -10,27 +10,33 @@ class Ethic extends Item {
   generalRule = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3
 }
 
-const militarist = () =>
-  none('FanaticMilitarist', 'Militarist', 'FanaticPacifist', 'Pacifist')
+const militarist = oneof(
+  'FanaticMilitarist',
+  'Militarist',
+  'FanaticPacifist',
+  'Pacifist'
+)
 
-const xenophobe = () =>
-  none('FanaticXenophobe', 'Xenophobe', 'FanaticXenophile', 'Xenophile')
+const xenophobe = oneof(
+  'FanaticXenophobe',
+  'Xenophobe',
+  'FanaticXenophile',
+  'Xenophile'
+)
 
-const authoritarian = () =>
-  none(
-    'FanaticAuthoritarian',
-    'Authoritarian',
-    'FanaticEgalitarian',
-    'Egalitarian'
-  )
+const authoritarian = oneof(
+  'FanaticAuthoritarian',
+  'Authoritarian',
+  'FanaticEgalitarian',
+  'Egalitarian'
+)
 
-const materialist = () =>
-  none(
-    'FanaticMaterialist',
-    'Materialist',
-    'FanaticSpiritualist',
-    'Spiritualist'
-  )
+const materialist = oneof(
+  'FanaticMaterialist',
+  'Materialist',
+  'FanaticSpiritualist',
+  'Spiritualist'
+)
 
 const ethics = Item.create(Ethic, [
   ...[

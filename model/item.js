@@ -31,7 +31,7 @@ class Item {
 
   makeEmpireNamePlural = () => (this.empireName += 's')
 
-  // Empire is not initialize before the creation of Items, so we have to defer
+  // Empire is not initialized before the creation of Items, so we have to defer
   get empireList() {
     return empire[this.empireName]
   }

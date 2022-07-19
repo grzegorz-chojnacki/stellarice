@@ -20,30 +20,33 @@ class Trait extends Item {
 }
 
 // Biological
-const charismatic = () => none('Charismatic', 'Repugnant')
-const communal = () => none('Communal', 'Solitary')
-const conformists = () => none('Conformists', 'Deviants')
-const conservationists = () => none('Conservationist', 'Wasteful')
-const docile = () => none('Docile', 'Unruly')
-const nomadic = () => none('Nomadic', 'Sedentary')
-const learners = () => none('QuickLearners', 'SlowLearners')
-const breeders = () => none('RapidBreeders', 'SlowBreeders')
-const traditional = () => none('Traditional', 'Quarrelsome')
-const trophic = () => none('Phototrophic', 'Radiotrophic')
-const strong = () => none('Strong', 'VeryStrong', 'Weak')
-const enduring = () => none('Enduring', 'Venerable', 'Fleeting')
-const adaptive = () => none('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
-const gaseous = () =>
-  none('GaseousByproducts', 'ScintillatingSkin', 'VolatileExcretions')
+const charismatic = oneof('Charismatic', 'Repugnant')
+const communal = oneof('Communal', 'Solitary')
+const conformists = oneof('Conformists', 'Deviants')
+const conservationists = oneof('Conservationist', 'Wasteful')
+const docile = oneof('Docile', 'Unruly')
+const nomadic = oneof('Nomadic', 'Sedentary')
+const learners = oneof('QuickLearners', 'SlowLearners')
+const breeders = oneof('RapidBreeders', 'SlowBreeders')
+const traditional = oneof('Traditional', 'Quarrelsome')
+const trophic = oneof('Phototrophic', 'Radiotrophic')
+const strong = oneof('Strong', 'VeryStrong', 'Weak')
+const enduring = oneof('Enduring', 'Venerable', 'Fleeting')
+const adaptive = oneof('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
+const gaseous = oneof(
+  'GaseousByproducts',
+  'ScintillatingSkin',
+  'VolatileExcretions'
+)
 
 // Mechanical
-const bulky = () => none('Bulky', 'DoubleJointed')
-const maintenance = () => none('HighMaintenance', 'Durable')
-const uncanny = () => none('Uncanny', 'EmotionEmulators')
-const repurposed = () => none('RepurposedHardware', 'LearningAlgorithms')
-const custom = () => none('CustomMade', 'MassProduced')
-const luxurious = () => none('Luxurious', 'Recycled')
-const bandwidth = () => none('HighBandwidth', 'StreamlinedProtocols')
+const bulky = oneof('Bulky', 'DoubleJointed')
+const maintenance = oneof('HighMaintenance', 'Durable')
+const uncanny = oneof('Uncanny', 'EmotionEmulators')
+const repurposed = oneof('RepurposedHardware', 'LearningAlgorithms')
+const custom = oneof('CustomMade', 'MassProduced')
+const luxurious = oneof('Luxurious', 'Recycled')
+const bandwidth = oneof('HighBandwidth', 'StreamlinedProtocols')
 
 const traitsOrigin = Item.create(Trait, [
   {

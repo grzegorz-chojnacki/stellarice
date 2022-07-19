@@ -16,8 +16,8 @@ class Rule {
 
   // Checks if a given item from items is passing
   match = x => {
-    if (x instanceof Rule) return x.test()
     if (x instanceof Item) return x.checked()
+    if (x instanceof Rule) return x.test()
   }
 }
 
@@ -40,6 +40,7 @@ class None extends Rule {
 }
 
 // Syntax sugar for creating rule objects
-const every = (...items) => new Every(items)
 const some = (...items) => new Some(items)
 const none = (...items) => new None(items)
+const every = (...items) => new Every(items)
+const oneof = (...items) => () => none(...items)
