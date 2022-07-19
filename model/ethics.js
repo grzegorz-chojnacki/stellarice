@@ -1,11 +1,6 @@
 class Ethic extends Item {
+  static empireName = 'ethics'
   static costSum = (acc, { cost }) => acc + cost
-
-  constructor(item) {
-    super(item)
-    this.makeEmpireNamePlural()
-    this.cost = item.cost
-  }
 
   generalRule = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3
 }

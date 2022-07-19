@@ -21,18 +21,19 @@ class Item {
     return item
   }
 
-  constructor({ id, rule = new Rule() }) {
+  constructor({ id, cost = 0, rule = new Rule() }) {
     this.id = id
     this.name = prettify(id)
+    this.cost = cost
     this.rule = rule.without(this.id)
     this.empireName = this.constructor.name.toLowerCase()
   }
 
-  makeEmpireNamePlural = () => (this.empireName += 's')
-
   // Empire is not initialized before the creation of Items, so we have to defer
   get empireList() {
-    return empire[this.empireName]
+    return empire[
+      (this.constructor.empireName || this.constructor.name).toLowerCase()
+    ]
   }
 
   // A general rule for every item in class

@@ -1,8 +1,5 @@
 class Civic extends Item {
-  constructor(item) {
-    super(item)
-    this.makeEmpireNamePlural()
-  }
+  static empireName = 'civics'
 
   generalRule = () => this.empireList.length < 2
 }

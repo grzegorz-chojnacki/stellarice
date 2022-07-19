@@ -1,11 +1,7 @@
 class Trait extends Item {
-  static costSum = (acc, { cost }) => acc - cost
+  static empireName = 'traits'
 
-  constructor(item) {
-    super(item)
-    this.makeEmpireNamePlural()
-    this.cost = item.cost
-  }
+  static costSum = (acc, { cost }) => acc - cost
 
   invalid = () => {
     if (this.unmetRule()) return true

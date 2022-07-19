@@ -1,8 +1,4 @@
 class Authority extends Item {
-  constructor(item) {
-    super(item)
-  }
-
   generalRule = () => this.empireList.length < 1
 }
 

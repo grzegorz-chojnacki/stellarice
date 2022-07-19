@@ -1,8 +1,4 @@
 class Origin extends Item {
-  constructor(item) {
-    super(item)
-  }
-
   generalRule = () => empire.origin.length === 0
 }
 
