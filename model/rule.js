@@ -46,4 +46,4 @@ class None extends Rule {
 const some = (...items) => new Some(items)
 const none = (...items) => new None(items)
 const every = (...items) => new Every(items)
-const oneof = (...items) => () => none(...items)
+const one = (...items) => () => none(...items)

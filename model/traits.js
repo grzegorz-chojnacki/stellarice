@@ -16,33 +16,33 @@ class Trait extends Item {
 }
 
 // Biological
-const charismatic = oneof('Charismatic', 'Repugnant')
-const communal = oneof('Communal', 'Solitary')
-const conformists = oneof('Conformists', 'Deviants')
-const conservationists = oneof('Conservationist', 'Wasteful')
-const docile = oneof('Docile', 'Unruly')
-const nomadic = oneof('Nomadic', 'Sedentary')
-const learners = oneof('QuickLearners', 'SlowLearners')
-const breeders = oneof('RapidBreeders', 'SlowBreeders')
-const traditional = oneof('Traditional', 'Quarrelsome')
-const trophic = oneof('Phototrophic', 'Radiotrophic')
-const strong = oneof('Strong', 'VeryStrong', 'Weak')
-const enduring = oneof('Enduring', 'Venerable', 'Fleeting')
-const adaptive = oneof('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
-const gaseous = oneof(
+const charismatic = one('Charismatic', 'Repugnant')
+const communal = one('Communal', 'Solitary')
+const conformists = one('Conformists', 'Deviants')
+const conservationists = one('Conservationist', 'Wasteful')
+const docile = one('Docile', 'Unruly')
+const nomadic = one('Nomadic', 'Sedentary')
+const learners = one('QuickLearners', 'SlowLearners')
+const breeders = one('RapidBreeders', 'SlowBreeders')
+const traditional = one('Traditional', 'Quarrelsome')
+const trophic = one('Phototrophic', 'Radiotrophic')
+const strong = one('Strong', 'VeryStrong', 'Weak')
+const enduring = one('Enduring', 'Venerable', 'Fleeting')
+const adaptive = one('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
+const gaseous = one(
   'GaseousByproducts',
   'ScintillatingSkin',
   'VolatileExcretions'
 )
 
 // Mechanical
-const bulky = oneof('Bulky', 'DoubleJointed')
-const maintenance = oneof('HighMaintenance', 'Durable')
-const uncanny = oneof('Uncanny', 'EmotionEmulators')
-const repurposed = oneof('RepurposedHardware', 'LearningAlgorithms')
-const custom = oneof('CustomMade', 'MassProduced')
-const luxurious = oneof('Luxurious', 'Recycled')
-const bandwidth = oneof('HighBandwidth', 'StreamlinedProtocols')
+const bulky = one('Bulky', 'DoubleJointed')
+const maintenance = one('HighMaintenance', 'Durable')
+const uncanny = one('Uncanny', 'EmotionEmulators')
+const repurposed = one('RepurposedHardware', 'LearningAlgorithms')
+const custom = one('CustomMade', 'MassProduced')
+const luxurious = one('Luxurious', 'Recycled')
+const bandwidth = one('HighBandwidth', 'StreamlinedProtocols')
 
 const traitsOrigin = Item.create(Trait, [
   {
