@@ -61,15 +61,17 @@ const render = (() => {
 
   return () => {
     // Summary with chosen options
-    summary.innerHTML = `<h2>Empire</h2>`
+    summary.innerHTML = '<h2>Empire summary</h'
+    const table = htmlToElement('<table></table>')
 
     Object.entries(empire).forEach(([name, items]) => {
-      const entries = htmlToElement(`<div>${capitalize(name)}:</div>`)
+      const row = htmlToElement('<tr></tr>')
+      row.appendChild(htmlToElement(`<th>${capitalize(name)}:</th>`))
 
+      const entries = htmlToElement('<td></td>')
       if (items.length === 0) {
-        const placeholder = htmlToElement('<span class="comment"></span>')
-        placeholder.innerText = (name === 'pop') ? 'Biological' : 'Empty'
-        entries.appendChild(placeholder)
+        entries.classList.add('comment')
+        entries.innerText = (name === 'pop') ? 'Biological' : 'Empty'
       } else {
         items.forEach(item => {
           const entry = htmlToElement(entryTemplate(item))
@@ -87,8 +89,11 @@ const render = (() => {
         })
       }
 
-      summary.appendChild(entries)
+      row.appendChild(entries)
+      table.appendChild(row)
     })
+
+    summary.appendChild(table)
 
     // Options for configuring the empire
     options.innerHTML = ''

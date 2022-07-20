@@ -22,7 +22,14 @@ html {
   font-family: monospace;
   background-color: var(--bg);
   color: var(--fg);
-  padding: 1em;
+  padding: 0 1em 0;
+}
+
+h1, h2, h3, h4, h5, h6 { margin: 0.5em 0; }
+
+th {
+  text-align: start;
+  padding-right: 2ch;
 }
 
 .repo-comment, .comment { color: var(--gray); }
@@ -40,6 +47,7 @@ html {
 }
 
 #options {
+  margin-top: 2em;
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
