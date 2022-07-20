@@ -29,13 +29,13 @@ body {
   font-family: monospace;
   background-color: var(--bg);
   color: var(--fg);
-  padding: 0 1em 0;
+  padding: 0.5em 1em 0;
   margin: 0;
   height: 100vh;
 }
 
 h1, h2, h3 {
-  padding: 0.5em 0;
+  margin: 0.5em 0;
 }
 
 th {
@@ -65,21 +65,27 @@ th {
 }
 
 #options > section {
+  flex-grow: 1;
+}
+
+.details { margin: 1em 0; }
+
+.input-list {
   display: flex;
+  height: 500px;
   flex-direction: column;
-  max-height: 600px;
   flex-grow: 1;
   overflow-y: auto;
 }
 
-#options > section {
+.input-list {
   scrollbar-width: thin;
   scrollbar-color: var(--gray) var(--dark);
 }
 
-#options > section::-webkit-scrollbar { width: 0.5em; }
-#options > section::-webkit-scrollbar-track { background: var(--dark); }
-#options > section::-webkit-scrollbar-thumb {
+.input-list::-webkit-scrollbar { width: 0.5em; }
+.input-list::-webkit-scrollbar-track { background: var(--dark); }
+.input-list::-webkit-scrollbar-thumb {
   background-color: var(--gray);
   border: 3px solid transparent;
 }

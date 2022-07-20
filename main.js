@@ -26,7 +26,7 @@ const render = (() => {
       name: 'traits',
       items: traits,
       details: () => `
-        <p>
+        <p class="details">
           Available traits: ${5 - empire.traits.length}<br>
           Available points: ${empire.traits.reduce(Trait.costSum, 2)}
         </p>`,
@@ -51,7 +51,8 @@ const render = (() => {
       name: 'civics',
       items: civics,
       template: sectionTemplate('checkbox', itemAttrributes),
-      details: () => `<p>Available civics: ${2 - empire.civics.length}</p>`,
+      details: () =>
+        `<p class="details">Available civics: ${2 - empire.civics.length}</p>`,
     },
   ]
 
@@ -110,6 +111,8 @@ const render = (() => {
 
       if (details) section.appendChild(htmlToElement(details()))
 
+      const inputList = htmlToElement('<div class="input-list"></div>')
+
       // Go through all items related to this section
       sortItems(items).forEach(item => {
         const element = htmlToElement(template(item))
@@ -123,9 +126,10 @@ const render = (() => {
         const color = getColor(item)
         if (color) element.classList.add(color)
 
-        section.appendChild(element)
+        inputList.appendChild(element)
       })
 
+      section.appendChild(inputList)
       options.appendChild(section)
     })
   }
