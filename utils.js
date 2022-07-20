@@ -14,30 +14,39 @@ const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 // Convert PascalCase to normal wording, with specific capitalization rules
 const prettify = str => decapitalize(capitalize(spacify(str)))
 
-// Helper function for generating HTML flags (attributes without values)
-const htmlFlag = (enabled, flag) => (enabled ? flag : '')
-const disabled = item => htmlFlag(item.disabled(), 'disabled')
-const invalid = item => htmlFlag(item.invalid(), 'invalid')
-const checked = item => htmlFlag(item.checked(), 'checked')
+
+// Helper function for setting an HTML flag
+const setHtmlFlag = (element, flag, isEnabled) =>
+  isEnabled ? element.setAttribute(flag, '') : element.removeAttribute(flag)
+
+
+// Converts rules to HTML lists with coloring depending on pass/fail
+const rulesToHtml = (item, x) => {
+  if (x instanceof Item) {
+    return `<li ${x.checked() ? 'present' : ''}>${x.fullName}</li>`
+  } else if (x instanceof Rule) {
+    return `
+      <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
+      <ul>
+        ${sortRules(x)
+          .map(y => rulesToHtml(item, y))
+          .join('')}
+      </ul>`
+  }
+}
 
 const sectionTemplate = inputType => item =>
   `<div>
-      <input
-        type="${inputType}"
-        id="${item.id}"
-        name="${item.id}"
-        ${checked(item)}
-        ${invalid(item)}
-        ${disabled(item)}>
+      <input type="${inputType}" id="${item.id}" name="${item.id}">
       <label for="${item.id}">${item.label}</label>
-      <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
+      <div class="tooltip"></div>
     </div>`
 
 // Entry template
 const entryTemplate = item => `
   <span>
     <label for="${item.id}">${item.name}</label>,
-    <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
+    <div class="tooltip"></div>
   </span>`
 
 // Helper function for getting item by id from all items
@@ -94,23 +103,6 @@ const sortRules = rule => {
     return [...items, ...sortRules(rules)]
   } else return rule
 }
-
-// Converts rules to HTML lists with coloring depending on pass/fail
-const rulesToHtml = (() => {
-  return (item, x) => {
-    if (x instanceof Item) {
-      return `<li ${x.checked() ? 'present' : ''}>${x.fullName}</li>`
-    } else if (x instanceof Rule) {
-      return `
-        <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
-        <ul>
-          ${sortRules(x)
-            .map(y => rulesToHtml(item, y))
-            .join('')}
-        </ul>`
-    }
-  }
-})()
 
 // Helper function for coloring the items with arbitrary rules
 // Returns CSS color class name or `null` for no class
