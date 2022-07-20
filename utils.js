@@ -103,7 +103,7 @@ const generateRules = (node, item, x) => {
     return rules.concat(() => {
       const value = item.rule.test()
       setHtmlFlag(span, 'pass', value)
-      setHtmlFlag(span, 'fail', value)
+      setHtmlFlag(span, 'fail', !value)
     })
   }
 }
