@@ -4,7 +4,6 @@ class Pop extends Item {
 }
 
 const pop = Item.create(Pop, [
-  { id: 'Biological' },
   { id: 'Botanic' },
   { id: 'Lithoid' },
   { id: 'Mechanical' },

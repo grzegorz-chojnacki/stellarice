@@ -294,7 +294,7 @@ const traitsNormal = Item.create(Trait, [
     cost: -1,
     id: 'Decadent',
   },
-]).map(Item.withRule(some('Biological', 'Lithoid', 'Botanic')))
+]).map(Item.withRule(none('Mechanical')))
 
 const traitsMechanic = Item.create(Trait, [
   // Positive traits

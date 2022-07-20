@@ -123,7 +123,6 @@ const rulesToHtml = (() => {
 const getColor = item => {
   if (item instanceof Pop) {
     return {
-      Biological: 'tacao',
       Botanic: 'rosebud',
       Lithoid: 'apricot',
       Mechanical: 'turquoise',
