@@ -48,6 +48,13 @@ const sectionTemplate =
       <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
     </div>`
 
+// Entry template:
+const entryTemplate = item => `
+  <span>
+    <label for="${item.id}">${item.name}</label>,
+    <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
+  </span>`
+
 // Helper function for getting item by id from all items
 const getItemById = id => {
   const item = all.find(item => item.id === id)
@@ -112,7 +119,9 @@ const rulesToHtml = (() => {
       return `
         <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
         <ul>
-          ${sortRules(x).map(y => rulesToHtml(item, y)).join('')}
+          ${sortRules(x)
+            .map(y => rulesToHtml(item, y))
+            .join('')}
         </ul>`
     }
   }

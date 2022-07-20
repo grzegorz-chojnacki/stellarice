@@ -22,10 +22,13 @@ html {
   font-family: monospace;
   background-color: var(--bg);
   color: var(--fg);
+  padding: 1em;
 }
 
+.repo-comment, .comment { color: var(--gray); }
+.comment { font-style: italic; }
+
 .repo-comment {
-  color: var(--gray);
   font-size: 0.5em;
   font-weight: normal;
   vertical-align: middle;
@@ -36,12 +39,13 @@ html {
   font-weight: bold;
 }
 
-main {
+#options {
   display: flex;
   flex-wrap: wrap;
+  gap: 1em;
 }
 
-section { margin: 0 1em 1em; }
+
 
 input:disabled, input:disabled + label { opacity: 0.4; }
 
@@ -77,7 +81,7 @@ input[origin] + label > * {
   background-color: var(--bg);
 }
 
-div:hover > .tooltip {
+div:hover > .tooltip, span:hover > .tooltip {
   display: block;
 }
 
