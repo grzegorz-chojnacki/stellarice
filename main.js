@@ -20,7 +20,7 @@ const render = (() => {
     {
       name: 'pop',
       items: pop,
-      template: sectionTemplate('radio', itemAttrributes),
+      template: sectionTemplate('radio'),
     },
     {
       name: 'traits',
@@ -30,27 +30,27 @@ const render = (() => {
           Available traits: ${5 - empire.traits.length}<br>
           Available points: ${empire.traits.reduce(Trait.costSum, 2)}
         </p>`,
-      template: sectionTemplate('checkbox', traitAttrributes),
+      template: sectionTemplate('checkbox'),
     },
     {
       name: 'origin',
       items: origin,
-      template: sectionTemplate('radio', itemAttrributes),
+      template: sectionTemplate('radio'),
     },
     {
       name: 'ethics',
       items: ethics,
-      template: sectionTemplate('checkbox', itemAttrributes),
+      template: sectionTemplate('checkbox'),
     },
     {
       name: 'authority',
       items: authority,
-      template: sectionTemplate('radio', itemAttrributes),
+      template: sectionTemplate('radio'),
     },
     {
       name: 'civics',
       items: civics,
-      template: sectionTemplate('checkbox', itemAttrributes),
+      template: sectionTemplate('checkbox'),
       details: () =>
         `<p class="details">Available civics: ${2 - empire.civics.length}</p>`,
     },

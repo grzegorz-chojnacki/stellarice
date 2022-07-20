@@ -20,27 +20,15 @@ const disabled = item => htmlFlag(item.disabled(), 'disabled')
 const invalid = item => htmlFlag(item.invalid(), 'invalid')
 const checked = item => htmlFlag(item.checked(), 'checked')
 
-// Helper functions for sectionTemplate
-const itemAttrributes = item => `
-  ${checked(item)}
-  ${invalid(item)}
-  ${disabled(item)}`
-
-const traitAttrributes = trait => `
-  ${checked(trait)}
-  ${invalid(trait)}
-  ${disabled(trait)}`
-
-// Abstract section template builder:
-//   inputType  - checkbox, radio
-//   attributes - helper function for generating a group of HTML attrubutes
-const sectionTemplate = (inputType, attributes) => item =>
+const sectionTemplate = inputType => item =>
   `<div>
       <input
         type="${inputType}"
         id="${item.id}"
         name="${item.id}"
-        ${attributes(item)}>
+        ${checked(item)}
+        ${invalid(item)}
+        ${disabled(item)}>
       <label for="${item.id}">${item.label}</label>
       <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
     </div>`
