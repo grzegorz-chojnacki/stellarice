@@ -13,7 +13,14 @@ const empire = {
 const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
+// List of various HTML elements which will need to be updated
+const elements = { inputs: [], headers: [] }
+
 // Section templates
+//   name     - the name displayed at the top of the section
+//   items    - items associated with this section
+//   details  - additional details about this section
+//   template - HTML tamplate dependent on a given item
 const sections = [
   {
     name: 'pop',
@@ -54,10 +61,16 @@ const sections = [
   },
 ]
 
-const elements = []
+// Main handler for updateing HTML elements after a user action
+const updateElements = () => {
+  elements.headers.forEach(({ header, items }) => {
+    header.classList.remove('cranberry')
+    if (items.find(item => !item.generalRule())) {
+      header.classList.add('cranberry')
+    }
+  })
 
-const updateInputs = () => {
-  elements.forEach(({ input, item, tooltip }) => {
+  elements.inputs.forEach(({ input, item, tooltip }) => {
     input.checked = item.checked()
     setHtmlFlag(input, 'disabled', item.disabled())
     setHtmlFlag(input, 'invalid', item.invalid())
@@ -66,9 +79,15 @@ const updateInputs = () => {
   })
 }
 
+// Input/label onclick handler
+const onClickAction = (item, name) => () => {
+  toggleIncluded(empire[name], item)
+  updateElements()
+}
+
+// Render the empire summary
 const renderSummary = () => {
-  // Summary with options picked for the empire
-  summary.innerHTML = '<h2>Empire summary</h'
+  summary.innerHTML = '<h2>Empire summary</h2>'
   const table = htmlToElement('<table></table>')
 
   Object.entries(empire).forEach(([name, items]) => {
@@ -84,40 +103,27 @@ const renderSummary = () => {
         const entry = htmlToElement(entryTemplate(item))
         const label = entry.getElementsByTagName('label')[0]
 
-        label.onclick = () => {
-          toggleIncluded(empire[name], item)
-          updateInputs()
-        }
-
-        const color = getColor(item)
-        if (color) label.classList.add(color)
+        label.onclick = onClickAction(item, name)
+        label.classList.add(getColor(item))
 
         entries.appendChild(entry)
       })
     }
 
-    row.appendChild(entries)
-    table.appendChild(row)
+    table.appendChild(row).appendChild(entries)
   })
 
   summary.appendChild(table)
 }
 
-const renderOptions = () => {
-  // Options for configuring the empire
+
+// Render the items
+const renderItems = () => {
   options.innerHTML = ''
-  // Build each section, where:
-  //   name     - both the section name and related item map (from `all` items)
-  //   details  - additional details about this section
-  //   template - HTML tamplate dependent on a given item
-  //   items    - items associated with this section
   sections.forEach(({ name, details, template, items }) => {
     const section = htmlToElement('<section></section>')
     const header = htmlToElement(`<h2>${capitalize(name)}</h2>`)
-
-    if (items.find(item => !item.generalRule())) {
-      header.classList.add('cranberry')
-    }
+    elements.headers.push({ header, items })
 
     section.appendChild(header)
 
@@ -131,24 +137,19 @@ const renderOptions = () => {
       const input = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
 
-      elements.push({ input, item, tooltip })
+      elements.inputs.push({ input, item, tooltip })
 
-      input.onclick = () => {
-        toggleIncluded(empire[name], item)
-        updateInputs()
-      }
-
-      const color = getColor(item)
-      if (color) element.classList.add(color)
+      input.onclick = onClickAction(item, name)
+      element.classList.add(getColor(item))
 
       inputList.appendChild(element)
     })
 
-    section.appendChild(inputList)
-    options.appendChild(section)
+    options.appendChild(section).appendChild(inputList)
   })
 }
 
+// Initialize the view
 renderSummary()
-renderOptions()
-updateInputs()
+renderItems()
+updateElements()

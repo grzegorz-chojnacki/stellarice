@@ -1,53 +1,27 @@
-// Generates HTML element from text
-const htmlToElement = html => {
-  const template = document.createElement('template')
-  template.innerHTML = html.trim()
-  return template.content.firstChild
+// Helper partition function
+const partition = (arr, fn) =>
+  arr.reduce(
+    ([a, b], x) => (fn(x) ? [a.concat(x), b] : [a, b.concat(x)]),
+    [[], []]
+  )
+
+// Sort items depending on arbitrary rules
+const sortItems = items => {
+  // Place disabled as last
+  items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
+  // Place checked & invalid as first
+  items = [...partition(items, x => x.invalid() && x.checked()).flatMap(x => x)]
+  return items
 }
 
-// String helper functions
-const capitalize = str => str[0].toUpperCase() + str.slice(1)
-const decapitalize = str =>
-  str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
-const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
-
-// Convert PascalCase to normal wording, with specific capitalization rules
-const prettify = str => decapitalize(capitalize(spacify(str)))
-
-
-// Helper function for setting an HTML flag
-const setHtmlFlag = (element, flag, isEnabled) =>
-  isEnabled ? element.setAttribute(flag, '') : element.removeAttribute(flag)
-
-
-// Converts rules to HTML lists with coloring depending on pass/fail
-const rulesToHtml = (item, x) => {
-  if (x instanceof Item) {
-    return `<li ${x.checked() ? 'present' : ''}>${x.fullName}</li>`
-  } else if (x instanceof Rule) {
-    return `
-      <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
-      <ul>
-        ${sortRules(x)
-          .map(y => rulesToHtml(item, y))
-          .join('')}
-      </ul>`
-  }
+// Sort rules alphabetically and hoist single items to the top
+const sortRules = rule => {
+  if (rule.items) {
+    const [items, rules] = partition(rule.items, x => x instanceof Item)
+    items.sort((a, b) => a.fullName.localeCompare(b.fullName))
+    return [...items, ...sortRules(rules)]
+  } else return rule
 }
-
-const sectionTemplate = inputType => item =>
-  `<div>
-      <input type="${inputType}" id="${item.id}" name="${item.id}">
-      <label for="${item.id}">${item.label}</label>
-      <div class="tooltip"></div>
-    </div>`
-
-// Entry template
-const entryTemplate = item => `
-  <span>
-    <label for="${item.id}">${item.name}</label>,
-    <div class="tooltip"></div>
-  </span>`
 
 // Helper function for getting item by id from all items
 const getItemById = id => {
@@ -79,29 +53,53 @@ const toggleIncluded = (list, item) => {
   }
 }
 
-// Helper partition function
-const partition = (arr, fn) =>
-  arr.reduce(
-    ([a, b], x) => (fn(x) ? [a.concat(x), b] : [a, b.concat(x)]),
-    [[], []]
-  )
-
-// Sort items depending on arbitrary rules
-const sortItems = items => {
-  // Place disabled as last
-  items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
-  // Place checked & invalid as first
-  items = [...partition(items, x => x.invalid() && x.checked()).flatMap(x => x)]
-  return items
+// Generates HTML element from text
+const htmlToElement = html => {
+  const template = document.createElement('template')
+  template.innerHTML = html.trim()
+  return template.content.firstChild
 }
 
-// Sort rules alphabetically and hoist single items to the top
-const sortRules = rule => {
-  if (rule.items) {
-    const [items, rules] = partition(rule.items, x => x instanceof Item)
-    items.sort((a, b) => a.fullName.localeCompare(b.fullName))
-    return [...items, ...sortRules(rules)]
-  } else return rule
+// String helper functions
+const capitalize = str => str[0].toUpperCase() + str.slice(1)
+const decapitalize = str =>
+  str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
+const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
+
+// Convert PascalCase to normal wording, with specific capitalization rules
+const prettify = str => decapitalize(capitalize(spacify(str)))
+
+// Helper function for setting an HTML flag
+const setHtmlFlag = (element, flag, isEnabled) =>
+  isEnabled ? element.setAttribute(flag, '') : element.removeAttribute(flag)
+
+const sectionTemplate = inputType => item =>
+  `<div>
+      <input type="${inputType}" id="${item.id}" name="${item.id}">
+      <label for="${item.id}">${item.label}</label>
+      <div class="tooltip"></div>
+    </div>`
+
+// Entry template
+const entryTemplate = item => `
+  <span>
+    <label for="${item.id}">${item.name}</label>,
+    <div class="tooltip"></div>
+  </span>`
+
+// Converts rules to HTML lists with coloring depending on pass/fail
+const rulesToHtml = (item, x) => {
+  if (x instanceof Item) {
+    return `<li ${x.checked() ? 'present' : ''}>${x.fullName}</li>`
+  } else if (x instanceof Rule) {
+    return `
+      <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
+      <ul>
+        ${sortRules(x)
+          .map(y => rulesToHtml(item, y))
+          .join('')}
+      </ul>`
+  }
 }
 
 // Helper function for coloring the items with arbitrary rules
@@ -142,5 +140,5 @@ const getColor = item => {
     return 'apricot'
   }
 
-  return null
+  return ''
 }

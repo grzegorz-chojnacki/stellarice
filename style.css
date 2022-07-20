@@ -101,12 +101,6 @@ input[invalid]:checked + label > * {
   text-decoration: line-through;
 }
 
-input[origin],
-input[origin] + label,
-input[origin] + label > * {
-  font-weight: bold;
-}
-
 .trait-point {
   display: inline-block;
   width: 2ch;
