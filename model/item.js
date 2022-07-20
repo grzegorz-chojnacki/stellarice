@@ -29,8 +29,14 @@ class Item {
     this.empireName = this.constructor.name.toLowerCase()
   }
 
+  // Used in rules, also contains the type
   get fullName() {
     return `${this.constructor.name} ${this.name}`
+  }
+
+  // Used to display the input label (and e.g. differentiate from the summary)
+  get label() {
+    return this.name
   }
 
   // Use getter, as empire is not defined while defining the model

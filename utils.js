@@ -34,21 +34,18 @@ const traitAttrributes = trait => `
 // Abstract section template builder:
 //   inputType  - checkbox, radio
 //   attributes - helper function for generating a group of HTML attrubutes
-//   decorator  - generates markup which wich will be prepended to the item name
-const sectionTemplate =
-  (inputType, attributes, decorator = () => '') =>
-  item =>
-    `<div>
+const sectionTemplate = (inputType, attributes) => item =>
+  `<div>
       <input
         type="${inputType}"
         id="${item.id}"
         name="${item.id}"
         ${attributes(item)}>
-      <label for="${item.id}">${decorator(item)}${item.name}</label>
+      <label for="${item.id}">${item.label}</label>
       <div class="tooltip">${rulesToHtml(item, item.rule)}</div>
     </div>`
 
-// Entry template:
+// Entry template
 const entryTemplate = item => `
   <span>
     <label for="${item.id}">${item.name}</label>,

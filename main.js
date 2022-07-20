@@ -30,11 +30,7 @@ const render = (() => {
           Available traits: ${5 - empire.traits.length}<br>
           Available points: ${empire.traits.reduce(Trait.costSum, 2)}
         </p>`,
-      template: sectionTemplate(
-        'checkbox',
-        traitAttrributes,
-        item => `[${item.cost.toString().padStart(2)}] `
-      ),
+      template: sectionTemplate('checkbox', traitAttrributes),
     },
     {
       name: 'origin',
@@ -71,7 +67,7 @@ const render = (() => {
       const entries = htmlToElement('<td></td>')
       if (items.length === 0) {
         entries.classList.add('comment')
-        entries.innerText = (name === 'pop') ? 'Biological' : 'Empty'
+        entries.innerText = name === 'pop' ? 'Biological' : 'Empty'
       } else {
         items.forEach(item => {
           const entry = htmlToElement(entryTemplate(item))
