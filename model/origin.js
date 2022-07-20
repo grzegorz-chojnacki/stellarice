@@ -1,4 +1,8 @@
 class Origin extends Item {
+  get empireList() {
+    return empire.origin
+  }
+
   generalRule = () => this.empireList.length === 1
   isAvailable = () => this.empireList.length === 0
 }

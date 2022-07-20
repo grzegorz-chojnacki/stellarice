@@ -1,7 +1,9 @@
 class Trait extends Item {
-  static empireName = 'traits'
-
   static costSum = (acc, { cost }) => acc - cost
+
+  get empireList() {
+    return empire.traits
+  }
 
   generalRule = () =>
     this.empireList.length <= 5 && this.empireList.reduce(Trait.costSum, 2) >= 0

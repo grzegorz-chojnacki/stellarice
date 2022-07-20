@@ -1,6 +1,9 @@
 class Ethic extends Item {
-  static empireName = 'ethics'
   static costSum = (acc, { cost }) => acc + cost
+
+  get empireList() {
+    return empire.ethics
+  }
 
   generalRule = () => this.empireList.reduce(Ethic.costSum, 0) === 3
   isAvailable = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3

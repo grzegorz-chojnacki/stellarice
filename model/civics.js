@@ -1,5 +1,7 @@
 class Civic extends Item {
-  static empireName = 'civics'
+  get empireList() {
+    return empire.civics
+  }
 
   generalRule = () => this.empireList.length === 2
   isAvailable = () => this.empireList.length < 2

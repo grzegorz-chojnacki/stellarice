@@ -33,11 +33,9 @@ class Item {
     return `${this.constructor.name} ${this.name}`
   }
 
-  // Empire is not initialized before the creation of Items, so we have to defer
+  // Use getter, as empire is not defined while defining the model
   get empireList() {
-    return empire[
-      (this.constructor.empireName || this.constructor.name).toLowerCase()
-    ]
+    throw new Error('Item does not have an empireList defined!')
   }
 
   // A general rule for every item in class

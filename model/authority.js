@@ -1,4 +1,8 @@
 class Authority extends Item {
+  get empireList() {
+    return empire.authority
+  }
+
   generalRule = () => this.empireList.length === 1
   isAvailable = () => this.empireList.length === 0
 }

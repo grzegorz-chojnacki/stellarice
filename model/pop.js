@@ -1,4 +1,8 @@
 class Pop extends Item {
+  get empireList() {
+    return empire.pop
+  }
+
   isAvailable = () => this.empireList.length === 0
 }
 
