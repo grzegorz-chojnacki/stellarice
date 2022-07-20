@@ -63,7 +63,8 @@ const render = (() => {
     // Build each section, where:
     //   name     - both the section name and related item map (from `all` items)
     //   summary  - a special section for traits
-    //   tamplate - HTML tamplate dependent on a given item
+    //   template - HTML tamplate dependent on a given item
+    //   items    - items associated with this section
     sections.forEach(({ name, summary, template, items }) => {
       const section = htmlToElement('<section></section>')
       const header = htmlToElement(`<h2>${capitalize(name)}</h2>`)
