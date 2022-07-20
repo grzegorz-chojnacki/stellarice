@@ -3,19 +3,10 @@ class Trait extends Item {
 
   static costSum = (acc, { cost }) => acc - cost
 
-  invalid = () => {
-    if (!this.rule.test()) return true
-    const sum = this.empireList.reduce(Trait.costSum, 2)
-    if (sum < 0 && this.cost >= 0) return true
-    return false
-  }
-
   generalRule = () =>
     this.empireList.length <= 5 && this.empireList.reduce(Trait.costSum, 2) >= 0
 
-  isAvailable = () =>
-    this.empireList.length < 5 &&
-    this.empireList.reduce(Trait.costSum, 2) - this.cost > 0
+  isAvailable = () => this.empireList.length < 5
 }
 
 // Biological
