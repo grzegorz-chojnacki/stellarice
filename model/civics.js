@@ -1,7 +1,8 @@
 class Civic extends Item {
   static empireName = 'civics'
 
-  generalRule = () => this.empireList.length < 2
+  generalRule = () => this.empireList.length === 2
+  isAvailable = () => this.empireList.length < 2
 }
 
 const civicsNormal = Item.create(Civic, [

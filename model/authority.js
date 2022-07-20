@@ -1,5 +1,6 @@
 class Authority extends Item {
-  generalRule = () => this.empireList.length < 1
+  generalRule = () => this.empireList.length === 1
+  isAvailable = () => this.empireList.length === 0
 }
 
 const authority = Item.create(Authority, [

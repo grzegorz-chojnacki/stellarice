@@ -54,7 +54,7 @@ const render = (() => {
       name: 'civics',
       items: civics,
       template: sectionTemplate('checkbox', itemAttrributes),
-      summary: () => `<p>Available slots: ${2 - empire.civics.length}</p>`,
+      summary: () => `<p>Available civics: ${2 - empire.civics.length}</p>`,
     },
   ]
 
@@ -66,7 +66,13 @@ const render = (() => {
     //   tamplate - HTML tamplate dependent on a given item
     sections.forEach(({ name, summary, template, items }) => {
       const section = htmlToElement('<section></section>')
-      section.appendChild(htmlToElement(`<h2>${capitalize(name)}</h2>`))
+      const header = htmlToElement(`<h2>${capitalize(name)}</h2>`)
+
+      if (items.find(item => !item.generalRule())) {
+        header.classList.add('cranberry')
+      }
+
+      section.appendChild(header)
 
       if (summary) section.appendChild(htmlToElement(summary()))
 

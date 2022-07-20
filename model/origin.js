@@ -1,5 +1,6 @@
 class Origin extends Item {
-  generalRule = () => empire.origin.length === 0
+  generalRule = () => this.empireList.length === 1
+  isAvailable = () => this.empireList.length === 0
 }
 
 const origin = Item.create(Origin, [

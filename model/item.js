@@ -42,11 +42,11 @@ class Item {
 
   // A general rule for every item in class
   generalRule = () => true
+  isAvailable = () => true
 
   // Logic & HTML formatting helper methods
-  unmetRule = () => !this.rule.test()
-  invalid = () => this.unmetRule()
+  valid = () => this.rule.test()
+  invalid = () => !this.rule.test()
   checked = () => this.empireList.includes(this)
-  disabled = () =>
-    !(this.checked() || (this.generalRule() && !this.unmetRule()))
+  disabled = () => !this.checked() && (!this.isAvailable() || this.invalid())
 }
