@@ -1,6 +1,7 @@
 :root {
   --fg:         #BBBBBB;
   --bg:         #16161C;
+  --dark:       #232530;
   --gray:       #4C4D53;
   --lavender:   #B877DB;
   --turquoise:  #25B0BC;
@@ -10,6 +11,12 @@
   --tacao:      #FAC29A;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .lavender  { color: var(--lavender);  }
 .turquoise { color: var(--turquoise); }
 .cranberry { color: var(--cranberry); }
@@ -17,15 +24,19 @@
 .rosebud   { color: var(--rosebud);   }
 .tacao     { color: var(--tacao);     }
 
-html {
+body {
   font-size: 16px;
   font-family: monospace;
   background-color: var(--bg);
   color: var(--fg);
   padding: 0 1em 0;
+  margin: 0;
+  height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 { margin: 0.5em 0; }
+h1, h2, h3 {
+  padding: 0.5em 0;
+}
 
 th {
   text-align: start;
@@ -53,7 +64,25 @@ th {
   gap: 1em;
 }
 
+#options > section {
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
 
+#options > section {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray) var(--dark);
+}
+
+#options > section::-webkit-scrollbar { width: 0.5em; }
+#options > section::-webkit-scrollbar-track { background: var(--dark); }
+#options > section::-webkit-scrollbar-thumb {
+  background-color: var(--gray);
+  border: 3px solid transparent;
+}
 
 input:disabled, input:disabled + label { opacity: 0.4; }
 
