@@ -69,17 +69,16 @@ const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 // Convert PascalCase to normal wording, with specific capitalization rules
 const prettify = str => decapitalize(capitalize(spacify(str)))
 
-
 // Helper function for setting an HTML flag
 const setHtmlFlag = (element, flag, isEnabled) =>
   isEnabled ? element.setAttribute(flag, '') : element.removeAttribute(flag)
 
 const sectionTemplate = inputType => item =>
   `<div>
-      <input type="${inputType}" id="${item.id}" name="${item.id}">
-      <label for="${item.id}">${item.label}</label>
-      <div class="tooltip"></div>
-    </div>`
+    <input type="${inputType}" id="${item.id}" name="${item.id}">
+    <label for="${item.id}">${item.label}</label>
+    <div class="tooltip"></div>
+  </div>`
 
 // Entry template
 const entryTemplate = item => `
@@ -87,21 +86,6 @@ const entryTemplate = item => `
     <label for="${item.id}">${item.name}</label>,
     <div class="tooltip"></div>
   </span>`
-
-// Converts rules to HTML lists with coloring depending on pass/fail
-const rulesToHtml = (item, x) => {
-  if (x instanceof Item) {
-    return `<li ${x.checked() ? 'present' : ''}>${x.fullName}</li>`
-  } else if (x instanceof Rule) {
-    return `
-      <span ${item.rule.test() ? 'pass' : 'fail'}>${x.text}</span>
-      <ul>
-        ${sortRules(x)
-          .map(y => rulesToHtml(item, y))
-          .join('')}
-      </ul>`
-  }
-}
 
 // Recursively builds the HTML tree of rules for item
 // Returns a list of callbacks which will update the tree to the current state

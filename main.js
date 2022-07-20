@@ -13,8 +13,8 @@ const empire = {
 const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
-// List of various HTML elements which will need to be updated
-const elements = { inputs: [], headers: [], tooltipCallbacks: [] }
+// List of various callback functions that refresh the DOM after state change
+const callbacks = []
 
 // Section templates
 //   name     - the name displayed at the top of the section
@@ -61,29 +61,11 @@ const sections = [
   },
 ]
 
-// Main handler for updateing HTML elements after a user action
-const updateElements = () => {
-  elements.headers.forEach(({ header, items }) => {
-    header.classList.remove('cranberry')
-    if (items.find(item => !item.generalRule())) {
-      header.classList.add('cranberry')
-    }
-  })
-
-  elements.tooltipCallbacks.forEach(fn => fn())
-
-  elements.inputs.forEach(({ input, item }) => {
-    input.checked = item.checked()
-    setHtmlFlag(input, 'disabled', item.disabled())
-    setHtmlFlag(input, 'invalid', item.invalid())
-    renderSummary()
-  })
-}
 
 // Input/label onclick handler
 const onClickAction = (item, name) => () => {
   toggleIncluded(empire[name], item)
-  updateElements()
+  callbacks.forEach(fn => fn())
 }
 
 // Render the empire summary
@@ -123,7 +105,13 @@ const renderItems = () => {
   sections.forEach(({ name, details, template, items }) => {
     const section = htmlToElement('<section></section>')
     const header = htmlToElement(`<h2>${capitalize(name)}</h2>`)
-    elements.headers.push({ header, items })
+    callbacks.push(() => {
+      if (items.find(item => !item.generalRule())) {
+        header.classList.add('cranberry')
+      } else {
+        header.classList.remove('cranberry')
+      }
+    })
 
     section.appendChild(header)
 
@@ -137,8 +125,14 @@ const renderItems = () => {
       const input = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
 
-      elements.inputs.push({ input, item })
-      elements.tooltipCallbacks.push(...generateRules(tooltip, item, item.rule))
+      callbacks.push(...generateRules(tooltip, item, item.rule))
+      callbacks
+        .push(() => {
+          input.checked = item.checked()
+          setHtmlFlag(input, 'disabled', item.disabled())
+          setHtmlFlag(input, 'invalid', item.invalid())
+          renderSummary()
+        })
 
       input.onclick = onClickAction(item, name)
       element.classList.add(getColor(item))
@@ -153,4 +147,4 @@ const renderItems = () => {
 // Initialize the view
 renderSummary()
 renderItems()
-updateElements()
+callbacks.forEach(fn => fn())
