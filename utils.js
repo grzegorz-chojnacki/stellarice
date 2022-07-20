@@ -69,6 +69,7 @@ const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 // Convert PascalCase to normal wording, with specific capitalization rules
 const prettify = str => decapitalize(capitalize(spacify(str)))
 
+
 // Helper function for setting an HTML flag
 const setHtmlFlag = (element, flag, isEnabled) =>
   isEnabled ? element.setAttribute(flag, '') : element.removeAttribute(flag)
@@ -99,6 +100,27 @@ const rulesToHtml = (item, x) => {
           .map(y => rulesToHtml(item, y))
           .join('')}
       </ul>`
+  }
+}
+
+// Recursively builds the HTML tree of rules for item
+// Returns a list of callbacks which will update the tree to the current state
+const generateRules = (node, item, x) => {
+  if (x instanceof Item) {
+    const li = htmlToElement(`<li>${x.fullName}</li>`)
+    node.appendChild(li)
+    return () => setHtmlFlag(li, 'present', x.checked())
+  } else if (x instanceof Rule) {
+    const span = htmlToElement(`<span>${x.text}</span>`)
+    const ul = htmlToElement('<ul></ul>')
+    const rules = sortRules(x).flatMap(y => generateRules(ul, item, y))
+    node.appendChild(span)
+    node.appendChild(ul)
+    return rules.concat(() => {
+      const value = item.rule.test()
+      setHtmlFlag(span, 'pass', value)
+      setHtmlFlag(span, 'fail', value)
+    })
   }
 }
 

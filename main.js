@@ -14,7 +14,7 @@ const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
 // List of various HTML elements which will need to be updated
-const elements = { inputs: [], headers: [] }
+const elements = { inputs: [], headers: [], tooltipCallbacks: [] }
 
 // Section templates
 //   name     - the name displayed at the top of the section
@@ -70,11 +70,12 @@ const updateElements = () => {
     }
   })
 
-  elements.inputs.forEach(({ input, item, tooltip }) => {
+  elements.tooltipCallbacks.forEach(fn => fn())
+
+  elements.inputs.forEach(({ input, item }) => {
     input.checked = item.checked()
     setHtmlFlag(input, 'disabled', item.disabled())
     setHtmlFlag(input, 'invalid', item.invalid())
-    tooltip.innerHTML = rulesToHtml(item, item.rule)
     renderSummary()
   })
 }
@@ -116,7 +117,6 @@ const renderSummary = () => {
   summary.appendChild(table)
 }
 
-
 // Render the items
 const renderItems = () => {
   options.innerHTML = ''
@@ -137,7 +137,8 @@ const renderItems = () => {
       const input = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
 
-      elements.inputs.push({ input, item, tooltip })
+      elements.inputs.push({ input, item })
+      elements.tooltipCallbacks.push(...generateRules(tooltip, item, item.rule))
 
       input.onclick = onClickAction(item, name)
       element.classList.add(getColor(item))
