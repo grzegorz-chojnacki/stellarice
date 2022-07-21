@@ -70,8 +70,11 @@ const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 const prettify = str => decapitalize(capitalize(spacify(str)))
 
 // Helper function for setting an HTML flag
-const setHtmlFlag = (element, flag, isEnabled) =>
-  isEnabled ? element.setAttribute(flag, '') : element.removeAttribute(flag)
+const setHtmlFlag = (element, name, isEnabled) =>
+  isEnabled ? element.setAttribute(name, '') : element.removeAttribute(name)
+
+const setHtmlClass = (element, name, isEnabled) =>
+  isEnabled ? element.classList.add(name) : element.classList.remove(name)
 
 const sectionTemplate = inputType => item =>
   `<div>
@@ -87,20 +90,21 @@ const entryTemplate = item => `
     <div class="tooltip"></div>
   </span>`
 
-// Recursively builds the HTML tree of rules for item
-// Returns a list of callbacks which will update the tree to the current state
-const generateRules = (node, item, x) => {
+// Recursively builds the HTML tree of rules and attaches them to root
+// Returns a list of HTML nodes
+//   - x can be either a rule of an item
+const generateRules = (root, x) => {
   if (x instanceof Item) {
-    const li = htmlToElement(`<li>${x.fullName}</li>`)
-    node.appendChild(li)
-    return { li, x }
+    const handle = htmlToElement(`<li>${x.fullName}</li>`)
+    root.appendChild(handle)
+    return { handle, x }
   } else if (x instanceof Rule) {
-    const span = htmlToElement(`<span>${x.text}</span>`)
+    const handle = htmlToElement(`<span>${x.text}</span>`)
     const ul = htmlToElement('<ul></ul>')
-    const rules = sortRules(x).flatMap(y => generateRules(ul, item, y))
-    node.appendChild(span)
-    node.appendChild(ul)
-    return rules.concat({ span, x })
+    const rules = sortRules(x).flatMap(y => generateRules(ul, y))
+    root.appendChild(handle)
+    root.appendChild(ul)
+    return rules.concat({ handle, x })
   }
 }
 
@@ -143,4 +147,17 @@ const getColor = item => {
   }
 
   return ''
+}
+
+const updateRuleLi = (li, item) => setHtmlFlag(li, 'present', item.checked())
+const updateRuleSpan = (span, item) => {
+  const value = item.rule.test()
+  setHtmlFlag(span, 'pass', value)
+  setHtmlFlag(span, 'fail', !value)
+}
+
+const udpateInput = (input, item) => {
+  input.checked = item.checked()
+  setHtmlFlag(input, 'disabled', item.disabled())
+  setHtmlFlag(input, 'invalid', item.invalid())
 }

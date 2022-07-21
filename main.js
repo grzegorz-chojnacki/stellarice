@@ -14,7 +14,7 @@ const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
 // List of various callback functions that refresh the DOM after state change
-const callbacks = []
+const updatable = { headers: [], inputs: [] }
 
 // Section templates
 //   name     - the name displayed at the top of the section
@@ -61,11 +61,33 @@ const sections = [
   },
 ]
 
+const updateView = () => {
+  renderSummary()
+
+  updatable.headers.forEach(({ header, items }) => {
+    setHtmlClass(
+      header,
+      'cranberry',
+      items.find(item => !item.generalRule())
+    )
+  })
+
+  updatable.inputs.forEach(({ input, item, rules }) => {
+    udpateInput(input, item)
+    rules.forEach(({ handle, x }) => {
+      if (x instanceof Rule) {
+        updateRuleSpan(handle, item)
+      } else if (x instanceof Item) {
+        updateRuleLi(handle, x)
+      }
+    })
+  })
+}
 
 // Input/label onclick handler
 const onClickAction = (item, name) => () => {
   toggleIncluded(empire[name], item)
-  callbacks.forEach(fn => fn())
+  updateView()
 }
 
 // Render the empire summary
@@ -106,13 +128,7 @@ const renderItems = () => {
   sections.forEach(({ name, details, template, items }) => {
     const section = htmlToElement('<section></section>')
     const header = htmlToElement(`<h2>${capitalize(name)}</h2>`)
-    callbacks.push(() => {
-      if (items.find(item => !item.generalRule())) {
-        header.classList.add('cranberry')
-      } else {
-        header.classList.remove('cranberry')
-      }
-    })
+    updatable.headers.push({ header, items })
 
     section.appendChild(header)
 
@@ -126,23 +142,8 @@ const renderItems = () => {
       const input = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
 
-      const rules = generateRules(tooltip, item, item.rule)
-      callbacks.push(() => rules.forEach(({ li, span, x }) => {
-        if (li) {
-          setHtmlFlag(li, 'present', x.checked())
-        } else if (span) {
-          const value = item.rule.test()
-          setHtmlFlag(span, 'pass', value)
-          setHtmlFlag(span, 'fail', !value)
-        }
-      }))
-      callbacks
-        .push(() => {
-          input.checked = item.checked()
-          setHtmlFlag(input, 'disabled', item.disabled())
-          setHtmlFlag(input, 'invalid', item.invalid())
-          renderSummary()
-        })
+      const rules = generateRules(tooltip, item.rule)
+      updatable.inputs.push({ item, input, rules })
 
       input.onclick = onClickAction(item, name)
       element.classList.add(getColor(item))
@@ -155,6 +156,5 @@ const renderItems = () => {
 }
 
 // Initialize the view
-renderSummary()
 renderItems()
-callbacks.forEach(fn => fn())
+updateView()
