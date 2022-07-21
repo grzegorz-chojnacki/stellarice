@@ -90,6 +90,37 @@ const entryTemplate = item => `
     <div class="tooltip"></div>
   </span>`
 
+const updateDetails = ({ handle, fn }) => (handle.innerHTML = fn())
+
+const updateRuleLi = (li, item) => setHtmlFlag(li, 'present', item.checked())
+const updateRuleSpan = (span, item) => {
+  const value = item.rule.test()
+  setHtmlFlag(span, 'pass', value)
+  setHtmlFlag(span, 'fail', !value)
+}
+
+const updateInput = ({ input, item, rules }) => {
+  input.checked = item.checked()
+  setHtmlFlag(input, 'disabled', item.disabled())
+  setHtmlFlag(input, 'invalid', item.invalid())
+
+  rules.forEach(({ handle, x }) => {
+    if (x instanceof Rule) {
+      updateRuleSpan(handle, item)
+    } else if (x instanceof Item) {
+      updateRuleLi(handle, x)
+    }
+  })
+}
+
+const updateHeader = ({ header, items }) => {
+  setHtmlClass(
+    header,
+    'cranberry',
+    items.find(item => !item.generalRule())
+  )
+}
+
 // Recursively builds the HTML tree of rules and attaches them to root
 // Returns a list of HTML nodes
 //   - x can be either a rule of an item
@@ -147,17 +178,4 @@ const getColor = item => {
   }
 
   return ''
-}
-
-const updateRuleLi = (li, item) => setHtmlFlag(li, 'present', item.checked())
-const updateRuleSpan = (span, item) => {
-  const value = item.rule.test()
-  setHtmlFlag(span, 'pass', value)
-  setHtmlFlag(span, 'fail', !value)
-}
-
-const udpateInput = (input, item) => {
-  input.checked = item.checked()
-  setHtmlFlag(input, 'disabled', item.disabled())
-  setHtmlFlag(input, 'invalid', item.invalid())
 }

@@ -14,7 +14,7 @@ const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
 // List of various callback functions that refresh the DOM after state change
-const updatable = { headers: [], inputs: [] }
+const updatable = { headers: [], inputs: [], details: [] }
 
 // Section templates
 //   name     - the name displayed at the top of the section
@@ -63,25 +63,9 @@ const sections = [
 
 const updateView = () => {
   renderSummary()
-
-  updatable.headers.forEach(({ header, items }) => {
-    setHtmlClass(
-      header,
-      'cranberry',
-      items.find(item => !item.generalRule())
-    )
-  })
-
-  updatable.inputs.forEach(({ input, item, rules }) => {
-    udpateInput(input, item)
-    rules.forEach(({ handle, x }) => {
-      if (x instanceof Rule) {
-        updateRuleSpan(handle, item)
-      } else if (x instanceof Item) {
-        updateRuleLi(handle, x)
-      }
-    })
-  })
+  updatable.details.forEach(updateDetails)
+  updatable.headers.forEach(updateHeader)
+  updatable.inputs.forEach(updateInput)
 }
 
 // Input/label onclick handler
@@ -132,7 +116,11 @@ const renderItems = () => {
 
     section.appendChild(header)
 
-    if (details) section.appendChild(htmlToElement(details()))
+    if (details) {
+      const handle = htmlToElement('<div></div>')
+      updatable.details.push({ handle, fn: details })
+      section.appendChild(handle)
+    }
 
     const inputList = htmlToElement('<div class="input-list"></div>')
 
