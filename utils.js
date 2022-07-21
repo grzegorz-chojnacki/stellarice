@@ -93,18 +93,14 @@ const generateRules = (node, item, x) => {
   if (x instanceof Item) {
     const li = htmlToElement(`<li>${x.fullName}</li>`)
     node.appendChild(li)
-    return () => setHtmlFlag(li, 'present', x.checked())
+    return { li, x }
   } else if (x instanceof Rule) {
     const span = htmlToElement(`<span>${x.text}</span>`)
     const ul = htmlToElement('<ul></ul>')
     const rules = sortRules(x).flatMap(y => generateRules(ul, item, y))
     node.appendChild(span)
     node.appendChild(ul)
-    return rules.concat(() => {
-      const value = item.rule.test()
-      setHtmlFlag(span, 'pass', value)
-      setHtmlFlag(span, 'fail', !value)
-    })
+    return rules.concat({ span, x })
   }
 }
 

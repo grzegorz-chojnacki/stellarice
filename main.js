@@ -78,6 +78,7 @@ const renderSummary = () => {
     row.appendChild(htmlToElement(`<th>${capitalize(name)}:</th>`))
 
     const entries = htmlToElement('<td></td>')
+
     if (items.length === 0) {
       entries.classList.add('comment')
       entries.innerText = name === 'pop' ? 'Biological' : 'Empty'
@@ -125,7 +126,16 @@ const renderItems = () => {
       const input = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
 
-      callbacks.push(...generateRules(tooltip, item, item.rule))
+      const rules = generateRules(tooltip, item, item.rule)
+      callbacks.push(() => rules.forEach(({ li, span, x }) => {
+        if (li) {
+          setHtmlFlag(li, 'present', x.checked())
+        } else if (span) {
+          const value = item.rule.test()
+          setHtmlFlag(span, 'pass', value)
+          setHtmlFlag(span, 'fail', !value)
+        }
+      }))
       callbacks
         .push(() => {
           input.checked = item.checked()
