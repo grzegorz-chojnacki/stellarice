@@ -10,9 +10,6 @@ const empire = {
   civics: [],
 }
 
-const summary = document.getElementById('summary')
-const options = document.getElementById('options')
-
 // List of various callback functions that refresh the DOM after state change
 const updatable = { summary: [], sections: {} }
 
@@ -75,21 +72,22 @@ const updateView = () => {
   })
 }
 
-// Render the empire summary
-const renderSummary = () => {
+const renderView = () => {
+  const summary = document.getElementById('summary')
+  const options = document.getElementById('options')
+
   summary.appendChild(document.createElement('h2')).append('Empire summary')
   const table = summary.appendChild(document.createElement('table'))
 
-  Object.entries(empire).forEach(([name, items]) => {
+  sections.forEach(({ name, items, template, details = () => '' }) => {
     const row = table.insertRow()
     row.appendChild(document.createElement('th')).append(capitalize(name))
-    updatable.summary.push({ handle: row.insertCell(), items, name })
-  })
-}
+    updatable.summary.push({
+      handle: row.insertCell(),
+      items: empire[name],
+      name,
+    })
 
-const renderItems = () => {
-  options.innerHTML = ''
-  sections.forEach(({ name, items, template, details = () => '' }) => {
     const section = options.appendChild(document.createElement('section'))
     const header = section.appendChild(document.createElement('h2'))
     header.innerHTML = capitalize(name)
@@ -125,6 +123,5 @@ const renderItems = () => {
 }
 
 // Initialize the view
-renderSummary()
-renderItems()
+renderView()
 updateView()
