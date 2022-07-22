@@ -5,15 +5,6 @@ const partition = (arr, fn) =>
     [[], []]
   )
 
-// Sort items depending on arbitrary rules
-const sortItems = items => {
-  // Place disabled as last
-  items = [...partition(items, x => !x.disabled()).flatMap(x => x)]
-  // Place checked & invalid as first
-  items = [...partition(items, x => x.invalid() && x.checked()).flatMap(x => x)]
-  return items
-}
-
 // Sort rules alphabetically and hoist single items to the top
 const sortRules = rule => {
   if (rule.items) {
@@ -129,6 +120,65 @@ const updateSummary = ({ handle, name, items }) => {
   }
 }
 
+const sortSummary = rows => {
+  rows.forEach(row => {
+    const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
+
+    row.items.sort((a, b) => a.id.localeCompare(b.id))
+    row.items.sort((a, b) => b.cost - a.cost)
+    row.items.sort(byGetOrder)
+  })
+
+  return rows
+}
+
+const sortInputs = inputs => {
+  const disabledLast = ({ item }) => !item.disabled()
+  const invalidFirst = ({ item }) => item.invalid() && item.checked()
+  const byGetOrder = (a, b) => (getOrder(a.item) > getOrder(b.item) ? -1 : 1)
+
+  inputs.sort((a, b) => a.item.id.localeCompare(b.item.id))
+
+  if (inputs[0].item instanceof Trait) {
+    inputs.sort((a, b) => b.item.cost - a.item.cost)
+  }
+
+  inputs.sort(byGetOrder)
+  inputs = partition(inputs, disabledLast).flatMap(x => x)
+  inputs = partition(inputs, invalidFirst).flatMap(x => x)
+
+  return inputs
+}
+
+const getOrder = item => {
+  if (item instanceof Trait) {
+    if (traitsOrigin.includes(item)) return 4
+    if (traitsBotanic.includes(item)) return 3
+    if (traitsLithoid.includes(item)) return 2
+    if (item.cost > 0) return 1
+    if (item.cost < 0) return 0
+  } else if (item instanceof Ethic) {
+    if (item.id.startsWith('Fanatic')) return 2
+    if (item.id !== 'Gestalt') return 1
+  } else if (item instanceof Civic) {
+    if (civicsMachine.includes(item)) return 1
+    if (civicsHive.includes(item)) return 2
+    if (civicsCorporate.includes(item)) return 3
+    if (civicsNormal.includes(item)) return 4
+  } else if (item instanceof Authority) {
+    return {
+      MachineIntelligence: 1,
+      HiveMind: 2,
+      Corporate: 3,
+      Democratic: 4,
+      Oligarchic: 5,
+      Dictatorial: 6,
+      Imperial: 7,
+    }[item.id]
+  }
+  return 0
+}
+
 // Recursively builds the HTML tree of rules and attaches them to root
 // Returns a list of HTML nodes
 //   - x can be either a rule of an item
@@ -151,40 +201,39 @@ const generateRules = (root, x) => {
 // Helper function for coloring the items with arbitrary rules
 // Returns CSS color class name or `null` for no class
 const getColor = item => {
-  if (item instanceof Pop) {
-    return {
-      Botanic: 'rosebud',
-      Lithoid: 'apricot',
-      Mechanical: 'turquoise',
-    }[item.id]
-  } else if (item instanceof Trait) {
-    if (traitsBotanic.includes(item)) return 'rosebud'
-    else if (traitsLithoid.includes(item)) return 'apricot'
-    else if (item.cost > 0) return 'turquoise'
-    else if (item.cost < 0) return 'cranberry'
-    return null
-  } else if (item instanceof Origin) {
-    return 'tacao'
-  } else if (item instanceof Ethic) {
-    if (item.id.startsWith('Fanatic')) return 'cranberry'
-    else if (item.id.startsWith('Gestalt')) return 'tacao'
-    return 'apricot'
-  } else if (item instanceof Authority) {
-    return {
-      Imperial: 'cranberry',
-      Dictatorial: 'apricot',
-      Oligarchic: 'rosebud',
-      Democratic: 'tacao',
-      Corporate: 'tacao',
-      HiveMind: 'lavender',
-      MachineIntelligence: 'turquoise',
-    }[item.id]
-  } else if (item instanceof Civic) {
-    if (civicsCorporate.includes(item)) return 'rosebud'
-    else if (civicsHive.includes(item)) return 'lavender'
-    else if (civicsMachine.includes(item)) return 'turquoise'
-    return 'apricot'
+  switch (true) {
+    case item instanceof Pop:
+      return {
+        Botanic: 'rosebud',
+        Lithoid: 'apricot',
+        Mechanical: 'turquoise',
+      }[item.id]
+    case item instanceof Trait:
+      if (traitsBotanic.includes(item)) return 'rosebud'
+      if (traitsLithoid.includes(item)) return 'apricot'
+      if (item.cost > 0) return 'turquoise'
+      if (item.cost < 0) return 'cranberry'
+      return null
+    case item instanceof Origin:
+      return 'tacao'
+    case item instanceof Ethic:
+      if (item.id.startsWith('Fanatic')) return 'cranberry'
+      if (item.id.startsWith('Gestalt')) return 'tacao'
+      return 'apricot'
+    case item instanceof Authority:
+      return {
+        Imperial: 'cranberry',
+        Dictatorial: 'apricot',
+        Oligarchic: 'rosebud',
+        Democratic: 'tacao',
+        Corporate: 'tacao',
+        HiveMind: 'lavender',
+        MachineIntelligence: 'turquoise',
+      }[item.id]
+    case item instanceof Civic:
+      if (civicsCorporate.includes(item)) return 'rosebud'
+      if (civicsHive.includes(item)) return 'lavender'
+      if (civicsMachine.includes(item)) return 'turquoise'
+      return 'apricot'
   }
-
-  return ''
 }

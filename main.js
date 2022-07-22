@@ -14,7 +14,7 @@ const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
 // List of various callback functions that refresh the DOM after state change
-const updatable = { headers: [], inputs: [], details: [], summary: [] }
+const updatable = { summary: [], sections: {} }
 
 // Section templates
 //   name     - the name displayed at the top of the section
@@ -62,10 +62,19 @@ const sections = [
 ]
 
 const updateView = () => {
-  updatable.details.forEach(updateDetails)
-  updatable.headers.forEach(updateHeader)
-  updatable.inputs.forEach(updateInput)
-  updatable.summary.forEach(updateSummary)
+  sortSummary(updatable.summary).forEach(updateSummary)
+
+  Object.entries(updatable.sections).forEach(([name, o]) => {
+    updateHeader(o.header)
+    o.details.fn && updateDetails(o.details)
+
+    sortInputs(o.inputs).forEach(({ handle }) => {
+      const container = handle.parentNode
+      container.parentNode.appendChild(container)
+    })
+
+    o.inputs.forEach(updateInput)
+  })
 }
 
 // Render the empire summary
@@ -80,24 +89,30 @@ const renderSummary = () => {
   })
 }
 
+
 const renderItems = () => {
   options.innerHTML = ''
   sections.forEach(({ name, details, template, items }) => {
     const section = options.appendChild(document.createElement('section'))
-    const handle = section.appendChild(document.createElement('h2'))
-    handle.innerHTML = capitalize(name)
-    updatable.headers.push({ handle, items })
+    const header = section.appendChild(document.createElement('h2'))
+    header.innerHTML = capitalize(name)
 
-    if (details) {
-      const handle = section.appendChild(document.createElement('div'))
-      updatable.details.push({ handle, fn: details })
-    }
+    const handle = details
+      ? section.appendChild(document.createElement('div'))
+      : undefined
 
     const inputList = section.appendChild(document.createElement('div'))
     inputList.classList.add('input-list')
 
+    updatable.sections[name] = {
+      header: { handle: header, items },
+      details: { handle, fn: details },
+      inputs: [],
+      items,
+    }
+
     // Go through all items related to this section
-    sortItems(items).forEach(item => {
+    items.forEach(item => {
       const element = inputList.appendChild(htmlToElement(template(item)))
       const handle = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
@@ -105,7 +120,7 @@ const renderItems = () => {
       element.classList.add(getColor(item))
 
       const rules = generateRules(tooltip, item.rule)
-      updatable.inputs.push({ item, handle, rules })
+      updatable.sections[name].inputs.push({ item, handle, rules })
 
       handle.onclick = () => {
         toggleIncluded(empire[name], item)
