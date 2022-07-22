@@ -10,9 +10,6 @@ const empire = {
   civics: [],
 }
 
-// List of various callback functions that refresh the DOM after state change
-const updatable = { summary: [], sections: {} }
-
 // Section templates
 //   name     - the name displayed at the top of the section
 //   items    - items associated with this section
@@ -28,8 +25,12 @@ const sections = [
     name: 'traits',
     items: traits,
     details: () => `
-        Available traits: ${5 - empire.traits.length}<br>
-        Available points: ${empire.traits.reduce(Trait.costSum, 2)}`,
+      Available traits:
+        <span class="trait-point">${5 - empire.traits.length}</span><br>
+      Available points:
+        <span class="trait-point">
+          ${empire.traits.reduce(Trait.costSum, 2)}
+        </span>`,
     template: sectionTemplate('checkbox'),
   },
   {
@@ -55,20 +56,22 @@ const sections = [
   },
 ]
 
+// List references to various HTML nodes grouped by sections
+const references = []
+
 const updateView = () => {
-  sortSummary(updatable.summary).forEach(updateSummary)
+  references.forEach(({ summary, header, details, inputs }) => {
+    updateSummary(sortSummary(summary))
+    updateHeader(header)
 
-  Object.values(updatable.sections).forEach(section => {
-    updateHeader(section.header)
+    details.handle.innerHTML = details.refresh()
 
-    section.details.handle.innerHTML = section.details.fn()
-
-    sortInputs(section.inputs).forEach(({ handle }) => {
+    sortInputs(inputs).forEach(({ handle }) => {
       const container = handle.parentNode
       container.parentNode.appendChild(container)
     })
 
-    section.inputs.forEach(updateInput)
+    inputs.forEach(updateInput)
   })
 }
 
@@ -82,11 +85,6 @@ const renderView = () => {
   sections.forEach(({ name, items, template, details = () => '' }) => {
     const row = table.insertRow()
     row.appendChild(document.createElement('th')).append(capitalize(name))
-    updatable.summary.push({
-      handle: row.insertCell(),
-      items: empire[name],
-      name,
-    })
 
     const section = options.appendChild(document.createElement('section'))
     const header = section.appendChild(document.createElement('h2'))
@@ -96,15 +94,7 @@ const renderView = () => {
     const inputList = section.appendChild(document.createElement('div'))
     inputList.classList.add('input-list')
 
-    updatable.sections[name] = {
-      header: { handle: header, items },
-      details: { handle, fn: details },
-      inputs: [],
-      items,
-    }
-
-    // Go through all items related to this section
-    items.forEach(item => {
+    const inputs = items.map(item => {
       const element = inputList.appendChild(htmlToElement(template(item)))
       const handle = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
@@ -112,12 +102,20 @@ const renderView = () => {
       element.classList.add(getColor(item))
 
       const rules = generateRules(tooltip, item.rule)
-      updatable.sections[name].inputs.push({ item, handle, rules })
 
       handle.onclick = () => {
         toggleIncluded(empire[name], item)
         updateView()
       }
+
+      return { item, handle, rules }
+    })
+
+    references.push({
+      summary: { handle: row.insertCell(), items: empire[name], name },
+      header: { handle: header, items },
+      details: { handle, refresh: details },
+      inputs,
     })
   })
 }

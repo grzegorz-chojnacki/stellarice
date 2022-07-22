@@ -76,6 +76,7 @@ const sectionTemplate = inputType => item =>
 
 const updateRuleItem = (node, item) =>
   setHtmlFlag(node, 'present', item.checked())
+
 const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
 
 const updateInput = ({ handle, item, rules }) => {
@@ -118,16 +119,14 @@ const updateSummary = ({ handle, name, items }) => {
   }
 }
 
-const sortSummary = rows => {
-  rows.forEach(row => {
+const sortSummary = row => {
     const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
 
     row.items.sort((a, b) => a.id.localeCompare(b.id))
     row.items.sort((a, b) => b.cost - a.cost)
     row.items.sort(byGetOrder)
-  })
 
-  return rows
+  return row
 }
 
 const sortInputs = inputs => {
