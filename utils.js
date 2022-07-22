@@ -92,12 +92,10 @@ const entryTemplate = item => `
 
 const updateDetails = ({ handle, fn }) => (handle.innerHTML = fn())
 
-const updateRuleLi = (li, item) => setHtmlFlag(li, 'present', item.checked())
-const updateRuleSpan = (span, item) => {
-  const value = item.rule.test()
-  setHtmlFlag(span, 'pass', value)
-  setHtmlFlag(span, 'fail', !value)
-}
+const updateRuleItem = (node, item) =>
+  setHtmlFlag(node, 'present', item.checked())
+const updateRule = (node, item) =>
+  setHtmlFlag(node, 'pass', item.rule.test())
 
 const updateInput = ({ input, item, rules }) => {
   input.checked = item.checked()
@@ -106,9 +104,9 @@ const updateInput = ({ input, item, rules }) => {
 
   rules.forEach(({ handle, x }) => {
     if (x instanceof Rule) {
-      updateRuleSpan(handle, item)
+      updateRule(handle, item)
     } else if (x instanceof Item) {
-      updateRuleLi(handle, x)
+      updateRuleItem(handle, x)
     }
   })
 }
@@ -126,17 +124,16 @@ const updateHeader = ({ header, items }) => {
 //   - x can be either a rule of an item
 const generateRules = (root, x) => {
   if (x instanceof Item) {
-    const handle = document.createElement('li')
+    const handle = root.appendChild(document.createElement('li'))
+    handle.classList.add('rule-item')
     handle.innerText = x.fullName
-    root.appendChild(handle)
     return { handle, x }
   } else if (x instanceof Rule) {
-    const handle = document.createElement(`span`)
+    const handle = root.appendChild(document.createElement('span'))
+    handle.classList.add('rule')
     handle.innerText = x.text
-    const ul = document.createElement('ul')
+    const ul = root.appendChild(document.createElement('ul'))
     const rules = sortRules(x).flatMap(y => generateRules(ul, y))
-    root.appendChild(handle)
-    root.appendChild(ul)
     return rules.concat({ handle, x })
   }
 }

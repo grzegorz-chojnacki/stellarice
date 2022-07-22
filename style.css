@@ -131,11 +131,14 @@ ul {
 
 li { list-style-type: disc; }
 
-span[fail], span[pass] { font-weight: bold; }
-span[fail] { color: var(--cranberry); }
-span[pass] { color: var(--turquoise); }
+.rule {
+  color: var(--cranberry);
+  font-weight: bold;
+}
 
-li[present] {
+.rule[pass] { color: var(--turquoise); }
+
+.rule-item[present] {
   color: var(--rosebud);
   font-weight: bold;
 }
