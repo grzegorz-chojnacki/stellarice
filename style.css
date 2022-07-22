@@ -64,18 +64,20 @@ th {
   gap: 1em;
 }
 
-#options > section {
-  flex-grow: 1;
-}
-
 .details { margin: 1em 0; }
 
 .input-list {
+  padding-right: 1em;
   display: flex;
-  height: 500px;
   flex-direction: column;
   flex-grow: 1;
-  overflow-y: auto;
+}
+
+@media (max-width: 1660px) {
+  .input-list {
+    overflow-y: auto;
+    height: 540px;
+  }
 }
 
 .input-list {
