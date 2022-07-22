@@ -70,12 +70,12 @@ const updateView = () => {
 
 // Render the empire summary
 const renderSummary = () => {
-  summary.appendChild(document.createElement('h2')).innerText = 'Empire summary'
+  summary.appendChild(document.createElement('h2')).append('Empire summary')
   const table = summary.appendChild(document.createElement('table'))
 
   Object.entries(empire).forEach(([name, items]) => {
     const row = table.insertRow()
-    row.appendChild(document.createElement('th')).innerText = capitalize(name)
+    row.appendChild(document.createElement('th')).append(capitalize(name))
     updatable.summary.push({ handle: row.insertCell(), items, name })
   })
 }
@@ -99,15 +99,15 @@ const renderItems = () => {
     // Go through all items related to this section
     sortItems(items).forEach(item => {
       const element = inputList.appendChild(htmlToElement(template(item)))
-      const input = element.getElementsByTagName('input')[0]
+      const handle = element.getElementsByTagName('input')[0]
       const tooltip = element.getElementsByClassName('tooltip')[0]
 
       element.classList.add(getColor(item))
 
       const rules = generateRules(tooltip, item.rule)
-      updatable.inputs.push({ item, input, rules })
+      updatable.inputs.push({ item, handle, rules })
 
-      input.onclick = () => {
+      handle.onclick = () => {
         toggleIncluded(empire[name], item)
         updateView()
       }

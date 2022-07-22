@@ -78,17 +78,10 @@ const setHtmlClass = (element, name, isEnabled) =>
 
 const sectionTemplate = inputType => item =>
   `<div>
-    <input type="${inputType}" id="${item.id}" name="${item.id}">
+    <input type="${inputType}" id="${item.id}">
     <label for="${item.id}">${item.label}</label>
     <div class="tooltip"></div>
   </div>`
-
-// Entry template
-const entryTemplate = item => `
-  <span>
-    <label for="${item.id}">${item.name}</label>,
-    <div class="tooltip"></div>
-  </span>`
 
 const updateDetails = ({ handle, fn }) => (handle.innerHTML = fn())
 
@@ -96,10 +89,10 @@ const updateRuleItem = (node, item) =>
   setHtmlFlag(node, 'present', item.checked())
 const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
 
-const updateInput = ({ input, item, rules }) => {
-  input.checked = item.checked()
-  setHtmlFlag(input, 'disabled', item.disabled())
-  setHtmlFlag(input, 'invalid', item.invalid())
+const updateInput = ({ handle, item, rules }) => {
+  handle.checked = item.checked()
+  setHtmlFlag(handle, 'disabled', item.disabled())
+  setHtmlFlag(handle, 'invalid', item.invalid())
 
   rules.forEach(({ handle, x }) => {
     if (x instanceof Rule) {
@@ -120,17 +113,19 @@ const updateHeader = ({ handle, items }) => {
 
 const updateSummary = ({ handle, name, items }) => {
   if (items.length === 0) {
-    handle.innerText = name === 'pop' ? 'Biological' : 'Empty'
+    const text = name === 'pop' ? 'Biological' : 'Empty'
+    handle.replaceChildren(document.createTextNode(text))
     handle.classList.add('comment')
   } else {
-    handle.innerHTML = ''
+    handle.replaceChildren()
     handle.removeAttribute('class')
-    items.forEach(item =>
-      handle
-        .appendChild(htmlToElement(entryTemplate(item)))
-        .getElementsByTagName('label')[0]
-        .classList.add(getColor(item))
-    )
+    items.forEach(item => {
+      const label = handle.appendChild(document.createElement('label'))
+      label.classList.add(getColor(item))
+      label.innerText = item.name
+      label.setAttribute('for', item.id)
+      handle.append(', ')
+    })
   }
 }
 
