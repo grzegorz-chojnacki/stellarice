@@ -64,7 +64,8 @@ const sections = [
 ]
 
 const updateView = () => {
-  sections.references.forEach(({ summary, header, details, inputs }) => {
+  sections.forEach(section => {
+    const { summary, header, details, inputs } = section.references
     updateSummary(sortSummary(summary))
     updateHeader(header)
 
@@ -109,7 +110,7 @@ const renderSection = (options, table) => section => {
 
   const inputs = items.map(renderInputs(empire[name], inputList, template))
 
-  return {
+  section.references = {
     summary: { handle: row.insertCell(), items: empire[name], name },
     header: { handle: header, items },
     details: { handle, refresh: details },
@@ -124,7 +125,7 @@ const renderView = () => {
   summary.appendChild(document.createElement('h2')).append('Empire summary')
   const table = summary.appendChild(document.createElement('table'))
 
-  sections.references = sections.map(renderSection(options, table))
+  sections.forEach(renderSection(options, table))
 }
 
 // Initialize the view
