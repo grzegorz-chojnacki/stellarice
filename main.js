@@ -77,13 +77,15 @@ const onClickAction = (item, name) => () => {
 // Render the empire summary
 const renderSummary = () => {
   summary.innerHTML = '<h2>Empire summary</h2>'
-  const table = htmlToElement('<table></table>')
+  const table = document.createElement('table')
 
   Object.entries(empire).forEach(([name, items]) => {
-    const row = htmlToElement('<tr></tr>')
-    row.appendChild(htmlToElement(`<th>${capitalize(name)}:</th>`))
+    const row = document.createElement('tr')
+    const cell = document.createElement('th')
+    cell.innerText = capitalize(name)
+    row.appendChild(cell)
 
-    const entries = htmlToElement('<td></td>')
+    const entries = document.createElement('td')
 
     if (items.length === 0) {
       entries.classList.add('comment')
@@ -110,19 +112,21 @@ const renderSummary = () => {
 const renderItems = () => {
   options.innerHTML = ''
   sections.forEach(({ name, details, template, items }) => {
-    const section = htmlToElement('<section></section>')
-    const header = htmlToElement(`<h2>${capitalize(name)}</h2>`)
+    const section = document.createElement('section')
+    const header = document.createElement(`h2`)
+    header.innerHTML = capitalize(name)
     updatable.headers.push({ header, items })
 
     section.appendChild(header)
 
     if (details) {
-      const handle = htmlToElement('<div></div>')
+      const handle = document.createElement('div')
       updatable.details.push({ handle, fn: details })
       section.appendChild(handle)
     }
 
-    const inputList = htmlToElement('<div class="input-list"></div>')
+    const inputList = document.createElement('div')
+    inputList.classList.add('input-list')
 
     // Go through all items related to this section
     sortItems(items).forEach(item => {

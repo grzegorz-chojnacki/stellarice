@@ -126,12 +126,14 @@ const updateHeader = ({ header, items }) => {
 //   - x can be either a rule of an item
 const generateRules = (root, x) => {
   if (x instanceof Item) {
-    const handle = htmlToElement(`<li>${x.fullName}</li>`)
+    const handle = document.createElement('li')
+    handle.innerText = x.fullName
     root.appendChild(handle)
     return { handle, x }
   } else if (x instanceof Rule) {
-    const handle = htmlToElement(`<span>${x.text}</span>`)
-    const ul = htmlToElement('<ul></ul>')
+    const handle = document.createElement(`span`)
+    handle.innerText = x.text
+    const ul = document.createElement('ul')
     const rules = sortRules(x).flatMap(y => generateRules(ul, y))
     root.appendChild(handle)
     root.appendChild(ul)
