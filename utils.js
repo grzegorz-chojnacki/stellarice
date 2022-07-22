@@ -74,8 +74,6 @@ const sectionTemplate = inputType => item =>
     <div class="tooltip"></div>
   </div>`
 
-const updateDetails = ({ handle, fn }) => (handle.innerHTML = fn())
-
 const updateRuleItem = (node, item) =>
   setHtmlFlag(node, 'present', item.checked())
 const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
