@@ -79,6 +79,44 @@ const updateView = () => {
   })
 }
 
+const renderInputs = (empireList, inputList, inputTemplate) => item => {
+  const element = inputList.appendChild(htmlToElement(inputTemplate(item)))
+  const handle = element.getElementsByTagName('input')[0]
+  const tooltip = element.getElementsByClassName('tooltip')[0]
+
+  element.classList.add(getColor(item))
+
+  handle.onclick = () => {
+    toggleIncluded(empireList, item)
+    updateView()
+  }
+
+  return { item, handle, rules: generateRules(tooltip, item.rule) }
+}
+
+const renderSection = (options, table) => section => {
+  const { name, items, template, details = () => '' } = section
+
+  const row = table.insertRow()
+  row.appendChild(document.createElement('th')).append(capitalize(name))
+  const root = options.appendChild(document.createElement('section'))
+  const header = root.appendChild(document.createElement('h2'))
+  header.innerHTML = capitalize(name)
+
+  const handle = root.appendChild(document.createElement('div'))
+  const inputList = root.appendChild(document.createElement('div'))
+  inputList.classList.add('input-list')
+
+  const inputs = items.map(renderInputs(empire[name], inputList, template))
+
+  return {
+    summary: { handle: row.insertCell(), items: empire[name], name },
+    header: { handle: header, items },
+    details: { handle, refresh: details },
+    inputs,
+  }
+}
+
 const renderView = () => {
   const summary = document.getElementById('summary')
   const options = document.getElementById('options')
@@ -86,44 +124,7 @@ const renderView = () => {
   summary.appendChild(document.createElement('h2')).append('Empire summary')
   const table = summary.appendChild(document.createElement('table'))
 
-  sections.references = sections.map(
-    ({ name, items, template, details = () => '' }) => {
-      const row = table.insertRow()
-      row.appendChild(document.createElement('th')).append(capitalize(name))
-
-      const section = options.appendChild(document.createElement('section'))
-      const header = section.appendChild(document.createElement('h2'))
-      header.innerHTML = capitalize(name)
-
-      const handle = section.appendChild(document.createElement('div'))
-      const inputList = section.appendChild(document.createElement('div'))
-      inputList.classList.add('input-list')
-
-      const inputs = items.map(item => {
-        const element = inputList.appendChild(htmlToElement(template(item)))
-        const handle = element.getElementsByTagName('input')[0]
-        const tooltip = element.getElementsByClassName('tooltip')[0]
-
-        element.classList.add(getColor(item))
-
-        const rules = generateRules(tooltip, item.rule)
-
-        handle.onclick = () => {
-          toggleIncluded(empire[name], item)
-          updateView()
-        }
-
-        return { item, handle, rules }
-      })
-
-      return {
-        summary: { handle: row.insertCell(), items: empire[name], name },
-        header: { handle: header, items },
-        details: { handle, refresh: details },
-        inputs,
-      }
-    }
-  )
+  sections.references = sections.map(renderSection(options, table))
 }
 
 // Initialize the view
