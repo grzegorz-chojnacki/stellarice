@@ -29,13 +29,13 @@ body {
   font-family: monospace;
   background-color: var(--bg);
   color: var(--fg);
-  padding: 0.5em 1em 0;
+  padding: 1rem;
   margin: 0;
   height: 100vh;
 }
 
 h1, h2, h3 {
-  margin: 0.5em 0;
+  margin: 1rem 0;
 }
 
 th {
@@ -61,12 +61,11 @@ th {
   margin-top: 2em;
   display: flex;
   flex-wrap: wrap;
-  gap: 1em;
+  gap: 2rem;
 }
 
 .input-list {
-  margin-top: 1em;
-  margin-right: 1em;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -119,7 +118,7 @@ input[invalid]:checked + label > * {
   background-color: var(--bg);
 }
 
-div:hover > .tooltip, span:hover > .tooltip {
+div:hover > .tooltip {
   display: block;
 }
 
