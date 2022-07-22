@@ -64,9 +64,11 @@ const prettify = str => decapitalize(capitalize(spacify(str)))
 const setHtmlFlag = (element, name, isEnabled) =>
   isEnabled ? element.setAttribute(name, '') : element.removeAttribute(name)
 
+// Helper function for setting an HTML class
 const setHtmlClass = (element, name, isEnabled) =>
   isEnabled ? element.classList.add(name) : element.classList.remove(name)
 
+// HTML empire section builder
 const sectionTemplate = inputType => item =>
   `<div>
     <input type="${inputType}" id="${item.id}">
@@ -74,10 +76,10 @@ const sectionTemplate = inputType => item =>
     <div class="tooltip"></div>
   </div>`
 
+// Helper functions for updating various elements
+const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
 const updateRuleItem = (node, item) =>
   setHtmlFlag(node, 'present', item.checked())
-
-const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
 
 const updateInput = ({ handle, item, rules }) => {
   handle.checked = item.checked()
@@ -93,6 +95,7 @@ const updateInput = ({ handle, item, rules }) => {
   })
 }
 
+// Color section header when general rule of its items is not passing
 const updateHeader = ({ handle, items }) => {
   setHtmlClass(
     handle,
@@ -101,6 +104,15 @@ const updateHeader = ({ handle, items }) => {
   )
 }
 
+// Take list of HTML nodes and apply their order to the DOM
+//   nodes - list of every element of a common parent element
+const sortNodes = nodes =>
+  nodes.forEach(node => {
+    const container = node.parentNode
+    container.parentNode.appendChild(container)
+  })
+
+// Update summary entries based on the items in the empire
 const updateSummary = ({ handle, name, items }) => {
   if (items.length === 0) {
     const text = name === 'pop' ? 'Biological' : 'Empty'
@@ -119,16 +131,16 @@ const updateSummary = ({ handle, name, items }) => {
   }
 }
 
+// Sort entries of one summary row
 const sortSummary = row => {
-    const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
+  const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
 
-    row.items.sort((a, b) => a.id.localeCompare(b.id))
-    row.items.sort((a, b) => b.cost - a.cost)
-    row.items.sort(byGetOrder)
-
-  return row
+  row.items.sort((a, b) => a.id.localeCompare(b.id))
+  row.items.sort((a, b) => b.cost - a.cost)
+  row.items.sort(byGetOrder)
 }
 
+// Sort entries of one section
 const sortInputs = inputs => {
   const disabledLast = ({ item }) => !item.disabled()
   const invalidFirst = ({ item }) => item.invalid() && item.checked()
@@ -144,9 +156,10 @@ const sortInputs = inputs => {
   inputs = partition(inputs, disabledLast).flatMap(x => x)
   inputs = partition(inputs, invalidFirst).flatMap(x => x)
 
-  return inputs
+  sortNodes(inputs.map(({ handle }) => handle))
 }
 
+// Get an arbitrary item order value, which can be used for sorting
 const getOrder = item => {
   if (item instanceof Trait) {
     if (traitsOrigin.includes(item)) return 4
@@ -176,8 +189,8 @@ const getOrder = item => {
   return 0
 }
 
-// Recursively builds the HTML tree of rules and attaches them to root
-// Returns a list of HTML nodes
+// Recursively build the HTML tree of rules and attach them to root
+// Return a list of HTML nodes
 //   - x can be either a rule of an item
 const generateRules = (root, x) => {
   if (x instanceof Item) {
@@ -196,7 +209,7 @@ const generateRules = (root, x) => {
 }
 
 // Helper function for coloring the items with arbitrary rules
-// Returns CSS color class name or `null` for no class
+// Return CSS color class name or `null` for no class
 const getColor = item => {
   switch (true) {
     case item instanceof Pop:

@@ -1,6 +1,11 @@
+// List of all items
 const all = [...pop, ...traits, ...origin, ...ethics, ...authority, ...civics]
+
+// Take the simple item rule structure based on item ids and recursively
+// inject real items into their place
 all.forEach(item => injectItems(item.rule))
 
+// The empire structure, used for keeping the state of which item is checked
 const empire = {
   pop: [],
   traits: [],
@@ -11,11 +16,11 @@ const empire = {
 }
 
 // Section templates
-//   name      - the name displayed at the top of the section
-//   items     - items associated with this section
-//   template  - HTML tamplate dependent on a given item
-//   refernces - Data and HTML node references used for updating the view
-//   details   - additional details about this section
+//   name       - the name displayed at the top of the section
+//   items      - items associated with this section
+//   template   - HTML tamplate dependent on a given item
+//   references - Data and HTML node references used for updating sections
+//   details    - additional details about this section
 const sections = [
   {
     name: 'pop',
@@ -63,23 +68,23 @@ const sections = [
   },
 ]
 
+// Update routine, triggered after each input click event
 const updateView = () => {
   sections.forEach(section => {
     const { summary, header, details, inputs } = section.references
-    updateSummary(sortSummary(summary))
+    sortSummary(summary)
+    updateSummary(summary)
+
     updateHeader(header)
 
     details.handle.innerHTML = details.refresh()
 
-    sortInputs(inputs).forEach(({ handle }) => {
-      const container = handle.parentNode
-      container.parentNode.appendChild(container)
-    })
-
-    inputs.forEach(updateInput)
+    sortInputs(inputs)
+    inputs.map(updateInput)
   })
 }
 
+// Create an input and its label for a given item, return references
 const renderInputs = (empireList, inputList, inputTemplate) => item => {
   const element = inputList.appendChild(htmlToElement(inputTemplate(item)))
   const handle = element.getElementsByTagName('input')[0]
@@ -95,6 +100,7 @@ const renderInputs = (empireList, inputList, inputTemplate) => item => {
   return { item, handle, rules: generateRules(tooltip, item.rule) }
 }
 
+// Create a section, return its references
 const renderSection = (options, table) => section => {
   const { name, items, template, details = () => '' } = section
 
@@ -118,6 +124,7 @@ const renderSection = (options, table) => section => {
   }
 }
 
+// Create empire summary and all sections
 const renderView = () => {
   const summary = document.getElementById('summary')
   const options = document.getElementById('options')
