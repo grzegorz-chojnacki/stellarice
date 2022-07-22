@@ -94,8 +94,7 @@ const updateDetails = ({ handle, fn }) => (handle.innerHTML = fn())
 
 const updateRuleItem = (node, item) =>
   setHtmlFlag(node, 'present', item.checked())
-const updateRule = (node, item) =>
-  setHtmlFlag(node, 'pass', item.rule.test())
+const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
 
 const updateInput = ({ input, item, rules }) => {
   input.checked = item.checked()
@@ -111,12 +110,28 @@ const updateInput = ({ input, item, rules }) => {
   })
 }
 
-const updateHeader = ({ header, items }) => {
+const updateHeader = ({ handle, items }) => {
   setHtmlClass(
-    header,
+    handle,
     'cranberry',
     items.find(item => !item.generalRule())
   )
+}
+
+const updateSummary = ({ handle, name, items }) => {
+  if (items.length === 0) {
+    handle.innerText = name === 'pop' ? 'Biological' : 'Empty'
+    handle.classList.add('comment')
+  } else {
+    handle.innerHTML = ''
+    handle.removeAttribute('class')
+    items.forEach(item =>
+      handle
+        .appendChild(htmlToElement(entryTemplate(item)))
+        .getElementsByTagName('label')[0]
+        .classList.add(getColor(item))
+    )
+  }
 }
 
 // Recursively builds the HTML tree of rules and attaches them to root

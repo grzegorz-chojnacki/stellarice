@@ -14,7 +14,7 @@ const summary = document.getElementById('summary')
 const options = document.getElementById('options')
 
 // List of various callback functions that refresh the DOM after state change
-const updatable = { headers: [], inputs: [], details: [] }
+const updatable = { headers: [], inputs: [], details: [], summary: [] }
 
 // Section templates
 //   name     - the name displayed at the top of the section
@@ -62,45 +62,31 @@ const sections = [
 ]
 
 const updateView = () => {
-  renderSummary()
   updatable.details.forEach(updateDetails)
   updatable.headers.forEach(updateHeader)
   updatable.inputs.forEach(updateInput)
+  updatable.summary.forEach(updateSummary)
 }
 
 // Render the empire summary
 const renderSummary = () => {
-  summary.innerHTML = '<h2>Empire summary</h2>'
+  summary.appendChild(document.createElement('h2')).innerText = 'Empire summary'
   const table = summary.appendChild(document.createElement('table'))
 
   Object.entries(empire).forEach(([name, items]) => {
     const row = table.insertRow()
     row.appendChild(document.createElement('th')).innerText = capitalize(name)
-
-    const entries = row.insertCell()
-
-    if (items.length === 0) {
-      entries.classList.add('comment')
-      entries.innerText = name === 'pop' ? 'Biological' : 'Empty'
-    } else {
-      items.forEach(item =>
-        entries
-          .appendChild(htmlToElement(entryTemplate(item)))
-          .getElementsByTagName('label')[0]
-          .classList.add(getColor(item))
-      )
-    }
+    updatable.summary.push({ handle: row.insertCell(), items, name })
   })
 }
 
-// Render the items
 const renderItems = () => {
   options.innerHTML = ''
   sections.forEach(({ name, details, template, items }) => {
     const section = options.appendChild(document.createElement('section'))
-    const header = section.appendChild(document.createElement('h2'))
-    header.innerHTML = capitalize(name)
-    updatable.headers.push({ header, items })
+    const handle = section.appendChild(document.createElement('h2'))
+    handle.innerHTML = capitalize(name)
+    updatable.headers.push({ handle, items })
 
     if (details) {
       const handle = section.appendChild(document.createElement('div'))
@@ -130,5 +116,6 @@ const renderItems = () => {
 }
 
 // Initialize the view
+renderSummary()
 renderItems()
 updateView()
