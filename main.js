@@ -25,7 +25,7 @@ all.forEach(item => injectItems(all, item.rule))
 /**
  * @typedef RuleItem
  * @property {HTMLElement} handle - Tooltip's <li> or <span> element
- * @property {Rule|Item} x - Item or rule relevant to handle
+ * @property {Entry} entry - Item or rule relevant to handle
  */
 
 /**

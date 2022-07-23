@@ -1,25 +1,28 @@
 // @ts-check
 /// <reference path="../paths.js" />
 
+/** @typedef {Rule|Item} Entry */
+/** @typedef {Entry|string} RawEntry */
+
 class Rule {
   text = 'No special rules'
 
   /**
-   * @param {(Rule|Item|string)[]} items
+   * @param {RawEntry[]} entries
    */
-  constructor(items = []) {
-    this.items = items
+  constructor(entries = []) {
+    this.entries = entries
   }
 
   /**
    * Remove items (or item ids) from rule recursively
-   * @param {Item|Rule|string} x
+   * @param {RawEntry} entry
    * @returns {Rule}
    */
-  without = x => {
-    this.items.forEach((item, i) => {
-      if (item === x) this.items.splice(i, 1)
-      if (x instanceof Rule) x.without(item)
+  without = entry => {
+    this.entries.forEach((e, i) => {
+      if (e === entry) this.entries.splice(i, 1)
+      if (entry instanceof Rule) entry.without(e)
     })
     return this
   }
@@ -32,47 +35,48 @@ class Rule {
   test = () => true
 
   /**
-   * Checks if a given item from items is passing
-   * @param {Item|Rule|string} x
+   * Checks if a given item from entries is passing
+   * @param {RawEntry} entry
    * @returns {boolean}
    */
-  match = x => {
-    if (x instanceof Item) return x.checked()
-    if (x instanceof Rule) return x.test()
-    throw new Error(`Rule wasn't properly injected with items, found: '${x}'`)
+  match = entry => {
+    if (entry instanceof Item) return entry.checked()
+    if (entry instanceof Rule) return entry.test()
+    throw new Error(`Rule wasn't properly injected with items,
+      found: '${entry}'`)
   }
 }
 
-// Every subitem is true
+// Every entry is true
 class Every extends Rule {
   text = 'Must have'
-  test = () => this.items.every(this.match)
+  test = () => this.entries.every(this.match)
 }
 
-// At least one subitem is true
+// At least one entry is true
 class Some extends Rule {
   text = 'At least one of'
-  test = () => this.items.some(this.match)
+  test = () => this.entries.some(this.match)
 }
 
-// None of the subitems are true
+// None of the entries are true
 class None extends Rule {
   text = 'Cannot have'
-  test = () => !this.items.some(this.match)
+  test = () => !this.entries.some(this.match)
 }
 
 // Syntax sugar for creating rule objects
-/** @param {(Item|Rule|string)[]} items */
-const some = (...items) => new Some(items)
+/** @param {RawEntry[]} entries */
+const some = (...entries) => new Some(entries)
 
-/** @param {(Item|Rule|string)[]} items */
-const none = (...items) => new None(items)
+/** @param {RawEntry[]} entries */
+const none = (...entries) => new None(entries)
 
-/** @param {(Item|Rule|string)[]} items */
-const every = (...items) => new Every(items)
+/** @param {RawEntry[]} entries */
+const every = (...entries) => new Every(entries)
 
-/** @param {(Item|Rule|string)[]} items */
+/** @param {RawEntry[]} entries */
 const one =
-  (...items) =>
+  (...entries) =>
   () =>
-    none(...items)
+    none(...entries)

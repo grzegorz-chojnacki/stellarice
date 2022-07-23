@@ -41,11 +41,11 @@ class Item {
     if (item.rule?.constructor === Rule) {
       item.rule = rule
     } else if (rule.constructor === item.rule?.constructor) {
-      item.rule.items = rule.items.concat(item.rule?.items)
+      item.rule.entries = rule.entries.concat(item.rule?.entries)
     } else if (rule instanceof Every) {
-      item.rule = every(...rule.items, item.rule)
+      item.rule = every(...rule.entries, item.rule)
     } else if (item.rule instanceof Every) {
-      item.rule = every(rule, ...item.rule.items)
+      item.rule = every(rule, ...item.rule.entries)
     } else {
       item.rule = every(rule, item.rule)
     }

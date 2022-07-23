@@ -16,13 +16,13 @@ const partition = (arr, fn) =>
 
 /**
  * Sort rules/items alphabetically, hoist items to the top
- * @param {(Rule|Item|string)[]} itemList
- * @returns {(Rule|Item)[]}
+ * @param {RawEntry[]} entries
+ * @returns {Entry[]}
  */
-const sortRules = itemList => {
+const sortEntries = entries => {
   const [items, rules] =
     /** @type {[Item[], Rule[]]} */
-    (partition(itemList, x => x instanceof Item))
+    (partition(entries, x => x instanceof Item))
 
   items.sort((a, b) => a.fullName.localeCompare(b.fullName))
   return [...items, ...rules]
@@ -47,7 +47,7 @@ const getItemById = (arr, id) => {
  * @returns {Rule}
  */
 const injectItems = (items, rule) => {
-  rule.items = rule.items.map(item => {
+  rule.entries = rule.entries.map(item => {
     if (typeof item === 'string') return getItemById(items, item)
     if (item instanceof Rule) {
       injectItems(items, item)
@@ -163,11 +163,11 @@ const updateInput = ({ handle, item, tooltip }) => {
   setHtmlFlag(handle, 'disabled', item.disabled())
   setHtmlFlag(handle, 'invalid', item.invalid())
 
-  tooltip.rules.forEach(({ handle, x }) => {
-    if (x instanceof Rule) {
-      updateRule(handle, x)
-    } else if (x instanceof Item) {
-      updateRuleItem(handle, x)
+  tooltip.rules.forEach(({ handle, entry }) => {
+    if (entry instanceof Rule) {
+      updateRule(handle, entry)
+    } else if (entry instanceof Item) {
+      updateRuleItem(handle, entry)
     }
   })
 }
@@ -293,22 +293,22 @@ const getOrder = item => {
 /**
  * Recursively build the HTML tree of rules and attach them to root
  * @param {HTMLElement} root
- * @param {Item|Rule} x
+ * @param {Entry} entry
  * @returns {RuleItem[]}
  */
-const generateTooltipRules = (root, x) => {
-  if (x instanceof Item) {
+const generateTooltipRules = (root, entry) => {
+  if (entry instanceof Item) {
     const handle = root.appendChild(document.createElement('li'))
     handle.classList.add('rule-item')
-    handle.innerText = x.fullName
-    return [{ handle, x }]
+    handle.innerText = entry.fullName
+    return [{ handle, entry }]
   } else {
     const handle = root.appendChild(document.createElement('span'))
     handle.classList.add('rule')
-    handle.innerText = x.text
+    handle.innerText = entry.text
     const ul = root.appendChild(document.createElement('ul'))
-    const rules = sortRules(x.items).flatMap(y => generateTooltipRules(ul, y))
-    return rules.concat({ handle, x })
+    const rules = sortEntries(entry.entries).flatMap(y => generateTooltipRules(ul, y))
+    return rules.concat({ handle, entry })
   }
 }
 
