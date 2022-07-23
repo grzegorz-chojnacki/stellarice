@@ -1,20 +1,33 @@
+// @ts-check
+
 class Rule {
   text = 'No special rules'
 
+  /**
+   * @param {(Rule|Item)[]} items
+   */
   constructor(items = []) {
     this.items = items
   }
 
-  // Remove elements from rules recursively
+  /**
+   * Remove items (or item ids) from rule recursively
+   * @param {Item|Rule|string} x
+   * @returns {Rule}
+   */
   without = x => {
       this.items.forEach((item, i) => {
         if (item === x) this.items.splice(i, 1)
-        if (x instanceof Rule) i.without(x)
+        if (x instanceof Rule) x.without(item)
       })
       return this
     }
 
-  // Checks if rule is passing, should call match for every item
+  /**
+   * Checks if rule is passing, should call match for every item
+   * @abstract
+   * @returns {boolean}
+   */
   test = () => true
 
   // Checks if a given item from items is passing

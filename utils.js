@@ -1,41 +1,67 @@
-// Helper partition function
+// @ts-check
+
+/**
+ * Helper partition function
+ * @template T
+ * @param {T[]} arr - array of elements to partition
+ * @param {(value: T) => boolean} fn - predicate for partitioning
+ * @return {[T[], T[]]}
+ */
 const partition = (arr, fn) =>
   arr.reduce(
     ([a, b], x) => (fn(x) ? [a.concat(x), b] : [a, b.concat(x)]),
-    [[], []]
+    /** @type {[T[], T[]]} */ ([[], []])
   )
 
-// Sort rules alphabetically and hoist single items to the top
-const sortRules = rule => {
-  if (rule.items) {
-    const [items, rules] = partition(rule.items, x => x instanceof Item)
+/**
+ * Sort rules/items alphabetically, hoist items to the top
+ * @param {(Rule|Item)[]} itemList
+ * @returns {(Rule|Item)[]}
+ */
+const sortRules = itemList => {
+  const [items, rules] =
+    /** @type {[Item[], Rule[]]} */
+    (partition(itemList, x => x instanceof Item))
+
     items.sort((a, b) => a.fullName.localeCompare(b.fullName))
-    return [...items, ...sortRules(rules)]
-  } else return rule
+  return [...items, ...rules]
 }
 
-// Helper function for getting item by id from all items
-const getItemById = id => {
-  const item = all.find(item => item.id === id)
+/**
+ * Helper function for getting item by id from all items
+ * @param {Item[]} arr
+ * @param {string} id
+ * @returns {Item}
+ */
+const getItemById = (arr, id) => {
+  const item = arr.find(item => item.id === id)
   if (!item) throw new Error(`Couldn't find '${id}'!`)
   return item
 }
 
-// Recursively inject items, essentialy replacing their id's to themselves
-//   - When passed an item id, it will get the item and return it
-//   - When passed a rule object it will return it back with injected items
-const injectItems = x => {
-  if (!x) return x
-  if (x instanceof Item) return x
-  if (typeof x === 'string') return getItemById(x)
-  if (x instanceof Rule) {
-    x.items = x.items.map(injectItems)
-    return x
-  }
-  return x
+/**
+ * Recursively inject rule with item references in place of ids
+ * @param {Item[]} items - list of all items
+ * @param {Rule} rule - rule to inject with item references
+ * @returns {Rule}
+ */
+const injectItems = (items, rule) => {
+  rule.items = rule.items.map(item => {
+    if (typeof item === 'string') return getItemById(items, item)
+    if (item instanceof Rule) {
+      injectItems(items, item)
+      return item
+    }
+    return item
+  })
+  return rule
 }
 
-// Insert or remove item from list
+/**
+ * Insert item to the list if it is not already included, remove it if found
+ * @param {Item[]} list
+ * @param {Item} item
+ */
 const toggleIncluded = (list, item) => {
   if (list.includes(item)) {
     list.splice(list.indexOf(item), 1)
@@ -44,78 +70,136 @@ const toggleIncluded = (list, item) => {
   }
 }
 
-// Generates HTML element from text
+/**
+ * Generates HTML element from text
+ * @param {string} html
+ * @returns {Element}
+ */
 const htmlToElement = html => {
   const template = document.createElement('template')
   template.innerHTML = html.trim()
-  return template.content.firstChild
+  if (template.content.children.length === 1)
+    return template.content.children[0]
+  throw new Error(`HTML template doesn't have only one child`)
 }
 
-// String helper functions
+/**
+ * Capitalize string
+ * @type {(str: string) => string}
+ */
 const capitalize = str => str[0].toUpperCase() + str.slice(1)
+
+/**
+ * Make certain words lowercase
+ * @type {(str: string) => string}
+ */
 const decapitalize = str =>
   str.replace(/\b(to|be|the|of)\b/gi, x => x.toLowerCase())
+
+/**
+ * Insert spaces before uppercase words
+ * @type {(str: string) => string}
+ */
 const spacify = str => str.replace(/[A-Z](?=[a-z])/g, x => ' ' + x).trim()
 
-// Convert PascalCase to normal wording, with specific capitalization rules
+/**
+ * Convert PascalCase to normal wording, with specific capitalization rules
+ * @type {(str: string) => string}
+ */
 const prettify = str => decapitalize(capitalize(spacify(str)))
 
-// Helper function for setting an HTML flag
+/**
+ * Helper function for setting an HTML flag
+ * @param {Element} element
+ * @param {string} name - Name of attribute
+ * @param {boolean} isEnabled
+ */
 const setHtmlFlag = (element, name, isEnabled) =>
   isEnabled ? element.setAttribute(name, '') : element.removeAttribute(name)
 
-// Helper function for setting an HTML class
+/**
+ * Helper function for setting an HTML class
+ * @param {Element} element
+ * @param {string} name - CSS class name
+ * @param {boolean} isEnabled
+ */
 const setHtmlClass = (element, name, isEnabled) =>
   isEnabled ? element.classList.add(name) : element.classList.remove(name)
 
-// HTML empire section builder
-const sectionTemplate = inputType => item =>
+/**
+ * HTML input template based on an item
+ * @param {'checkbox'|'radio'} type
+ * @returns {(item: Item) => string}
+ */
+const inputTemplate = type => item =>
   `<div>
-    <input type="${inputType}" id="${item.id}">
+    <input type="${type}" id="${item.id}">
     <label for="${item.id}">${item.label}</label>
     <div class="tooltip"></div>
   </div>`
 
-// Helper functions for updating various elements
-const updateRule = (node, item) => setHtmlFlag(node, 'pass', item.rule.test())
+/**
+ * Add 'pass' HTML attribute to node if its rule is passing
+ * @param {Element} node
+ * @param {Rule} rule
+ */
+const updateRule = (node, rule) => setHtmlFlag(node, 'pass', rule.test())
+
+/**
+ * Add 'checked' HTML attribute to node if its item is checked
+ * @param {Element} node
+ * @param {Item} item
+ */
 const updateRuleItem = (node, item) =>
   setHtmlFlag(node, 'present', item.checked())
 
-const updateInput = ({ handle, item, rules }) => {
+/**
+ * Refresh style of an input and its tooltip based on relevant item and rules
+ * @param {Input} _
+ */
+const updateInput = ({ handle, item, tooltip }) => {
   handle.checked = item.checked()
   setHtmlFlag(handle, 'disabled', item.disabled())
   setHtmlFlag(handle, 'invalid', item.invalid())
 
-  rules.forEach(({ handle, x }) => {
+  tooltip.rules.forEach(({ handle, x }) => {
     if (x instanceof Rule) {
-      updateRule(handle, item)
+      updateRule(handle, x)
     } else if (x instanceof Item) {
       updateRuleItem(handle, x)
     }
   })
 }
 
-// Color section header when general rule of its items is not passing
+/**
+ * Color the section header when general rule of its items is not passing
+ * @param {Header} _
+ */
 const updateHeader = ({ handle, items }) => {
   setHtmlClass(
     handle,
     'cranberry',
-    items.find(item => !item.generalRule())
+    items.some(item => !item.generalRule())
   )
 }
 
-// Take list of HTML nodes and apply their order to the DOM
-//   nodes - list of every element of a common parent element
+/**
+ * Take list of HTML nodes and apply their order to the DOM
+ * @param {Element[]} nodes - list of every element of a common parent element
+ */
 const sortNodes = nodes =>
   nodes.forEach(node => {
     const container = node.parentNode
-    container.parentNode.appendChild(container)
+    container?.parentNode?.appendChild(container)
   })
 
-// Update summary entries based on the items in the empire
-const updateSummary = ({ handle, name, items }) => {
+/**
+ * Update summary entries based on the items in the empire
+ * @param {Summary} _
+ */
+const updateSummary = ({ handle, items }) => {
   if (items.length === 0) {
-    const text = name === 'pop' ? 'Biological' : 'Empty'
+    const text = items === empire.pop ? 'Biological' : 'Empty'
     handle.replaceChildren(document.createTextNode(text))
     handle.classList.add('comment')
   } else {
@@ -131,8 +215,12 @@ const updateSummary = ({ handle, name, items }) => {
   }
 }
 
-// Sort entries of one summary row
+/**
+ * Sort items of one summary row
+ * @param {Summary} row
+ */
 const sortSummary = row => {
+  /** @type {(a: Item, b: Item) => number} */
   const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
 
   row.items.sort((a, b) => a.id.localeCompare(b.id))
@@ -140,10 +228,18 @@ const sortSummary = row => {
   row.items.sort(byGetOrder)
 }
 
-// Sort entries of one section
+/**
+ * Sort entries of one section
+ * @param {Input[]} inputs
+ */
 const sortInputs = inputs => {
+  /** @param {{ item: Item }} item */
   const disabledLast = ({ item }) => !item.disabled()
+
+  /** @param {{ item: Item }} item */
   const invalidFirst = ({ item }) => item.invalid() && item.checked()
+
+  /** @type {(a: { item: Item }, b: { item: Item }) => number} */
   const byGetOrder = (a, b) => (getOrder(a.item) > getOrder(b.item) ? -1 : 1)
 
   inputs.sort((a, b) => a.item.id.localeCompare(b.item.id))
@@ -159,7 +255,11 @@ const sortInputs = inputs => {
   sortNodes(inputs.map(({ handle }) => handle))
 }
 
-// Get an arbitrary item order value, which can be used for sorting
+/**
+ * Get an arbitrary item order value, which can be used for sorting
+ * @param {Item} item
+ * @returns {number}
+ */
 const getOrder = item => {
   if (item instanceof Trait) {
     if (traitsOrigin.includes(item)) return 4
@@ -189,61 +289,67 @@ const getOrder = item => {
   return 0
 }
 
-// Recursively build the HTML tree of rules and attach them to root
-// Return a list of HTML nodes
-//   - x can be either a rule of an item
-const generateRules = (root, x) => {
+/**
+ * Recursively build the HTML tree of rules and attach them to root
+ * @param {HTMLElement} root
+ * @param {Item|Rule} x
+ * @returns {RuleItem[]}
+ */
+const generateTooltipRules = (root, x) => {
   if (x instanceof Item) {
     const handle = root.appendChild(document.createElement('li'))
     handle.classList.add('rule-item')
     handle.innerText = x.fullName
-    return { handle, x }
-  } else if (x instanceof Rule) {
+    return [{ handle, x }]
+  } else {
     const handle = root.appendChild(document.createElement('span'))
     handle.classList.add('rule')
     handle.innerText = x.text
     const ul = root.appendChild(document.createElement('ul'))
-    const rules = sortRules(x).flatMap(y => generateRules(ul, y))
+    const rules = sortRules(x.items).flatMap(y => generateTooltipRules(ul, y))
     return rules.concat({ handle, x })
   }
 }
 
-// Helper function for coloring the items with arbitrary rules
-// Return CSS color class name or `null` for no class
+/**
+ * Helper function for coloring the item with an arbitrary rules
+ * @param {Item} item
+ * @returns {string} CSS color class name or `null` for no class
+ */
 const getColor = item => {
-  switch (true) {
-    case item instanceof Pop:
-      return {
-        Botanic: 'rosebud',
-        Lithoid: 'apricot',
-        Mechanical: 'turquoise',
-      }[item.id]
-    case item instanceof Trait:
-      if (traitsBotanic.includes(item)) return 'rosebud'
-      if (traitsLithoid.includes(item)) return 'apricot'
-      if (item.cost > 0) return 'turquoise'
-      if (item.cost < 0) return 'cranberry'
-      return null
-    case item instanceof Origin:
-      return 'tacao'
-    case item instanceof Ethic:
-      if (item.id.startsWith('Fanatic')) return 'cranberry'
-      if (item.id.startsWith('Gestalt')) return 'tacao'
-      return 'apricot'
-    case item instanceof Authority:
-      return {
-        Imperial: 'cranberry',
-        Dictatorial: 'apricot',
-        Oligarchic: 'rosebud',
-        Democratic: 'tacao',
-        Corporate: 'tacao',
-        HiveMind: 'lavender',
-        MachineIntelligence: 'turquoise',
-      }[item.id]
-    case item instanceof Civic:
-      if (civicsCorporate.includes(item)) return 'rosebud'
-      if (civicsHive.includes(item)) return 'lavender'
-      if (civicsMachine.includes(item)) return 'turquoise'
-      return 'apricot'
+  if (item instanceof Pop) {
+    return {
+      Botanic: 'rosebud',
+      Lithoid: 'apricot',
+      Mechanical: 'turquoise',
+    }[item.id]
+  } else if (item instanceof Trait) {
+    if (traitsBotanic.includes(item)) return 'rosebud'
+    if (traitsLithoid.includes(item)) return 'apricot'
+    if (item.cost > 0) return 'turquoise'
+    if (item.cost < 0) return 'cranberry'
+    return 'none'
+  } else if (item instanceof Origin) {
+    return 'tacao'
+  } else if (item instanceof Ethic) {
+    if (item.id.startsWith('Fanatic')) return 'cranberry'
+    if (item.id.startsWith('Gestalt')) return 'tacao'
+    return 'apricot'
+  } else if (item instanceof Authority) {
+    return {
+      Imperial: 'cranberry',
+      Dictatorial: 'apricot',
+      Oligarchic: 'rosebud',
+      Democratic: 'tacao',
+      Corporate: 'tacao',
+      HiveMind: 'lavender',
+      MachineIntelligence: 'turquoise',
+    }[item.id]
+  } else if (item instanceof Civic) {
+    if (civicsCorporate.includes(item)) return 'rosebud'
+    if (civicsHive.includes(item)) return 'lavender'
+    if (civicsMachine.includes(item)) return 'turquoise'
+    return 'apricot'
   }
+  throw new Error(`Couldn't match color for '${item.id}'`)
 }

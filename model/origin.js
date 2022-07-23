@@ -1,3 +1,5 @@
+// @ts-check
+
 class Origin extends Item {
   get empireList() {
     return empire.origin
@@ -7,7 +9,7 @@ class Origin extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
-const origin = Item.create(Origin, [
+const origins = Item.create(Origin, [
   {
     id: 'ProsperousUnification',
   },

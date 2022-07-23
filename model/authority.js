@@ -1,3 +1,5 @@
+// @ts-check
+
 class Authority extends Item {
   get empireList() {
     return empire.authority

@@ -1,4 +1,7 @@
+// @ts-check
+
 class Trait extends Item {
+  /** @type {(acc: number, { cost: number }) => number } */
   static costSum = (acc, { cost }) => acc - cost
 
   get empireList() {
@@ -405,12 +408,13 @@ const traitsMechanic = Item.create(Trait, [
   },
 ]).map(Item.withRule(every('Mechanical')))
 
+
 const traits = [
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
-  ...traitsNormal.filter(x => x.cost > 0),
-  ...traitsMechanic.filter(x => x.cost > 0),
-  ...traitsNormal.filter(x => x.cost < 0),
-  ...traitsMechanic.filter(x => x.cost < 0),
+  ...traitsNormal.filter(x => x.cost && x.cost > 0),
+  ...traitsMechanic.filter(x => x.cost && x.cost > 0),
+  ...traitsNormal.filter(x => x.cost && x.cost < 0),
+  ...traitsMechanic.filter(x => x.cost && x.cost < 0),
 ]

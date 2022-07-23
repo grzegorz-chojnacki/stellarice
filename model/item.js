@@ -1,16 +1,33 @@
+// @ts-check
+
+/**
+ * @typedef RawItem
+ * @property {string} id
+ * @property {number=} cost
+ * @property {Rule=} rule
+ */
+
 class Item {
-  // Helper method for constructing items from simple objects
+  /**
+   * Helper method for constructing items from simple objects
+   * @param {typeof Item} classRef
+   * @param {RawItem[]} objects
+   * @returns {Item[]}
+   */
   static create = (classRef, objects) => {
-    if (!Item.isPrototypeOf(classRef))
-      throw new Error('Supplied class does not extend Item')
     return objects.map(o => new classRef(o))
   }
 
+  /**
+   * Helper method that creates function for merging with rules of an item
+   * @param {Rule} rule
+   * @returns {(item: Item) => Item}
+   */
   static withRule = rule => item => {
-    if (item.rule.constructor === Rule) {
+    if (item.rule?.constructor === Rule) {
       item.rule = rule
-    } else if (rule.constructor === item.rule.constructor) {
-      item.rule.items = rule.items.concat(item.rule.items)
+    } else if (rule.constructor === item.rule?.constructor) {
+      item.rule.items = rule.items.concat(item.rule?.items)
     } else if (rule instanceof Every) {
       item.rule = every(...rule.items, item.rule)
     } else if (item.rule instanceof Every) {
@@ -21,6 +38,7 @@ class Item {
     return item
   }
 
+  /** @param {RawItem} _ */
   constructor({ id, cost = 0, rule = new Rule() }) {
     this.id = id
     this.name = prettify(id)
@@ -29,7 +47,7 @@ class Item {
     this.empireName = this.constructor.name.toLowerCase()
   }
 
-  // Used in rules, also contains the type
+  // Used for displaying the rule
   get fullName() {
     return `${this.constructor.name} ${this.name}`
   }
@@ -39,13 +57,31 @@ class Item {
     return this.name
   }
 
-  // Use getter, as empire is not defined while defining the model
+  /**
+   * Empire list of related items
+   *
+   * Used as getter, because empire doesn't exist yet while defining the model
+   * @abstract
+   * @returns {Item[]}
+   */
   get empireList() {
     throw new Error('Item does not have an empireList defined!')
   }
 
-  // A general rule for every item in class
+  /**
+   * A general rule to check for every item in the class
+   *
+   * Used to determine if the composition is valid
+   * @returns {boolean}
+   */
   generalRule = () => true
+
+  /**
+   * A general rule to check for every item in the class
+   *
+   * Used to determine if the composition is valid
+   * @returns {boolean}
+   */
   isAvailable = () => true
 
   // Logic & HTML formatting helper methods

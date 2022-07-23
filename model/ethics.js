@@ -1,4 +1,7 @@
+// @ts-check
+
 class Ethic extends Item {
+  /** @type {(acc: number, { cost: number }) => number} */
   static costSum = (acc, { cost }) => acc + cost
 
   get empireList() {
@@ -37,91 +40,93 @@ const materialist = one(
   'Spiritualist'
 )
 
-const ethics = Item.create(Ethic, [
-  ...[
-    {
-      cost: 2,
-      id: 'FanaticMilitarist',
-      rule: militarist(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticPacifist',
-      rule: militarist(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticXenophobe',
-      rule: xenophobe(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticXenophile',
-      rule: xenophobe(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticAuthoritarian',
-      rule: authoritarian(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticEgalitarian',
-      rule: authoritarian(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticMaterialist',
-      rule: materialist(),
-    },
-    {
-      cost: 2,
-      id: 'FanaticSpiritualist',
-      rule: materialist(),
-    },
-    {
-      cost: 1,
-      id: 'Militarist',
-      rule: militarist(),
-    },
-    {
-      cost: 1,
-      id: 'Pacifist',
-      rule: militarist(),
-    },
-    {
-      cost: 1,
-      id: 'Xenophobe',
-      rule: xenophobe(),
-    },
-    {
-      cost: 1,
-      id: 'Xenophile',
-      rule: xenophobe(),
-    },
-    {
-      cost: 1,
-      id: 'Authoritarian',
-      rule: authoritarian(),
-    },
-    {
-      cost: 1,
-      id: 'Egalitarian',
-      rule: authoritarian(),
-    },
-    {
-      cost: 1,
-      id: 'Materialist',
-      rule: materialist(),
-    },
-    {
-      cost: 1,
-      id: 'Spiritualist',
-      rule: materialist(),
-    },
-  ].map(Item.withRule(none('Mechanical'))),
+const normalEthics = Item.create(Ethic, [
   {
+    cost: 2,
+    id: 'FanaticMilitarist',
+    rule: militarist(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticPacifist',
+    rule: militarist(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticXenophobe',
+    rule: xenophobe(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticXenophile',
+    rule: xenophobe(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticAuthoritarian',
+    rule: authoritarian(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticEgalitarian',
+    rule: authoritarian(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticMaterialist',
+    rule: materialist(),
+  },
+  {
+    cost: 2,
+    id: 'FanaticSpiritualist',
+    rule: materialist(),
+  },
+  {
+    cost: 1,
+    id: 'Militarist',
+    rule: militarist(),
+  },
+  {
+    cost: 1,
+    id: 'Pacifist',
+    rule: militarist(),
+  },
+  {
+    cost: 1,
+    id: 'Xenophobe',
+    rule: xenophobe(),
+  },
+  {
+    cost: 1,
+    id: 'Xenophile',
+    rule: xenophobe(),
+  },
+  {
+    cost: 1,
+    id: 'Authoritarian',
+    rule: authoritarian(),
+  },
+  {
+    cost: 1,
+    id: 'Egalitarian',
+    rule: authoritarian(),
+  },
+  {
+    cost: 1,
+    id: 'Materialist',
+    rule: materialist(),
+  },
+  {
+    cost: 1,
+    id: 'Spiritualist',
+    rule: materialist(),
+  },
+]).map(item => Item.withRule(none('Mechanical'))(item))
+
+const ethics = [
+  ...normalEthics,
+  ...Item.create(Ethic, [{
     cost: 3,
     id: 'Gestalt',
-  },
-])
+  }]),
+]

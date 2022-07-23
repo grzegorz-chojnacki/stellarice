@@ -1,3 +1,5 @@
+// @ts-check
+
 class Civic extends Item {
   get empireList() {
     return empire.civics
