@@ -2,9 +2,7 @@
 /// <reference path="../paths.js" />
 
 class Civic extends Item {
-  get empireList() {
-    return empire.civics
-  }
+  empireList = empire.civics
 
   generalRule = () => this.empireList.length === 2
   isAvailable = () => this.empireList.length < 2

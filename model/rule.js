@@ -5,7 +5,7 @@ class Rule {
   text = 'No special rules'
 
   /**
-   * @param {(Rule|Item)[]} items
+   * @param {(Rule|Item|string)[]} items
    */
   constructor(items = []) {
     this.items = items
@@ -31,10 +31,15 @@ class Rule {
    */
   test = () => true
 
-  // Checks if a given item from items is passing
+  /**
+   * Checks if a given item from items is passing
+   * @param {Item|Rule|string} x
+   * @returns {boolean}
+   */
   match = x => {
     if (x instanceof Item) return x.checked()
     if (x instanceof Rule) return x.test()
+    throw new Error(`Rule wasn't properly injected with items, found: '${x}'`)
   }
 }
 
@@ -57,9 +62,16 @@ class None extends Rule {
 }
 
 // Syntax sugar for creating rule objects
+/** @param {(Item|Rule|string)[]} items */
 const some = (...items) => new Some(items)
+
+/** @param {(Item|Rule|string)[]} items */
 const none = (...items) => new None(items)
+
+/** @param {(Item|Rule|string)[]} items */
 const every = (...items) => new Every(items)
+
+/** @param {(Item|Rule|string)[]} items */
 const one =
   (...items) =>
   () =>

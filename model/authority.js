@@ -2,9 +2,7 @@
 /// <reference path="../paths.js" />
 
 class Authority extends Item {
-  get empireList() {
-    return empire.authority
-  }
+  empireList = empire.authority
 
   generalRule = () => this.empireList.length === 1
   isAvailable = () => this.empireList.length === 0

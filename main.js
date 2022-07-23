@@ -5,19 +5,6 @@ const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 all.forEach(item => injectItems(all, item.rule))
 
 /**
- * The empire structure, used for keeping the state of which item is checked
- * @type {{ [x: string]: Item[] }}
- */
-const empire = {
-  pop: [],
-  traits: [],
-  origin: [],
-  ethics: [],
-  authority: [],
-  civics: [],
-}
-
-/**
  * @typedef Summary
  * @property {HTMLElement} handle - Section's summary table row
  * @property {Item[]} items - Empire list of items related to this summary row

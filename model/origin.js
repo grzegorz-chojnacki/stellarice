@@ -2,9 +2,7 @@
 /// <reference path="../paths.js" />
 
 class Origin extends Item {
-  get empireList() {
-    return empire.origin
-  }
+  empireList = empire.origin
 
   generalRule = () => this.empireList.length === 1
   isAvailable = () => this.empireList.length === 0

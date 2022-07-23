@@ -5,9 +5,7 @@ class Trait extends Item {
   /** @type {(acc: number, { cost: number }) => number } */
   static costSum = (acc, { cost }) => acc - cost
 
-  get empireList() {
-    return empire.traits
-  }
+  empireList = empire.traits
 
   get label() {
     return `[${this.cost.toString().padStart(2)}] ${this.name}`

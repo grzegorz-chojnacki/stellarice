@@ -2,6 +2,19 @@
 /// <reference path="../paths.js" />
 
 /**
+ * The empire structure, used for keeping the state of which item is checked
+ * @type {{ [x: string]: Item[] }}
+ */
+ const empire = {
+  pop: [],
+  traits: [],
+  origin: [],
+  ethics: [],
+  authority: [],
+  civics: [],
+}
+
+/**
  * @typedef RawItem
  * @property {string} id
  * @property {number=} cost
@@ -45,7 +58,7 @@ class Item {
     this.name = prettify(id)
     this.cost = cost
     this.rule = rule.without(this.id)
-    this.empireName = this.constructor.name.toLowerCase()
+    this.empireList = []
   }
 
   // Used for displaying the rule
@@ -56,17 +69,6 @@ class Item {
   // Used to display the input label (and e.g. differentiate from the summary)
   get label() {
     return this.name
-  }
-
-  /**
-   * Empire list of related items
-   *
-   * Used as getter, because empire doesn't exist yet while defining the model
-   * @abstract
-   * @returns {Item[]}
-   */
-  get empireList() {
-    throw new Error('Item does not have an empireList defined!')
   }
 
   /**

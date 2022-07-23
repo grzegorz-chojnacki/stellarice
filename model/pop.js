@@ -2,9 +2,7 @@
 /// <reference path="../paths.js" />
 
 class Pop extends Item {
-  get empireList() {
-    return empire.pop
-  }
+  empireList = empire.pop
 
   isAvailable = () => this.empireList.length === 0
 }

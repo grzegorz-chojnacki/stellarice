@@ -16,7 +16,7 @@ const partition = (arr, fn) =>
 
 /**
  * Sort rules/items alphabetically, hoist items to the top
- * @param {(Rule|Item)[]} itemList
+ * @param {(Rule|Item|string)[]} itemList
  * @returns {(Rule|Item)[]}
  */
 const sortRules = itemList => {
