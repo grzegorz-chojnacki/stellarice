@@ -109,6 +109,7 @@ input[invalid]:checked + label > * {
 
 .tooltip {
   color: var(--fg);
+  z-index: 100;
   display: none;
   position: fixed;
   top: 1em;
