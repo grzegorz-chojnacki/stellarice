@@ -44,18 +44,44 @@ const getItemById = (arr, id) => {
  * Recursively inject rule with item references in place of ids
  * @param {Item[]} items - list of all items
  * @param {Rule} rule - rule to inject with item references
- * @returns {Rule}
  */
 const injectItems = (items, rule) => {
-  rule.entries = rule.entries.map(item => {
-    if (typeof item === 'string') return getItemById(items, item)
-    if (item instanceof Rule) {
-      injectItems(items, item)
-      return item
+  rule.entries = rule.entries.map(entry => {
+    if (typeof entry === 'string') return getItemById(items, entry)
+    if (entry instanceof Rule) {
+      injectItems(items, entry)
     }
-    return item
+    return entry
   })
   return rule
+}
+
+/**
+ * Generate list of unique pairs (combinations of 2 elements)
+ * @template T
+ * @param {T[]} arr
+ */
+const pairs = arr => arr.flatMap((v, i) => arr.slice(i + 1).map(w => [v, w]))
+
+/**
+ * Recursively go through rules and simplify them
+ * @param {Rule} rule - rule to inject with item references
+ */
+const mergeRules = rule => {
+  rule.entries.forEach(entry => {
+    if (entry instanceof Rule) mergeRules(entry)
+  })
+
+  pairs(rule.entries).forEach(([a, b]) => {
+    if (typeof a === 'string' || typeof b === 'string') return
+    if (a instanceof Item || b instanceof Item) return
+    if (a.constructor === Some) return
+    if (b.constructor === Some) return
+    if (a.constructor === b.constructor) {
+      a.entries = a.entries.concat(b.entries)
+      rule.entries.splice(rule.entries.findIndex(e => e === b), 1)
+    }
+  })
 }
 
 /**
@@ -307,7 +333,9 @@ const generateTooltipRules = (root, entry) => {
     handle.classList.add('rule')
     handle.innerText = entry.text
     const ul = root.appendChild(document.createElement('ul'))
-    const rules = sortEntries(entry.entries).flatMap(y => generateTooltipRules(ul, y))
+    const rules = sortEntries(entry.entries).flatMap(y =>
+      generateTooltipRules(ul, y)
+    )
     return rules.concat({ handle, entry })
   }
 }

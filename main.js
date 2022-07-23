@@ -3,6 +3,7 @@
 
 const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 all.forEach(item => injectItems(all, item.rule))
+all.forEach(item => mergeRules(item.rule))
 
 /**
  * @typedef Summary

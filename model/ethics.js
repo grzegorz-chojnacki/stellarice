@@ -120,7 +120,7 @@ const normalEthics = Item.create(Ethic, [
     id: 'Spiritualist',
     rule: materialist(),
   },
-]).map(item => Item.withRule(none('Mechanical'))(item))
+]).map(item => Item.withRule(() => none('Mechanical'))(item))
 
 const ethics = [
   ...normalEthics,

@@ -90,7 +90,7 @@ const traitsBotanic = Item.create(Trait, [
     cost: 2,
     rule: every(breeders(), none('CloneArmy', 'Necrophage')),
   },
-]).map(Item.withRule(every('Botanic')))
+]).map(Item.withRule(() => every('Botanic')))
 
 const traitsLithoid = Item.create(Trait, [
   {
@@ -108,7 +108,7 @@ const traitsLithoid = Item.create(Trait, [
     cost: 2,
     rule: gaseous(),
   },
-]).map(Item.withRule(every('Lithoid')))
+]).map(Item.withRule(() => every('Lithoid')))
 
 const traitsNormal = Item.create(Trait, [
   // Positive traits
@@ -293,7 +293,7 @@ const traitsNormal = Item.create(Trait, [
     cost: -1,
     id: 'Decadent',
   },
-]).map(Item.withRule(none('Mechanical')))
+]).map(Item.withRule(() => none('Mechanical')))
 
 const traitsMechanic = Item.create(Trait, [
   // Positive traits
@@ -405,7 +405,7 @@ const traitsMechanic = Item.create(Trait, [
     id: 'HighBandwidth',
     rule: bandwidth(),
   },
-]).map(Item.withRule(every('Mechanical')))
+]).map(Item.withRule(() => every('Mechanical')))
 
 const traits = [
   ...traitsOrigin,

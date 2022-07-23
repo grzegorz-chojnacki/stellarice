@@ -34,10 +34,11 @@ class Item {
 
   /**
    * Helper method that creates function for merging with rules of an item
-   * @param {Rule} rule
+   * @param {() => Rule} ruleFn
    * @returns {(item: Item) => Item}
    */
-  static withRule = rule => item => {
+  static withRule = ruleFn => item => {
+    const rule = ruleFn()
     if (item.rule?.constructor === Rule) {
       item.rule = rule
     } else if (rule.constructor === item.rule?.constructor) {
