@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../paths.js" />
 
 class Authority extends Item {
   get empireList() {

@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../paths.js" />
 
 class Rule {
   text = 'No special rules'
@@ -16,12 +17,12 @@ class Rule {
    * @returns {Rule}
    */
   without = x => {
-      this.items.forEach((item, i) => {
-        if (item === x) this.items.splice(i, 1)
-        if (x instanceof Rule) x.without(item)
-      })
-      return this
-    }
+    this.items.forEach((item, i) => {
+      if (item === x) this.items.splice(i, 1)
+      if (x instanceof Rule) x.without(item)
+    })
+    return this
+  }
 
   /**
    * Checks if rule is passing, should call match for every item
@@ -59,4 +60,7 @@ class None extends Rule {
 const some = (...items) => new Some(items)
 const none = (...items) => new None(items)
 const every = (...items) => new Every(items)
-const one = (...items) => () => none(...items)
+const one =
+  (...items) =>
+  () =>
+    none(...items)

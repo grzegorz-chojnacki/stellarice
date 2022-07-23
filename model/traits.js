@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../paths.js" />
 
 class Trait extends Item {
   /** @type {(acc: number, { cost: number }) => number } */
@@ -407,7 +408,6 @@ const traitsMechanic = Item.create(Trait, [
     rule: bandwidth(),
   },
 ]).map(Item.withRule(every('Mechanical')))
-
 
 const traits = [
   ...traitsOrigin,

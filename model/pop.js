@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../paths.js" />
 
 class Pop extends Item {
   get empireList() {

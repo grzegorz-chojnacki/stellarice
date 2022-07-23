@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../paths.js" />
 
 class Civic extends Item {
   get empireList() {

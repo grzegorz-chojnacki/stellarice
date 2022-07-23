@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="paths.js" />
 
 /**
  * Helper partition function
@@ -23,7 +24,7 @@ const sortRules = itemList => {
     /** @type {[Item[], Rule[]]} */
     (partition(itemList, x => x instanceof Item))
 
-    items.sort((a, b) => a.fullName.localeCompare(b.fullName))
+  items.sort((a, b) => a.fullName.localeCompare(b.fullName))
   return [...items, ...rules]
 }
 

@@ -1,4 +1,6 @@
 // @ts-check
+/// <reference path="paths.js" />
+
 const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 all.forEach(item => injectItems(all, item.rule))
 

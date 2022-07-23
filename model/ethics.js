@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../paths.js" />
 
 class Ethic extends Item {
   /** @type {(acc: number, { cost: number }) => number} */
@@ -125,8 +126,10 @@ const normalEthics = Item.create(Ethic, [
 
 const ethics = [
   ...normalEthics,
-  ...Item.create(Ethic, [{
-    cost: 3,
-    id: 'Gestalt',
-  }]),
+  ...Item.create(Ethic, [
+    {
+      cost: 3,
+      id: 'Gestalt',
+    },
+  ]),
 ]
