@@ -107,6 +107,40 @@ const withRule = ruleFn => item => {
 }
 
 /**
+ * Check if item has a None rule (or Every rule with None rule) and for each of
+ * its items go to them and add None rule in the reversed direction
+ * @param {Item} item
+ */
+const doubleBindNone = item => {
+  let rule = item.rule
+  if (item.rule instanceof Every) {
+    // @ts-ignore
+    rule = item.rule.entries.find(e => e instanceof None)
+  }
+
+  if (rule instanceof None) {
+    rule.entries.forEach(entry => {
+      if (entry instanceof Item) {
+        if (!entry.rule.entries.includes(item)) {
+          if (entry.rule.constructor === Rule) {
+            entry.rule = new None([item])
+          } else if (entry.rule instanceof None) {
+            entry.rule.entries.push(item)
+          } else if (entry.rule instanceof Every) {
+            const none = entry.rule.entries.find(r => r instanceof None)
+            if (none instanceof None) {
+              none.entries.push(item)
+            } else {
+              entry.rule.entries.push(new None([item]))
+            }
+          }
+        }
+      }
+    })
+  }
+}
+
+/**
  * Generate list of unique pairs (combinations of 2 elements)
  * @template T
  * @param {T[]} arr

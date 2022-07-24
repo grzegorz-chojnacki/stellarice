@@ -11,6 +11,19 @@ const all = cookEntries([
 ])
 
 all.forEach(item => mergeRules(item.rule))
+all.forEach(doubleBindNone)
+
+/**
+ * @param {Rule} rule
+ * @param {(item: Item) => void} fn
+ */
+const iterateRule = (rule, fn) => {
+  const [items, rules] = partition(rule.entries, x => x instanceof Item)
+  // @ts-ignore
+  items.forEach(fn)
+  // @ts-ignore
+  rules.forEach(rule => iterateRule(rule, fn))
+}
 
 /**
  * @typedef Summary
