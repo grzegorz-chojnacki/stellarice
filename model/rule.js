@@ -84,4 +84,4 @@ const none = (...entries) => ({ type: None, entries })
 const every = (...entries) => ({ type: Every, entries })
 
 /** @param {RawEntry[]} entries */
-const one = (...entries) => none(...entries)
+const one = (...entries) => () => none(...entries)

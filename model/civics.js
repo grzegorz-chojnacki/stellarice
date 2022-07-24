@@ -404,12 +404,12 @@ const civicsMachine = [
 const civics = [
   ...civicsNormal
     .map(addItemType(NormalCivic))
-    .map(withRule(none('Corporate', 'HiveMind', 'MachineIntelligence'))),
+    .map(withRule(() => none('Corporate', 'HiveMind', 'MachineIntelligence'))),
   ...civicsCorporate
     .map(addItemType(CorporateCivic))
-    .map(withRule(some('Corporate'))),
-  ...civicsHive.map(addItemType(HiveCivic)).map(withRule(every('HiveMind'))),
+    .map(withRule(() => some('Corporate'))),
+  ...civicsHive.map(addItemType(HiveCivic)).map(withRule(() => every('HiveMind'))),
   ...civicsMachine
     .map(addItemType(MachineCivic))
-    .map(withRule(some('MachineIntelligence'))),
+    .map(withRule(() => some('MachineIntelligence'))),
 ]

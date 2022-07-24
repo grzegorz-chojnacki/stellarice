@@ -87,10 +87,11 @@ const cookEntries = rawItems => {
 
 /**
  * Helper method that creates function for merging with rules of an item
- * @param {RawRule} rule
+ * @param {() => RawRule} ruleFn
  * @returns {(item: RawItem) => RawItem}
  */
-const withRule = rule => item => {
+const withRule = ruleFn => item => {
+  const rule = ruleFn()
   if (!item.rule || item.rule.type === Rule) {
     item.rule = rule
   } else if (rule.type === item.rule.type) {
@@ -122,7 +123,6 @@ const mergeRules = rule => {
   })
 
   pairs(rule.entries).forEach(([a, b]) => {
-    if (typeof a === 'string' || typeof b === 'string') return
     if (a instanceof Item || b instanceof Item) return
     if (a.constructor === Some) return
     if (b.constructor === Some) return

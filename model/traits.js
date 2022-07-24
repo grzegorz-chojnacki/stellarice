@@ -56,7 +56,7 @@ const traitsOrigin = [
   {
     id: 'CloneSoldier',
     cost: 0,
-    rule: every('CloneArmy', breeders),
+    rule: every('CloneArmy', breeders()),
   },
   {
     id: 'Survivor',
@@ -84,53 +84,53 @@ const traitsBotanic = [
   {
     id: 'Radiotrophic',
     cost: 2,
-    rule: trophic,
+    rule: trophic(),
   },
   {
     id: 'Phototrophic',
     cost: 1,
-    rule: every(trophic, none('Subterranean')),
+    rule: every(trophic(), none('Subterranean')),
   },
   {
     id: 'Budding',
     cost: 2,
-    rule: every(breeders, none('CloneArmy', 'Necrophage')),
+    rule: every(breeders(), none('CloneArmy', 'Necrophage')),
   },
 ]
   .map(addItemType(BotanicTrait))
-  .map(withRule(every('Botanic')))
+  .map(withRule(() => every('Botanic')))
 
 const traitsLithoid = [
   {
     id: 'GaseousByproducts',
     cost: 2,
-    rule: gaseous,
+    rule: gaseous(),
   },
   {
     id: 'ScintillatingSkin',
     cost: 2,
-    rule: gaseous,
+    rule: gaseous(),
   },
   {
     id: 'VolatileExcretions',
     cost: 2,
-    rule: gaseous,
+    rule: gaseous(),
   },
 ]
   .map(addItemType(LithoidTrait))
-  .map(withRule(every('Lithoid')))
+  .map(withRule(() => every('Lithoid')))
 
 const traitsNormal = [
   // Positive traits
   {
     cost: 2,
     id: 'Adaptive',
-    rule: adaptive,
+    rule: adaptive(),
   },
   {
     cost: 4,
     id: 'ExtremelyAdaptive',
-    rule: adaptive,
+    rule: adaptive(),
   },
   {
     cost: 2,
@@ -139,37 +139,37 @@ const traitsNormal = [
   {
     cost: 2,
     id: 'Charismatic',
-    rule: charismatic,
+    rule: charismatic(),
   },
   {
     cost: 1,
     id: 'Communal',
-    rule: communal,
+    rule: communal(),
   },
   {
     cost: 2,
     id: 'Conformists',
-    rule: conformists,
+    rule: conformists(),
   },
   {
     cost: 1,
     id: 'Conservationist',
-    rule: conservationists,
+    rule: conservationists(),
   },
   {
     cost: 2,
     id: 'Docile',
-    rule: docile,
+    rule: docile(),
   },
   {
     cost: 1,
     id: 'Enduring',
-    rule: enduring,
+    rule: enduring(),
   },
   {
     cost: 4,
     id: 'Venerable',
-    rule: enduring,
+    rule: enduring(),
   },
   {
     cost: 2,
@@ -198,17 +198,17 @@ const traitsNormal = [
   {
     cost: 1,
     id: 'Nomadic',
-    rule: nomadic,
+    rule: nomadic(),
   },
   {
     cost: 1,
     id: 'QuickLearners',
-    rule: learners,
+    rule: learners(),
   },
   {
     cost: 2,
     id: 'RapidBreeders',
-    rule: breeders,
+    rule: breeders(),
   },
   {
     cost: 1,
@@ -217,12 +217,12 @@ const traitsNormal = [
   {
     cost: 1,
     id: 'Strong',
-    rule: strong,
+    rule: strong(),
   },
   {
     cost: 3,
     id: 'VeryStrong',
-    rule: strong,
+    rule: strong(),
   },
   {
     cost: 1,
@@ -235,69 +235,69 @@ const traitsNormal = [
   {
     cost: 1,
     id: 'Traditional',
-    rule: traditional,
+    rule: traditional(),
   },
 
   // Negative traits
   {
     cost: -2,
     id: 'Nonadaptive',
-    rule: adaptive,
+    rule: adaptive(),
   },
   {
     cost: -2,
     id: 'Repugnant',
-    rule: charismatic,
+    rule: charismatic(),
   },
   {
     cost: -2,
     id: 'Solitary',
-    rule: communal,
+    rule: communal(),
   },
   {
     cost: -1,
     id: 'Deviants',
-    rule: conformists,
+    rule: conformists(),
   },
   {
     cost: -1,
     id: 'Wasteful',
-    rule: conservationists,
+    rule: conservationists(),
   },
   {
     cost: -2,
     id: 'Unruly',
-    rule: docile,
+    rule: docile(),
   },
   {
     cost: -1,
     id: 'Fleeting',
-    rule: enduring,
+    rule: enduring(),
   },
   {
     cost: -1,
     id: 'Sedentary',
-    rule: nomadic,
+    rule: nomadic(),
   },
   {
     cost: -1,
     id: 'SlowLearners',
-    rule: learners,
+    rule: learners(),
   },
   {
     cost: -2,
     id: 'SlowBreeders',
-    rule: breeders,
+    rule: breeders(),
   },
   {
     cost: -1,
     id: 'Weak',
-    rule: strong,
+    rule: strong(),
   },
   {
     cost: -1,
     id: 'Quarrelsome',
-    rule: traditional,
+    rule: traditional(),
   },
   {
     cost: -1,
@@ -305,7 +305,7 @@ const traitsNormal = [
   },
 ]
   .map(addItemType(NormalTrait))
-  .map(withRule(none('Mechanical')))
+  .map(withRule(() => none('Mechanical')))
 
 const traitsMechanic = [
   // Positive traits
@@ -316,12 +316,12 @@ const traitsMechanic = [
   {
     cost: 1,
     id: 'DoubleJointed',
-    rule: bulky,
+    rule: bulky(),
   },
   {
     cost: 1,
     id: 'Durable',
-    rule: maintenance,
+    rule: maintenance(),
   },
   {
     cost: 3,
@@ -330,7 +330,7 @@ const traitsMechanic = [
   {
     cost: 1,
     id: 'EmotionEmulators',
-    rule: uncanny,
+    rule: uncanny(),
   },
   {
     cost: 2,
@@ -343,7 +343,7 @@ const traitsMechanic = [
   {
     cost: 1,
     id: 'LearningAlgorithms',
-    rule: repurposed,
+    rule: repurposed(),
   },
   {
     cost: 2,
@@ -356,7 +356,7 @@ const traitsMechanic = [
   {
     cost: 1,
     id: 'MassProduced',
-    rule: custom,
+    rule: custom(),
   },
   {
     cost: 2,
@@ -369,12 +369,12 @@ const traitsMechanic = [
   {
     cost: 2,
     id: 'Recycled',
-    rule: luxurious,
+    rule: luxurious(),
   },
   {
     cost: 2,
     id: 'StreamlinedProtocols',
-    rule: bandwidth,
+    rule: bandwidth(),
   },
   {
     cost: 2,
@@ -385,41 +385,41 @@ const traitsMechanic = [
   {
     cost: -1,
     id: 'Bulky',
-    rule: bulky,
+    rule: bulky(),
   },
   {
     cost: -1,
     id: 'HighMaintenance',
-    rule: maintenance,
+    rule: maintenance(),
   },
   {
     cost: -1,
     id: 'Uncanny',
-    rule: uncanny,
+    rule: uncanny(),
   },
   {
     cost: -1,
     id: 'RepurposedHardware',
-    rule: repurposed,
+    rule: repurposed(),
   },
   {
     cost: -1,
     id: 'CustomMade',
-    rule: custom,
+    rule: custom(),
   },
   {
     cost: -1,
     id: 'Luxurious',
-    rule: luxurious,
+    rule: luxurious(),
   },
   {
     cost: -1,
     id: 'HighBandwidth',
-    rule: bandwidth,
+    rule: bandwidth(),
   },
 ]
   .map(addItemType(MechanicTrait))
-  .map(withRule(every('Mechanical')))
+  .map(withRule(() => every('Mechanical')))
 
 const traits = [
   ...traitsOrigin,
