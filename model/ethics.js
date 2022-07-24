@@ -125,12 +125,14 @@ const normalEthics = [
 ]
   .map(addItemType(Ethic))
   .map(withRule(() => none('Mechanical')))
+  .map(cookItem)
+
 
 const ethics = [
   ...normalEthics,
-  {
+  cookItem({
     type: Gestalt,
     cost: 3,
     id: 'Gestalt',
-  },
+  }),
 ]

@@ -23,7 +23,6 @@ const empire = {
  */
 
 class Item {
-  static emptyRule = new Rule()
   /**
    * List of items relevant to this item type
    * @abstract
@@ -31,36 +30,31 @@ class Item {
    */
   empireList = []
 
-
   /**
    * @param {string} id
    * @param {number=} cost
-   * @param {Rule=} rule
+   * @param {RawRule=} rule
    */
-  constructor(id, cost = 0, rule = Item.emptyRule) {
+  constructor(id, cost = 0, rule = { type: Rule, entries: [] }) {
     this.id = id
     this.name = prettify(id)
     this.cost = cost
-    this.rule = rule
+    this.rule = new Every([])
+    this.rawRule = rule
   }
 
   // Used for displaying the item in tooltip
-  // Gets the name of the class immediately subclassing Item
   get fullName() {
-    let proto = Object.getPrototypeOf(this)
-    while (true) {
-      if (Object.getPrototypeOf(proto).constructor === Item) {
-        break
-      } else {
-        proto = Object.getPrototypeOf(proto)
-      }
-    }
-    return `${proto.constructor.name} ${this.name}`
+    return `${this.constructor.name} ${this.name}`
   }
 
   // Used to display the input label (and e.g. differentiate from the summary)
   get label() {
     return this.name
+  }
+
+  clean() {
+    this.rule = this.rule.without(this)
   }
 
   /**

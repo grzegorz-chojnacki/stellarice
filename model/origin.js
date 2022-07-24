@@ -174,4 +174,6 @@ const origins = [
     id: 'ProgenitorHive',
     rule: every('HiveMind'),
   },
-].map(addItemType(Origin))
+]
+  .map(addItemType(Origin))
+  .map(cookItem)

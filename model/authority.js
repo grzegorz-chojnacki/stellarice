@@ -37,4 +37,6 @@ const authority = [
     id: 'MachineIntelligence',
     rule: every('Mechanical', 'Gestalt'),
   },
-].map(addItemType(Authority))
+]
+  .map(addItemType(Authority))
+  .map(cookItem)

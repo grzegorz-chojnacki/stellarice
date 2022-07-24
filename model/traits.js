@@ -17,12 +17,6 @@ class Trait extends Item {
   isAvailable = () => this.empireList.length < 5
 }
 
-class OriginTrait extends Trait {}
-class BotanicTrait extends Trait {}
-class LithoidTrait extends Trait {}
-class NormalTrait extends Trait {}
-class MechanicTrait extends Trait {}
-
 // Biological
 const charismatic = one('Charismatic', 'Repugnant')
 const communal = one('Communal', 'Solitary')
@@ -78,7 +72,9 @@ const traitsOrigin = [
     cost: 0,
     rule: every('Subterranean', none('Phototrophic')),
   },
-].map(addItemType(OriginTrait))
+]
+  .map(addItemType(Trait))
+  .map(cookItem)
 
 const traitsBotanic = [
   {
@@ -97,8 +93,9 @@ const traitsBotanic = [
     rule: every(breeders(), none('CloneArmy', 'Necrophage')),
   },
 ]
-  .map(addItemType(BotanicTrait))
+  .map(addItemType(Trait))
   .map(withRule(() => every('Botanic')))
+  .map(cookItem)
 
 const traitsLithoid = [
   {
@@ -117,8 +114,9 @@ const traitsLithoid = [
     rule: gaseous(),
   },
 ]
-  .map(addItemType(LithoidTrait))
+  .map(addItemType(Trait))
   .map(withRule(() => every('Lithoid')))
+  .map(cookItem)
 
 const traitsNormal = [
   // Positive traits
@@ -304,8 +302,9 @@ const traitsNormal = [
     id: 'Decadent',
   },
 ]
-  .map(addItemType(NormalTrait))
+  .map(addItemType(Trait))
   .map(withRule(() => none('Mechanical')))
+  .map(cookItem)
 
 const traitsMechanic = [
   // Positive traits
@@ -418,8 +417,9 @@ const traitsMechanic = [
     rule: bandwidth(),
   },
 ]
-  .map(addItemType(MechanicTrait))
+  .map(addItemType(Trait))
   .map(withRule(() => every('Mechanical')))
+  .map(cookItem)
 
 const traits = [
   ...traitsOrigin,

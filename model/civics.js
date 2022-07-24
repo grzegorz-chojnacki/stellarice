@@ -8,11 +8,6 @@ class Civic extends Item {
   isAvailable = () => this.empireList.length < 2
 }
 
-class NormalCivic extends Civic {}
-class CorporateCivic extends Civic {}
-class HiveCivic extends Civic {}
-class MachineCivic extends Civic {}
-
 const civicsNormal = [
   { id: 'CutthroatPolitics' },
   { id: 'EfficientBureaucracy' },
@@ -238,6 +233,9 @@ const civicsNormal = [
     ),
   },
 ]
+  .map(addItemType(Civic))
+  .map(withRule(() => none('Corporate', 'HiveMind', 'MachineIntelligence')))
+  .map(cookItem)
 
 const civicsCorporate = [
   { id: 'CriminalHeritage' },
@@ -326,6 +324,9 @@ const civicsCorporate = [
     ),
   },
 ]
+  .map(addItemType(Civic))
+  .map(withRule(() => some('Corporate')))
+  .map(cookItem)
 
 const civicsHive = [
   { id: 'Ascetic' },
@@ -361,6 +362,9 @@ const civicsHive = [
     rule: none('DevouringSwarm', 'Terravore'),
   },
 ]
+  .map(addItemType(Civic))
+  .map(withRule(() => every('HiveMind')))
+  .map(cookItem)
 
 const civicsMachine = [
   { id: 'Constructobot' },
@@ -400,16 +404,14 @@ const civicsMachine = [
     rule: none('DeterminedExterminator', 'DrivenAssimilator'),
   },
 ]
+  .map(addItemType(Civic))
+  .map(withRule(() => some('MachineIntelligence')))
+  .map(cookItem)
+
 
 const civics = [
-  ...civicsNormal
-    .map(addItemType(NormalCivic))
-    .map(withRule(() => none('Corporate', 'HiveMind', 'MachineIntelligence'))),
-  ...civicsCorporate
-    .map(addItemType(CorporateCivic))
-    .map(withRule(() => some('Corporate'))),
-  ...civicsHive.map(addItemType(HiveCivic)).map(withRule(() => every('HiveMind'))),
-  ...civicsMachine
-    .map(addItemType(MachineCivic))
-    .map(withRule(() => some('MachineIntelligence'))),
+  ...civicsNormal,
+  ...civicsCorporate,
+  ...civicsHive,
+  ...civicsMachine,
 ]

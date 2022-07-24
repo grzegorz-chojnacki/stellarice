@@ -1,29 +1,11 @@
 // @ts-check
 /// <reference path="paths.js" />
 
-const all = cookEntries([
-  ...pop,
-  ...traits,
-  ...origins,
-  ...ethics,
-  ...authority,
-  ...civics,
-])
+const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
-all.forEach(item => mergeRules(item.rule))
-all.forEach(doubleBindNone)
-
-/**
- * @param {Rule} rule
- * @param {(item: Item) => void} fn
- */
-const iterateRule = (rule, fn) => {
-  const [items, rules] = partition(rule.entries, x => x instanceof Item)
-  // @ts-ignore
-  items.forEach(fn)
-  // @ts-ignore
-  rules.forEach(rule => iterateRule(rule, fn))
-}
+all.forEach(item => item.rule = cookRule(item.rawRule, all))
+all.forEach(item => item.clean())
+// all.forEach(doubleBindNone)
 
 /**
  * @typedef Summary

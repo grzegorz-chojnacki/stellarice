@@ -1,18 +1,28 @@
 // @ts-check
 /// <reference path="../paths.js" />
 
-/** @typedef {RawRule | string} RawEntry */
-/** @typedef {Item | Rule} Entry */
-/** @typedef {{ item: Item, rule?: RawRule }} ItemRawRule */
-/** @typedef {ItemRawRule & { items: Item[] }} ItemRawRuleItems */
-
 /**
  * @typedef RawRule
  * @property {typeof Rule} type
- * @property {RawEntry[]} entries
+ * @property {(string|RawRule)[]} entries
+ */
+
+/**
+ * @typedef {Item|Rule} Entry
  */
 
 class Rule {
+  /**
+   * Checks if the entry passes its tests
+   * @abstract
+   * @param {Entry} entry
+   * @returns {boolean}
+   */
+  static check = entry => {
+    if (entry instanceof Item) return entry.checked()
+    else return entry.test()
+  }
+
   text = 'No special rules'
 
   /**
@@ -23,65 +33,66 @@ class Rule {
   }
 
   /**
-   * Remove items from rule recursively
-   * @param {Entry} entry
+   * Recursively create a copy o this rule without a given item
+   * @param {Item} item
    * @returns {Rule}
    */
-  without = entry => {
-    this.entries.forEach((e, i) => {
-      if (e === entry) this.entries.splice(i, 1)
-      if (entry instanceof Rule) entry.without(e)
-    })
-    return this
+  without = item => {
+    // @ts-ignore
+    return new this.constructor([
+      ...this.items.filter(i => i !== item),
+      ...this.rules.map(rule => rule.without(item)),
+    ])
   }
 
   /**
-   * Checks if rule is passing, should call match for every item
+   * Checks if rule is passing, should call Rule.check for every item
    * @abstract
    * @returns {boolean}
    */
   test = () => true
 
-  /**
-   * Checks if a given item from entries is passing
-   * @param {Entry} entry
-   * @returns {boolean}
-   */
-  match = entry => {
-    if (entry instanceof Item) return entry.checked()
-    if (entry instanceof Rule) return entry.test()
-    throw new Error(`Rule wasn't properly injected with items,
-      found: '${entry}'`)
+  get items() {
+    return this.entries.filter(isItem)
+  }
+
+  get rules() {
+    return this.entries.filter(isRule)
   }
 }
 
 // Every entry is true
 class Every extends Rule {
   text = 'Must have'
-  test = () => this.entries.every(this.match)
+  test = () => this.entries.every(Rule.check)
 }
 
 // At least one entry is true
 class Some extends Rule {
   text = 'At least one of'
-  test = () => this.entries.some(this.match)
+  test = () => this.entries.some(Rule.check)
 }
 
 // None of the entries are true
 class None extends Rule {
   text = 'Cannot have'
-  test = () => !this.entries.some(this.match)
+  test = () => !this.entries.some(Rule.check)
 }
 
+/** @typedef {string|RawRule} RawEntry */
+
 // Syntax sugar for creating rule objects
-/** @param {RawEntry[]} entries */
+/** @type {(...entries: RawEntry[]) => RawRule} */
 const some = (...entries) => ({ type: Some, entries })
 
-/** @param {RawEntry[]} entries */
+/** @type {(...entries: RawEntry[]) => RawRule} */
 const none = (...entries) => ({ type: None, entries })
 
-/** @param {RawEntry[]} entries */
+/** @type {(...entries: RawEntry[]) => RawRule} */
 const every = (...entries) => ({ type: Every, entries })
 
-/** @param {RawEntry[]} entries */
-const one = (...entries) => () => none(...entries)
+/** @type {(...entries: RawEntry[]) => () => RawRule} */
+const one =
+  (...entries) =>
+  () =>
+    none(...entries)

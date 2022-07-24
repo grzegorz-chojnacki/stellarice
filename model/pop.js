@@ -7,6 +7,6 @@ class Pop extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
-const pop = [{ id: 'Botanic' }, { id: 'Lithoid' }, { id: 'Mechanical' }].map(
-  addItemType(Pop)
-)
+const pop = [{ id: 'Botanic' }, { id: 'Lithoid' }, { id: 'Mechanical' }]
+  .map(addItemType(Pop))
+  .map(cookItem)

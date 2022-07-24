@@ -1,6 +1,12 @@
 // @ts-check
 /// <reference path="paths.js" />
 
+/** @type {(x: any) => x is Item} */
+const isItem = x => x instanceof Item
+
+/** @type {(x: any) => x is Rule} */
+const isRule = x => x instanceof Rule
+
 /**
  * Helper partition function
  * @template T
@@ -48,42 +54,22 @@ const getItemById = (items, id) => {
 const addItemType = type => item => ({ ...item, type })
 
 /**
- * Construct item from a raw item object, items has still raw rules inside
- * @type {(item: RawItem) => ItemRawRule}
+ * Construct item from a raw item object, item has still raw rules inside
+ * @type {(item: RawItem) => Item}
  */
-
-const cookItem = ({ type, id, cost, rule }) => ({
-  item: new type(id, cost),
-  rule,
-})
+const cookItem = ({ type, id, cost, rule }) => new type(id, cost, rule)
 
 /**
  * Construct rule from a raw rule object
- * @type {(items: Item[], rule: RawRule) => Rule}
+ * @type {(rule: RawRule, items: Item[]) => Rule}
  */
-const cookRule = (items, { type, entries }) => {
-  return new type(
+const cookRule = ({ type, entries }, items) =>
+  new type(
     entries.map(entry => {
       if (typeof entry === 'string') return getItemById(items, entry)
-      if (entry.type) return cookRule(items, entry)
-      throw new Error(
-        `Found entry that couldn't be processed: '${JSON.stringify(entry)}'`
-      )
+      else return cookRule(entry, items)
     })
   )
-}
-
-/** @type {(items: RawItem[]) => Item[]} */
-const cookEntries = rawItems => {
-  const itemRawRules = rawItems.map(cookItem)
-  const items = itemRawRules.map(({ item }) => item)
-  return itemRawRules.map(({ item, rule }) => {
-    if (rule) {
-      item.rule = cookRule(items, rule).without(item)
-    }
-    return item
-  })
-}
 
 /**
  * Helper method that creates function for merging with rules of an item
@@ -375,19 +361,19 @@ const sortInputs = inputs => {
  */
 const getOrder = item => {
   if (item instanceof Trait) {
-    if (item instanceof OriginTrait) return 4
-    if (item instanceof BotanicTrait) return 3
-    if (item instanceof LithoidTrait) return 2
+    if (traitsOrigin.includes(item)) return 4
+    if (traitsBotanic.includes(item)) return 3
+    if (traitsLithoid.includes(item)) return 2
     if (item.cost > 0) return 1
     if (item.cost < 0) return 0
   } else if (item instanceof Ethic) {
     if (item.id.startsWith('Fanatic')) return 2
     if (item.id !== 'Gestalt') return 1
   } else if (item instanceof Civic) {
-    if (item instanceof MachineCivic) return 1
-    if (item instanceof HiveCivic) return 2
-    if (item instanceof CorporateCivic) return 3
-    if (item instanceof NormalCivic) return 4
+    if (civicsMachine.includes(item)) return 1
+    if (civicsHive.includes(item)) return 2
+    if (civicsCorporate.includes(item)) return 3
+    if (civicsNormal.includes(item)) return 4
   } else if (item instanceof Authority) {
     return {
       MachineIntelligence: 1,
@@ -439,8 +425,8 @@ const getColor = item => {
       Mechanical: 'turquoise',
     }[item.id]
   } else if (item instanceof Trait) {
-    if (item instanceof BotanicTrait) return 'rosebud'
-    if (item instanceof LithoidTrait) return 'apricot'
+    if (traitsBotanic.includes(item)) return 'rosebud'
+    if (traitsLithoid.includes(item)) return 'apricot'
     if (item.cost > 0) return 'turquoise'
     if (item.cost < 0) return 'cranberry'
     return 'none'
@@ -461,9 +447,9 @@ const getColor = item => {
       MachineIntelligence: 'turquoise',
     }[item.id]
   } else if (item instanceof Civic) {
-    if (item instanceof CorporateCivic) return 'rosebud'
-    if (item instanceof HiveCivic) return 'lavender'
-    if (item instanceof MachineCivic) return 'turquoise'
+    if (civicsCorporate.includes(item)) return 'rosebud'
+    if (civicsHive.includes(item)) return 'lavender'
+    if (civicsMachine.includes(item)) return 'turquoise'
     return 'apricot'
   }
   throw new Error(`Couldn't match color for '${item.id}'`)
