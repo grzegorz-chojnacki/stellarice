@@ -8,7 +8,7 @@ class Origin extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
-const origins = Item.create(Origin, [
+const origins = [
   {
     id: 'ProsperousUnification',
   },
@@ -174,4 +174,4 @@ const origins = Item.create(Origin, [
     id: 'ProgenitorHive',
     rule: every('HiveMind'),
   },
-])
+].map(addItemType(Origin))

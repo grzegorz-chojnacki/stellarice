@@ -8,7 +8,12 @@ class Civic extends Item {
   isAvailable = () => this.empireList.length < 2
 }
 
-const civicsNormal = Item.create(Civic, [
+class NormalCivic extends Civic {}
+class CorporateCivic extends Civic {}
+class HiveCivic extends Civic {}
+class MachineCivic extends Civic {}
+
+const civicsNormal = [
   { id: 'CutthroatPolitics' },
   { id: 'EfficientBureaucracy' },
   { id: 'Environmentalist' },
@@ -232,11 +237,9 @@ const civicsNormal = Item.create(Civic, [
       'Subterranean'
     ),
   },
-]).map(
-  Item.withRule(() => none('Corporate', 'HiveMind', 'MachineIntelligence'))
-)
+]
 
-const civicsCorporate = Item.create(Civic, [
+const civicsCorporate = [
   { id: 'CriminalHeritage' },
   { id: 'Franchising' },
   { id: 'FreeTraders' },
@@ -322,9 +325,9 @@ const civicsCorporate = Item.create(Civic, [
       'Subterranean'
     ),
   },
-]).map(Item.withRule(() => some('Corporate')))
+]
 
-const civicsHive = Item.create(Civic, [
+const civicsHive = [
   { id: 'Ascetic' },
   { id: 'DividedAttention' },
   { id: 'NaturalNeuralNetwork' },
@@ -357,9 +360,9 @@ const civicsHive = Item.create(Civic, [
     id: 'HiveMemorialist',
     rule: none('DevouringSwarm', 'Terravore'),
   },
-]).map(Item.withRule(() => some('HiveMind')))
+]
 
-const civicsMachine = Item.create(Civic, [
+const civicsMachine = [
   { id: 'Constructobot' },
   { id: 'DelegatedFunctions' },
   { id: 'FactoryOverclocking' },
@@ -396,11 +399,17 @@ const civicsMachine = Item.create(Civic, [
     id: 'MachineMemorialist',
     rule: none('DeterminedExterminator', 'DrivenAssimilator'),
   },
-]).map(Item.withRule(() => some('MachineIntelligence')))
+]
 
 const civics = [
-  ...civicsNormal,
-  ...civicsCorporate,
-  ...civicsHive,
-  ...civicsMachine,
+  ...civicsNormal
+    .map(addItemType(NormalCivic))
+    .map(withRule(none('Corporate', 'HiveMind', 'MachineIntelligence'))),
+  ...civicsCorporate
+    .map(addItemType(CorporateCivic))
+    .map(withRule(some('Corporate'))),
+  ...civicsHive.map(addItemType(HiveCivic)).map(withRule(every('HiveMind'))),
+  ...civicsMachine
+    .map(addItemType(MachineCivic))
+    .map(withRule(some('MachineIntelligence'))),
 ]

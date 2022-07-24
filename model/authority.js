@@ -8,7 +8,7 @@ class Authority extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
-const authority = Item.create(Authority, [
+const authority = [
   {
     id: 'Imperial',
     rule: none('Egalitarian', 'FanaticEgalitarian', 'Gestalt'),
@@ -37,4 +37,4 @@ const authority = Item.create(Authority, [
     id: 'MachineIntelligence',
     rule: every('Mechanical', 'Gestalt'),
   },
-])
+].map(addItemType(Authority))

@@ -1,22 +1,30 @@
 // @ts-check
 /// <reference path="../paths.js" />
 
-/** @typedef {Rule|Item} Entry */
-/** @typedef {Entry|string} RawEntry */
+/** @typedef {RawRule | string} RawEntry */
+/** @typedef {Item | Rule} Entry */
+/** @typedef {{ item: Item, rule?: RawRule }} ItemRawRule */
+/** @typedef {ItemRawRule & { items: Item[] }} ItemRawRuleItems */
+
+/**
+ * @typedef RawRule
+ * @property {typeof Rule} type
+ * @property {RawEntry[]} entries
+ */
 
 class Rule {
   text = 'No special rules'
 
   /**
-   * @param {RawEntry[]} entries
+   * @param {(Rule | Item)[]} entries
    */
   constructor(entries = []) {
     this.entries = entries
   }
 
   /**
-   * Remove items (or item ids) from rule recursively
-   * @param {RawEntry} entry
+   * Remove items from rule recursively
+   * @param {Entry} entry
    * @returns {Rule}
    */
   without = entry => {
@@ -36,7 +44,7 @@ class Rule {
 
   /**
    * Checks if a given item from entries is passing
-   * @param {RawEntry} entry
+   * @param {Entry} entry
    * @returns {boolean}
    */
   match = entry => {
@@ -67,16 +75,13 @@ class None extends Rule {
 
 // Syntax sugar for creating rule objects
 /** @param {RawEntry[]} entries */
-const some = (...entries) => new Some(entries)
+const some = (...entries) => ({ type: Some, entries })
 
 /** @param {RawEntry[]} entries */
-const none = (...entries) => new None(entries)
+const none = (...entries) => ({ type: None, entries })
 
 /** @param {RawEntry[]} entries */
-const every = (...entries) => new Every(entries)
+const every = (...entries) => ({ type: Every, entries })
 
 /** @param {RawEntry[]} entries */
-const one =
-  (...entries) =>
-  () =>
-    none(...entries)
+const one = (...entries) => none(...entries)

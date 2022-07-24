@@ -1,8 +1,15 @@
 // @ts-check
 /// <reference path="paths.js" />
 
-const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
-all.forEach(item => injectItems(all, item.rule))
+const all = cookEntries([
+  ...pop,
+  ...traits,
+  ...origins,
+  ...ethics,
+  ...authority,
+  ...civics,
+])
+
 all.forEach(item => mergeRules(item.rule))
 
 /**
@@ -64,12 +71,12 @@ all.forEach(item => mergeRules(item.rule))
 const sections = [
   {
     name: 'pop',
-    items: pop,
+    items: all.filter(item => item instanceof Pop),
     template: inputTemplate('radio'),
   },
   {
     name: 'traits',
-    items: traits,
+    items: all.filter(item => item instanceof Trait),
     template: inputTemplate('checkbox'),
     details: () => `
       Available traits:
@@ -81,22 +88,22 @@ const sections = [
   },
   {
     name: 'origin',
-    items: origins,
+    items: all.filter(item => item instanceof Origin),
     template: inputTemplate('radio'),
   },
   {
     name: 'ethics',
-    items: ethics,
+    items: all.filter(item => item instanceof Ethic),
     template: inputTemplate('checkbox'),
   },
   {
     name: 'authority',
-    items: authority,
+    items: all.filter(item => item instanceof Authority),
     template: inputTemplate('radio'),
   },
   {
     name: 'civics',
-    items: civics,
+    items: all.filter(item => item instanceof Civic),
     template: inputTemplate('checkbox'),
     details: () => `Available civics: ${2 - empire.civics.length}`,
   },

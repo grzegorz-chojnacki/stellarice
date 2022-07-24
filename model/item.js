@@ -5,7 +5,7 @@
  * The empire structure, used for keeping the state of which item is checked
  * @type {{ [x: string]: Item[] }}
  */
- const empire = {
+const empire = {
   pop: [],
   traits: [],
   origin: [],
@@ -16,55 +16,46 @@
 
 /**
  * @typedef RawItem
+ * @property {typeof Item} type
  * @property {string} id
  * @property {number=} cost
- * @property {Rule=} rule
+ * @property {RawRule=} rule
  */
 
 class Item {
+  static emptyRule = new Rule()
   /**
-   * Helper method for constructing items from simple objects
-   * @param {typeof Item} classRef
-   * @param {RawItem[]} objects
-   * @returns {Item[]}
+   * List of items relevant to this item type
+   * @abstract
+   * @type {Item[]}
    */
-  static create = (classRef, objects) => {
-    return objects.map(o => new classRef(o))
-  }
+  empireList = []
+
 
   /**
-   * Helper method that creates function for merging with rules of an item
-   * @param {() => Rule} ruleFn
-   * @returns {(item: Item) => Item}
+   * @param {string} id
+   * @param {number=} cost
+   * @param {Rule=} rule
    */
-  static withRule = ruleFn => item => {
-    const rule = ruleFn()
-    if (item.rule?.constructor === Rule) {
-      item.rule = rule
-    } else if (rule.constructor === item.rule?.constructor) {
-      item.rule.entries = rule.entries.concat(item.rule?.entries)
-    } else if (rule instanceof Every) {
-      item.rule = every(...rule.entries, item.rule)
-    } else if (item.rule instanceof Every) {
-      item.rule = every(rule, ...item.rule.entries)
-    } else {
-      item.rule = every(rule, item.rule)
-    }
-    return item
-  }
-
-  /** @param {RawItem} _ */
-  constructor({ id, cost = 0, rule = new Rule() }) {
+  constructor(id, cost = 0, rule = Item.emptyRule) {
     this.id = id
     this.name = prettify(id)
     this.cost = cost
-    this.rule = rule.without(this.id)
-    this.empireList = []
+    this.rule = rule
   }
 
-  // Used for displaying the rule
+  // Used for displaying the item in tooltip
+  // Gets the name of the class immediately subclassing Item
   get fullName() {
-    return `${this.constructor.name} ${this.name}`
+    let proto = Object.getPrototypeOf(this)
+    while (true) {
+      if (Object.getPrototypeOf(proto).constructor === Item) {
+        break
+      } else {
+        proto = Object.getPrototypeOf(proto)
+      }
+    }
+    return `${proto.constructor.name} ${this.name}`
   }
 
   // Used to display the input label (and e.g. differentiate from the summary)

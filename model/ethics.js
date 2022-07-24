@@ -11,6 +11,8 @@ class Ethic extends Item {
   isAvailable = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3
 }
 
+class Gestalt extends Ethic {}
+
 const militarist = one(
   'FanaticMilitarist',
   'Militarist',
@@ -39,95 +41,96 @@ const materialist = one(
   'Spiritualist'
 )
 
-const normalEthics = Item.create(Ethic, [
+const normalEthics = [
   {
     cost: 2,
     id: 'FanaticMilitarist',
-    rule: militarist(),
+    rule: militarist,
   },
   {
     cost: 2,
     id: 'FanaticPacifist',
-    rule: militarist(),
+    rule: militarist,
   },
   {
     cost: 2,
     id: 'FanaticXenophobe',
-    rule: xenophobe(),
+    rule: xenophobe,
   },
   {
     cost: 2,
     id: 'FanaticXenophile',
-    rule: xenophobe(),
+    rule: xenophobe,
   },
   {
     cost: 2,
     id: 'FanaticAuthoritarian',
-    rule: authoritarian(),
+    rule: authoritarian,
   },
   {
     cost: 2,
     id: 'FanaticEgalitarian',
-    rule: authoritarian(),
+    rule: authoritarian,
   },
   {
     cost: 2,
     id: 'FanaticMaterialist',
-    rule: materialist(),
+    rule: materialist,
   },
   {
     cost: 2,
     id: 'FanaticSpiritualist',
-    rule: materialist(),
+    rule: materialist,
   },
   {
     cost: 1,
     id: 'Militarist',
-    rule: militarist(),
+    rule: militarist,
   },
   {
     cost: 1,
     id: 'Pacifist',
-    rule: militarist(),
+    rule: militarist,
   },
   {
     cost: 1,
     id: 'Xenophobe',
-    rule: xenophobe(),
+    rule: xenophobe,
   },
   {
     cost: 1,
     id: 'Xenophile',
-    rule: xenophobe(),
+    rule: xenophobe,
   },
   {
     cost: 1,
     id: 'Authoritarian',
-    rule: authoritarian(),
+    rule: authoritarian,
   },
   {
     cost: 1,
     id: 'Egalitarian',
-    rule: authoritarian(),
+    rule: authoritarian,
   },
   {
     cost: 1,
     id: 'Materialist',
-    rule: materialist(),
+    rule: materialist,
   },
   {
     cost: 1,
     id: 'Spiritualist',
-    rule: materialist(),
+    rule: materialist,
   },
-]).map(item => Item.withRule(() => none('Mechanical'))(item))
+]
+  .map(addItemType(Ethic))
+  .map(withRule(none('Mechanical')))
 
 const ethics = [
   ...normalEthics,
-  ...Item.create(Ethic, [
-    {
-      cost: 3,
-      id: 'Gestalt',
-    },
-  ]),
+  {
+    type: Gestalt,
+    cost: 3,
+    id: 'Gestalt',
+  },
 ]
