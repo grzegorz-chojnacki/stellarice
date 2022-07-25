@@ -242,27 +242,36 @@ const getOrder = item => {
 }
 
 /**
- * Recursively build the HTML tree of rules and attach them to root
+ * Recursively build the HTML tree of rules and attach them to the root
  * @param {HTMLElement} root
- * @param {Entry} entry
+ * @param {Rule} rule
  * @returns {RuleItem[]}
  */
-const generateTooltipRules = (root, entry) => {
-  if (entry instanceof Item) {
-    const handle = root.appendChild(document.createElement('li'))
-    handle.classList.add('rule-item')
-    handle.innerText = entry.fullName
-    return [{ handle, entry }]
-  } else {
-    const handle = root.appendChild(document.createElement('span'))
-    handle.classList.add('rule')
-    handle.innerText = entry.text
-    const ul = root.appendChild(document.createElement('ul'))
-    const rules = sortEntries(entry.entries).flatMap(y =>
-      generateTooltipRules(ul, y)
-    )
-    return rules.concat({ handle, entry })
-  }
+const generateTooltipRule = (root, rule) => {
+  const handle = root.appendChild(document.createElement('span'))
+  handle.classList.add('rule')
+  handle.innerText = rule.text
+  const ul = root.appendChild(document.createElement('ul'))
+  const items = rule.items
+    .sort(compareItems)
+    .flatMap(item => generateTooltipItem(ul, item))
+
+  const rules = rule.rules.flatMap(rule => generateTooltipRule(ul, rule))
+
+  return [{ handle, entry: rule }, ...rules, ...items]
+}
+
+/**
+ * Construct the HTML item representation and attach to the root
+ * @param {HTMLElement} root
+ * @param {Item} item
+ * @returns {RuleItem[]}
+ */
+const generateTooltipItem = (root, item) => {
+  const handle = root.appendChild(document.createElement('li'))
+  handle.classList.add('rule-item')
+  handle.innerText = item.fullName
+  return [{ handle, entry: item }]
 }
 
 /**
@@ -351,7 +360,7 @@ const renderInputs = (items, inputContainer, template) => item => {
     handle,
     tooltip: {
       handle: tooltip,
-      rules: generateTooltipRules(tooltip, item.rule),
+      rules: generateTooltipRule(tooltip, item.rule),
     },
   }
 }

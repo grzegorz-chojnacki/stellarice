@@ -20,19 +20,14 @@ const partition = (arr, fn) =>
     /** @type {[T[], T[]]} */ ([[], []])
   )
 
-/**
- * Sort rules/items alphabetically, hoist items to the top
- * @param {Entry[]} entries
- * @returns {Entry[]}
- */
-const sortEntries = entries => {
-  const [items, rules] =
-    /** @type {[Item[], Rule[]]} */
-    (partition(entries, x => x instanceof Item))
 
-  items.sort((a, b) => a.fullName.localeCompare(b.fullName))
-  return [...items, ...rules]
-}
+/**
+ * Item name comparator used for sorting
+ * @param {Item} a
+ * @param {Item} b
+ * @returns {number}
+ */
+const compareItems = (a, b) => a.fullName.localeCompare(b.fullName)
 
 /**
  * Helper function for getting item by id from all items
