@@ -11,8 +11,6 @@ class Ethic extends Item {
   isAvailable = () => this.empireList.reduce(Ethic.costSum, 3) - this.cost >= 0
 }
 
-class Gestalt extends Ethic {}
-
 const militarist = one(
   'FanaticMilitarist',
   'Militarist',
@@ -131,7 +129,7 @@ const normalEthics = [
 const ethics = [
   ...normalEthics,
   cookItem({
-    type: Gestalt,
+    type: Ethic,
     cost: 3,
     id: 'Gestalt',
   }),
