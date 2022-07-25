@@ -3,12 +3,12 @@
 
 class Ethic extends Item {
   /** @type {(acc: number, { cost: number }) => number} */
-  static costSum = (acc, { cost }) => acc + cost
+  static costSum = (acc, { cost }) => acc - cost
 
   empireList = empire.ethics
 
-  generalRule = () => this.empireList.reduce(Ethic.costSum, 0) === 3
-  isAvailable = () => this.empireList.reduce(Ethic.costSum, 0) + this.cost <= 3
+  generalRule = () => this.empireList.reduce(Ethic.costSum, 3) === 0
+  isAvailable = () => this.empireList.reduce(Ethic.costSum, 3) - this.cost >= 0
 }
 
 class Gestalt extends Ethic {}

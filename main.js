@@ -3,7 +3,7 @@
 
 const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
-all.forEach(item => item.rule = cookRule(item.rawRule, all))
+all.forEach(item => (item.rule = cookRule(item.rawRule, all)))
 all.forEach(item => item.clean())
 // all.forEach(doubleBindNone)
 
@@ -23,6 +23,7 @@ const sections = [
     name: 'pop',
     items: pop,
     template: inputTemplate('radio'),
+    details: () => `Available: ${1 - empire.pop.length}`,
   },
   {
     name: 'traits',
@@ -40,22 +41,26 @@ const sections = [
     name: 'origin',
     items: origins,
     template: inputTemplate('radio'),
+    details: () => (empire.origin.length === 0 ? 'Select one:' : 'One selected'),
   },
   {
     name: 'ethics',
     items: ethics,
     template: inputTemplate('checkbox'),
+    details: () => `Available points: ${empire.ethics.reduce(Ethic.costSum, 3)}`,
   },
   {
     name: 'authority',
     items: authority,
     template: inputTemplate('radio'),
+    details: () =>
+      empire.authority.length === 0 ? 'Select one:' : 'One selected',
   },
   {
     name: 'civics',
     items: civics,
     template: inputTemplate('checkbox'),
-    details: () => `Available civics: ${2 - empire.civics.length}`,
+    details: () => `Available: ${2 - empire.civics.length}`,
   },
 ]
 
