@@ -4,8 +4,8 @@
 const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
 all.forEach(item => (item.rule = cookRule(item.rawRule, all)))
-all.forEach(item => item.clean())
 // all.forEach(doubleBindNone)
+all.forEach(item => item.clean())
 
 /**
  * Section templates

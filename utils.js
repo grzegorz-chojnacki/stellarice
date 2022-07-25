@@ -8,6 +8,14 @@ const isItem = x => x instanceof Item
 const isRule = x => x instanceof Rule
 
 /**
+ * Helper function that returns logger only when an item's id is equal to id
+ * @param {Item} item
+ * @param {string} id
+ * @return {(...args: any) => void}
+*/
+const logFilter = (item, id) => item.id === id ? console.log : () => {}
+
+/**
  * Helper partition function
  * @template T
  * @param {T[]} arr - array of elements to partition
@@ -19,7 +27,6 @@ const partition = (arr, fn) =>
     ([a, b], x) => (fn(x) ? [a.concat(x), b] : [a, b.concat(x)]),
     /** @type {[T[], T[]]} */ ([[], []])
   )
-
 
 /**
  * Item name comparator used for sorting
@@ -94,27 +101,26 @@ const withRule = ruleFn => item => {
  */
 const doubleBindNone = item => {
   let rule = item.rule
-  if (item.rule instanceof Every) {
-    // @ts-ignore
-    rule = item.rule.entries.find(e => e instanceof None)
+  if (rule instanceof Every) {
+    // If rule is an instance of Every, we can check if it contains a None rule
+    // and use that instead
+    rule = rule.rules.find(e => e instanceof None) || rule
   }
 
   if (rule instanceof None) {
-    rule.entries.forEach(entry => {
-      if (entry instanceof Item) {
-        if (!entry.rule.entries.includes(item)) {
-          if (entry.rule.constructor === Rule) {
-            entry.rule = new None([item])
-          } else if (entry.rule instanceof None) {
-            entry.rule.entries.push(item)
-          } else if (entry.rule instanceof Every) {
-            const none = entry.rule.entries.find(r => r instanceof None)
-            if (none instanceof None) {
-              none.entries.push(item)
-            } else {
-              entry.rule.entries.push(new None([item]))
-            }
-          }
+    rule.items.forEach(i => {
+      const target = i.rule
+      if (target.items.includes(item)) return
+      if (target.constructor === Rule) {
+        i.rule = new None([item])
+      } else if (target instanceof None) {
+        target.entries.push(item)
+      } else if (target instanceof Every) {
+        const none = target.rules.find(r => r instanceof None)
+        if (none) {
+          none.entries.push(item)
+        } else {
+          target.entries.push(new None([item]))
         }
       }
     })
@@ -133,14 +139,9 @@ const pairs = arr => arr.flatMap((v, i) => arr.slice(i + 1).map(w => [v, w]))
  * @param {Rule} rule - rule to inject with item references
  */
 const mergeRules = rule => {
-  rule.entries.forEach(entry => {
-    if (entry instanceof Rule) mergeRules(entry)
-  })
-
-  pairs(rule.entries).forEach(([a, b]) => {
-    if (a instanceof Item || b instanceof Item) return
-    if (a.constructor === Some) return
-    if (b.constructor === Some) return
+  rule.rules.forEach(mergeRules)
+  pairs(rule.rules).forEach(([a, b]) => {
+    if (a.constructor === Some || b.constructor === Some) return
     if (a.constructor === b.constructor) {
       a.entries = a.entries.concat(b.entries)
       rule.entries.splice(
