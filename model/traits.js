@@ -36,6 +36,11 @@ const gaseous = one(
   'ScintillatingSkin',
   'VolatileExcretions'
 )
+const scientist = one(
+  'NaturalEngineers',
+  'NaturalPhysicists',
+  'NaturalSociologists'
+)
 
 // Mechanical
 const bulky = one('Bulky', 'DoubleJointed')
@@ -184,14 +189,17 @@ const traitsNormal = [
   {
     cost: 1,
     id: 'NaturalEngineers',
+    rule: scientist(),
   },
   {
     cost: 1,
     id: 'NaturalPhysicists',
+    rule: scientist(),
   },
   {
     cost: 1,
     id: 'NaturalSociologists',
+    rule: scientist(),
   },
   {
     cost: 1,
