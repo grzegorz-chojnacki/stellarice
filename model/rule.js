@@ -63,19 +63,19 @@ class Rule {
 
 // Every entry is true
 class Every extends Rule {
-  text = 'Must have'
+  text = 'Every one of:'
   test = () => this.entries.every(Rule.check)
 }
 
 // At least one entry is true
 class Some extends Rule {
-  text = 'At least one of'
+  text = 'At least one of:'
   test = () => this.entries.some(Rule.check)
 }
 
 // None of the entries are true
 class None extends Rule {
-  text = 'Cannot have'
+  text = 'None of:'
   test = () => !this.entries.some(Rule.check)
 }
 
