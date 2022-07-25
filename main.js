@@ -66,12 +66,12 @@ all.forEach(item => item.clean())
 const sections = [
   {
     name: 'pop',
-    items: all.filter(item => item instanceof Pop),
+    items: pop,
     template: inputTemplate('radio'),
   },
   {
     name: 'traits',
-    items: all.filter(item => item instanceof Trait),
+    items: traits,
     template: inputTemplate('checkbox'),
     details: () => `
       Available traits:
@@ -83,22 +83,22 @@ const sections = [
   },
   {
     name: 'origin',
-    items: all.filter(item => item instanceof Origin),
+    items: origins,
     template: inputTemplate('radio'),
   },
   {
     name: 'ethics',
-    items: all.filter(item => item instanceof Ethic),
+    items: ethics,
     template: inputTemplate('checkbox'),
   },
   {
     name: 'authority',
-    items: all.filter(item => item instanceof Authority),
+    items: authority,
     template: inputTemplate('radio'),
   },
   {
     name: 'civics',
-    items: all.filter(item => item instanceof Civic),
+    items: civics,
     template: inputTemplate('checkbox'),
     details: () => `Available civics: ${2 - empire.civics.length}`,
   },
