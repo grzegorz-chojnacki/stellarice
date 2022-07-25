@@ -51,7 +51,7 @@
  * @param {string} html
  * @returns {Element}
  */
- const htmlToElement = html => {
+const htmlToElement = html => {
   const template = document.createElement('template')
   template.innerHTML = html.trim()
   if (template.content.children.length === 1)
@@ -65,246 +65,247 @@
  * @param {string} name - Name of attribute
  * @param {boolean} isEnabled
  */
- const setHtmlFlag = (element, name, isEnabled) =>
- isEnabled ? element.setAttribute(name, '') : element.removeAttribute(name)
+const setHtmlFlag = (element, name, isEnabled) =>
+  isEnabled ? element.setAttribute(name, '') : element.removeAttribute(name)
 
 /**
-* Helper function for setting an HTML class
-* @param {Element} element
-* @param {string} name - CSS class name
-* @param {boolean} isEnabled
-*/
+ * Helper function for setting an HTML class
+ * @param {Element} element
+ * @param {string} name - CSS class name
+ * @param {boolean} isEnabled
+ */
 const setHtmlClass = (element, name, isEnabled) =>
- isEnabled ? element.classList.add(name) : element.classList.remove(name)
+  isEnabled ? element.classList.add(name) : element.classList.remove(name)
 
 /**
-* HTML input template based on an item
-* @param {'checkbox'|'radio'} type
-* @returns {(item: Item) => string}
-*/
+ * HTML input template based on an item
+ * @param {'checkbox'|'radio'} type
+ * @returns {(item: Item) => string}
+ */
 const inputTemplate = type => item =>
- `<div>
+  `<div>
    <input type="${type}" id="${item.id}">
    <label for="${item.id}">${item.label}</label>
    <div class="tooltip"></div>
  </div>`
 
 /**
-* Add 'pass' HTML attribute to node if its rule is passing
-* @param {Element} node
-* @param {Rule} rule
-*/
+ * Add 'pass' HTML attribute to node if its rule is passing
+ * @param {Element} node
+ * @param {Rule} rule
+ */
 const updateRule = (node, rule) => setHtmlFlag(node, 'pass', rule.test())
 
 /**
-* Add 'checked' HTML attribute to node if its item is checked
-* @param {Element} node
-* @param {Item} item
-*/
+ * Add 'checked' HTML attribute to node if its item is checked
+ * @param {Element} node
+ * @param {Item} item
+ */
 const updateRuleItem = (node, item) =>
- setHtmlFlag(node, 'present', item.checked())
+  setHtmlFlag(node, 'present', item.checked())
 
 /**
-* Refresh style of an input and its tooltip based on relevant item and rules
-* @param {Input} _
-*/
+ * Refresh style of an input and its tooltip based on relevant item and rules
+ * @param {Input} _
+ */
 const updateInput = ({ handle, item, tooltip }) => {
- handle.checked = item.checked()
- setHtmlFlag(handle, 'disabled', item.disabled())
- setHtmlFlag(handle, 'invalid', item.invalid())
+  handle.checked = item.checked()
+  setHtmlFlag(handle, 'disabled', item.disabled())
+  setHtmlFlag(handle, 'invalid', item.invalid())
 
- tooltip.rules.forEach(({ handle, entry }) => {
-   if (entry instanceof Rule) {
-     updateRule(handle, entry)
-   } else if (entry instanceof Item) {
-     updateRuleItem(handle, entry)
-   }
- })
+  tooltip.rules.forEach(({ handle, entry }) => {
+    if (entry instanceof Rule) {
+      updateRule(handle, entry)
+    } else if (entry instanceof Item) {
+      updateRuleItem(handle, entry)
+    }
+  })
 }
 
 /**
-* Color the section header when general rule of its items is not passing
-* @param {Header} _
-*/
+ * Color the section header when general rule of its items is not passing
+ * @param {Header} _
+ */
 const updateHeader = ({ handle, items }) => {
- setHtmlClass(
-   handle,
-   'cranberry',
-   items.some(item => !item.generalRule())
- )
+  setHtmlClass(
+    handle,
+    'cranberry',
+    items.some(item => !item.generalRule())
+  )
 }
 
 /**
-* Take list of HTML nodes and apply their order to the DOM
-* @param {Element[]} nodes - list of every element of a common parent element
-*/
+ * Take list of HTML nodes and apply their order to the DOM
+ * @param {Element[]} nodes - list of every element of a common parent element
+ */
 const sortNodes = nodes =>
- nodes.forEach(node => {
-   const container = node.parentNode
-   container?.parentNode?.appendChild(container)
- })
+  nodes.forEach(node => {
+    const container = node.parentNode
+    container?.parentNode?.appendChild(container)
+  })
 
 /**
-* Update summary entries based on the items in the empire
-* @param {Summary} _
-*/
+ * Update summary based on the items in the empire
+ * @param {Summary} _
+ */
 const updateSummary = ({ handle, items }) => {
- if (items.length === 0) {
-   const text = items === empire.pop ? 'Biological' : 'Empty'
-   handle.replaceChildren(document.createTextNode(text))
-   handle.classList.add('comment')
- } else {
-   handle.replaceChildren()
-   handle.removeAttribute('class')
-   items.forEach(item => {
-     const label = handle.appendChild(document.createElement('label'))
-     label.classList.add(getColor(item))
-     label.innerText = item.name
-     label.setAttribute('for', item.id)
-     handle.append(', ')
-   })
- }
+  if (items.length === 0) {
+    // Pops are biological as a *default*
+    const text = items === empire.pop ? 'Biological' : 'Empty'
+    handle.replaceChildren(document.createTextNode(text))
+    handle.classList.add('comment')
+  } else {
+    handle.replaceChildren()
+    handle.removeAttribute('class')
+    items.forEach(item => {
+      const label = handle.appendChild(document.createElement('label'))
+      label.classList.add(getColor(item))
+      label.innerText = item.name
+      label.setAttribute('for', item.id)
+      handle.append(', ')
+    })
+  }
 }
 
 /**
-* Sort items of one summary row
-* @param {Summary} row
-*/
+ * Sort items of one summary row
+ * @param {Summary} row
+ */
 const sortSummary = row => {
- /** @type {(a: Item, b: Item) => number} */
- const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
+  /** @type {(a: Item, b: Item) => number} */
+  const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
 
- row.items.sort((a, b) => a.id.localeCompare(b.id))
- row.items.sort((a, b) => b.cost - a.cost)
- row.items.sort(byGetOrder)
+  row.items.sort((a, b) => a.id.localeCompare(b.id))
+  row.items.sort((a, b) => b.cost - a.cost)
+  row.items.sort(byGetOrder)
 }
 
 /**
-* Sort entries of one section
-* @param {Input[]} inputs
-*/
+ * Sort entries of one section
+ * @param {Input[]} inputs
+ */
 const sortInputs = inputs => {
- /** @param {{ item: Item }} item */
- const disabledLast = ({ item }) => !item.disabled()
+  /** @param {{ item: Item }} item */
+  const disabledLast = ({ item }) => !item.disabled()
 
- /** @param {{ item: Item }} item */
- const invalidFirst = ({ item }) => item.invalid() && item.checked()
+  /** @param {{ item: Item }} item */
+  const invalidFirst = ({ item }) => item.invalid() && item.checked()
 
- /** @type {(a: { item: Item }, b: { item: Item }) => number} */
- const byGetOrder = (a, b) => (getOrder(a.item) > getOrder(b.item) ? -1 : 1)
+  /** @type {(a: { item: Item }, b: { item: Item }) => number} */
+  const byGetOrder = (a, b) => (getOrder(a.item) > getOrder(b.item) ? -1 : 1)
 
- inputs.sort((a, b) => a.item.id.localeCompare(b.item.id))
+  inputs.sort((a, b) => a.item.id.localeCompare(b.item.id))
 
- if (inputs[0].item instanceof Trait) {
-   inputs.sort((a, b) => b.item.cost - a.item.cost)
- }
+  if (inputs[0].item instanceof Trait) {
+    inputs.sort((a, b) => b.item.cost - a.item.cost)
+  }
 
- inputs.sort(byGetOrder)
- inputs = partition(inputs, disabledLast).flatMap(x => x)
- inputs = partition(inputs, invalidFirst).flatMap(x => x)
+  inputs.sort(byGetOrder)
+  inputs = partition(inputs, disabledLast).flatMap(x => x)
+  inputs = partition(inputs, invalidFirst).flatMap(x => x)
 
- sortNodes(inputs.map(({ handle }) => handle))
+  sortNodes(inputs.map(({ handle }) => handle))
 }
 
 /**
-* Get an arbitrary item order value, which can be used for sorting
-* @param {Item} item
-* @returns {number}
-*/
+ * Get an arbitrary item order value, which can be used for sorting
+ * @param {Item} item
+ * @returns {number}
+ */
 const getOrder = item => {
- if (item instanceof Trait) {
-   if (traitsOrigin.includes(item)) return 4
-   if (traitsBotanic.includes(item)) return 3
-   if (traitsLithoid.includes(item)) return 2
-   if (item.cost > 0) return 1
-   if (item.cost < 0) return 0
- } else if (item instanceof Ethic) {
-   if (item.id.startsWith('Fanatic')) return 2
-   if (item.id !== 'Gestalt') return 1
- } else if (item instanceof Civic) {
-   if (civicsMachine.includes(item)) return 1
-   if (civicsHive.includes(item)) return 2
-   if (civicsCorporate.includes(item)) return 3
-   if (civicsNormal.includes(item)) return 4
- } else if (item instanceof Authority) {
-   return {
-     MachineIntelligence: 1,
-     HiveMind: 2,
-     Corporate: 3,
-     Democratic: 4,
-     Oligarchic: 5,
-     Dictatorial: 6,
-     Imperial: 7,
-   }[item.id]
- }
- return 0
+  if (item instanceof Trait) {
+    if (traitsOrigin.includes(item)) return 4
+    if (traitsBotanic.includes(item)) return 3
+    if (traitsLithoid.includes(item)) return 2
+    if (item.cost > 0) return 1
+    if (item.cost < 0) return 0
+  } else if (item instanceof Ethic) {
+    if (item.id.startsWith('Fanatic')) return 2
+    if (item.id !== 'Gestalt') return 1
+  } else if (item instanceof Civic) {
+    if (civicsMachine.includes(item)) return 1
+    if (civicsHive.includes(item)) return 2
+    if (civicsCorporate.includes(item)) return 3
+    if (civicsNormal.includes(item)) return 4
+  } else if (item instanceof Authority) {
+    return {
+      MachineIntelligence: 1,
+      HiveMind: 2,
+      Corporate: 3,
+      Democratic: 4,
+      Oligarchic: 5,
+      Dictatorial: 6,
+      Imperial: 7,
+    }[item.id]
+  }
+  return 0
 }
 
 /**
-* Recursively build the HTML tree of rules and attach them to root
-* @param {HTMLElement} root
-* @param {Entry} entry
-* @returns {RuleItem[]}
-*/
+ * Recursively build the HTML tree of rules and attach them to root
+ * @param {HTMLElement} root
+ * @param {Entry} entry
+ * @returns {RuleItem[]}
+ */
 const generateTooltipRules = (root, entry) => {
- if (entry instanceof Item) {
-   const handle = root.appendChild(document.createElement('li'))
-   handle.classList.add('rule-item')
-   handle.innerText = entry.fullName
-   return [{ handle, entry }]
- } else {
-   const handle = root.appendChild(document.createElement('span'))
-   handle.classList.add('rule')
-   handle.innerText = entry.text
-   const ul = root.appendChild(document.createElement('ul'))
-   const rules = sortEntries(entry.entries).flatMap(y =>
-     generateTooltipRules(ul, y)
-   )
-   return rules.concat({ handle, entry })
- }
+  if (entry instanceof Item) {
+    const handle = root.appendChild(document.createElement('li'))
+    handle.classList.add('rule-item')
+    handle.innerText = entry.fullName
+    return [{ handle, entry }]
+  } else {
+    const handle = root.appendChild(document.createElement('span'))
+    handle.classList.add('rule')
+    handle.innerText = entry.text
+    const ul = root.appendChild(document.createElement('ul'))
+    const rules = sortEntries(entry.entries).flatMap(y =>
+      generateTooltipRules(ul, y)
+    )
+    return rules.concat({ handle, entry })
+  }
 }
 
 /**
-* Helper function for coloring the item with an arbitrary rules
-* @param {Item} item
-* @returns {string} CSS color class name or `null` for no class
-*/
+ * Helper function for coloring the item with an arbitrary rules
+ * @param {Item} item
+ * @returns {string} CSS color class name or `null` for no class
+ */
 const getColor = item => {
- if (item instanceof Pop) {
-   return {
-     Botanic: 'rosebud',
-     Lithoid: 'apricot',
-     Mechanical: 'turquoise',
-   }[item.id]
- } else if (item instanceof Trait) {
-   if (traitsBotanic.includes(item)) return 'rosebud'
-   if (traitsLithoid.includes(item)) return 'apricot'
-   if (item.cost > 0) return 'turquoise'
-   if (item.cost < 0) return 'cranberry'
-   return 'none'
- } else if (item instanceof Origin) {
-   return 'tacao'
- } else if (item instanceof Ethic) {
-   if (item.id.startsWith('Fanatic')) return 'cranberry'
-   if (item.id.startsWith('Gestalt')) return 'tacao'
-   return 'apricot'
- } else if (item instanceof Authority) {
-   return {
-     Imperial: 'cranberry',
-     Dictatorial: 'apricot',
-     Oligarchic: 'rosebud',
-     Democratic: 'tacao',
-     Corporate: 'tacao',
-     HiveMind: 'lavender',
-     MachineIntelligence: 'turquoise',
-   }[item.id]
- } else if (item instanceof Civic) {
-   if (civicsCorporate.includes(item)) return 'rosebud'
-   if (civicsHive.includes(item)) return 'lavender'
-   if (civicsMachine.includes(item)) return 'turquoise'
-   return 'apricot'
- }
- throw new Error(`Couldn't match color for '${item.id}'`)
+  if (item instanceof Pop) {
+    return {
+      Botanic: 'rosebud',
+      Lithoid: 'apricot',
+      Mechanical: 'turquoise',
+    }[item.id]
+  } else if (item instanceof Trait) {
+    if (traitsBotanic.includes(item)) return 'rosebud'
+    if (traitsLithoid.includes(item)) return 'apricot'
+    if (item.cost > 0) return 'turquoise'
+    if (item.cost < 0) return 'cranberry'
+    return 'none'
+  } else if (item instanceof Origin) {
+    return 'tacao'
+  } else if (item instanceof Ethic) {
+    if (item.id.startsWith('Fanatic')) return 'cranberry'
+    if (item.id.startsWith('Gestalt')) return 'tacao'
+    return 'apricot'
+  } else if (item instanceof Authority) {
+    return {
+      Imperial: 'cranberry',
+      Dictatorial: 'apricot',
+      Oligarchic: 'rosebud',
+      Democratic: 'tacao',
+      Corporate: 'tacao',
+      HiveMind: 'lavender',
+      MachineIntelligence: 'turquoise',
+    }[item.id]
+  } else if (item instanceof Civic) {
+    if (civicsCorporate.includes(item)) return 'rosebud'
+    if (civicsHive.includes(item)) return 'lavender'
+    if (civicsMachine.includes(item)) return 'turquoise'
+    return 'apricot'
+  }
+  throw new Error(`Couldn't match color for '${item.id}'`)
 }
 
 // Update routine, triggered after each input click event
