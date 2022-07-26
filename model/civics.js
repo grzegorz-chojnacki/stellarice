@@ -324,7 +324,7 @@ const civicsCorporate = [
   },
 ]
   .map(item => new Civic(item))
-  .map(withRule(some('Corporate')))
+  .map(withRule(every('Corporate')))
 
 const civicsHive = [
   { id: 'Ascetic' },
