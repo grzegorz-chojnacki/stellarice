@@ -175,5 +175,4 @@ const origins = [
     rule: every('HiveMind'),
   },
 ]
-  .map(addItemType(Origin))
-  .map(cookItem)
+  .map(item => new Origin(item))

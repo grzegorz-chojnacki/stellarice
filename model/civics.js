@@ -233,9 +233,8 @@ const civicsNormal = [
     ),
   },
 ]
-  .map(addItemType(Civic))
-  .map(withRule(() => none('Corporate', 'HiveMind', 'MachineIntelligence')))
-  .map(cookItem)
+  .map(item => new Civic(item))
+  .map(withRule(none('Corporate', 'HiveMind', 'MachineIntelligence')))
 
 const civicsCorporate = [
   { id: 'CriminalHeritage' },
@@ -324,9 +323,8 @@ const civicsCorporate = [
     ),
   },
 ]
-  .map(addItemType(Civic))
-  .map(withRule(() => some('Corporate')))
-  .map(cookItem)
+  .map(item => new Civic(item))
+  .map(withRule(some('Corporate')))
 
 const civicsHive = [
   { id: 'Ascetic' },
@@ -362,9 +360,8 @@ const civicsHive = [
     rule: none('DevouringSwarm', 'Terravore'),
   },
 ]
-  .map(addItemType(Civic))
-  .map(withRule(() => every('HiveMind')))
-  .map(cookItem)
+  .map(item => new Civic(item))
+  .map(withRule(every('HiveMind')))
 
 const civicsMachine = [
   { id: 'Constructobot' },
@@ -404,10 +401,8 @@ const civicsMachine = [
     rule: none('DeterminedExterminator', 'DrivenAssimilator'),
   },
 ]
-  .map(addItemType(Civic))
-  .map(withRule(() => some('MachineIntelligence')))
-  .map(cookItem)
-
+  .map(item => new Civic(item))
+  .map(withRule(some('MachineIntelligence')))
 
 const civics = [
   ...civicsNormal,

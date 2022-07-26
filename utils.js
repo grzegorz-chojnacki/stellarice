@@ -8,14 +8,6 @@ const isItem = x => x instanceof Item
 const isRule = x => x instanceof Rule
 
 /**
- * Helper function that returns logger only when an item's id is equal to id
- * @param {Item} item
- * @param {string} id
- * @return {(...args: any) => void}
-*/
-const logFilter = (item, id) => item.id === id ? console.log : () => {}
-
-/**
  * Helper partition function
  * @template T
  * @param {T[]} arr - array of elements to partition
@@ -49,19 +41,6 @@ const getItemById = (items, id) => {
 }
 
 /**
- * Add type to RawItem-like object
- * @param {typeof Item} type
- * @returns {(item: { id: string, cost?: number, rule?: RawRule }) => RawItem }
- */
-const addItemType = type => item => ({ ...item, type })
-
-/**
- * Construct item from a raw item object, item has still raw rules inside
- * @type {(item: RawItem) => Item}
- */
-const cookItem = ({ type, id, cost, rule }) => new type(id, cost, rule)
-
-/**
  * Construct rule from a raw rule object
  * @type {(rule: RawRule, items: Item[]) => Rule}
  */
@@ -75,22 +54,11 @@ const cookRule = ({ type, entries }, items) =>
 
 /**
  * Helper method that creates function for merging with rules of an item
- * @param {() => RawRule} ruleFn
- * @returns {(item: RawItem) => RawItem}
+ * @param {() => Rule} ruleFn
+ * @returns {(item: Item) => Item}
  */
 const withRule = ruleFn => item => {
-  const rule = ruleFn()
-  if (!item.rule || item.rule.type === Rule) {
-    item.rule = rule
-  } else if (rule.type === item.rule.type) {
-    item.rule.entries = rule.entries.concat(item.rule?.entries)
-  } else if (rule.type === Every) {
-    item.rule = every(...rule.entries, item.rule)
-  } else if (item.rule.type === Every) {
-    item.rule = every(rule, ...item.rule.entries)
-  } else {
-    item.rule = every(rule, item.rule)
-  }
+  item.ruleFns.push(ruleFn)
   return item
 }
 
@@ -134,22 +102,53 @@ const doubleBindNone = item => {
  */
 const pairs = arr => arr.flatMap((v, i) => arr.slice(i + 1).map(w => [v, w]))
 
+/** @type {(type: typeof Rule) => (rule: Rule) => (Rule|Entry[])} */
+const flattenIfOfType = type => rule => {
+  if (rule instanceof type) return rule.entries
+  else return rule
+}
+
+/** @type {(a: Rule, b: Rule) => boolean} */
+const areMergable = (a, b) =>
+  (a instanceof Every || a instanceof None) && a.constructor === b.constructor
+
 /**
- * Recursively go through rules and simplify them
- * @param {Rule} rule - rule to inject with item references
+ * A rule can be omitted if it adds unnecessary nesting: e.g. Every & Some with
+ * one child rule will always have the same test result as its child
+ * @type {(rule: Rule) => boolean}
  */
-const mergeRules = rule => {
-  rule.rules.forEach(mergeRules)
-  pairs(rule.rules).forEach(([a, b]) => {
-    if (a.constructor === Some || b.constructor === Some) return
-    if (a.constructor === b.constructor) {
-      a.entries = a.entries.concat(b.entries)
-      rule.entries.splice(
-        rule.entries.findIndex(e => e === b),
-        1
-      )
-    }
-  })
+const canBeOmitted = rule =>
+  (rule instanceof Every || rule instanceof Some) &&
+  rule.entries.length === 1 &&
+  rule.entries[0] instanceof Rule
+
+/** @type {(rule: Rule[]) => Rule[]} */
+const merge = rules =>
+  rules.reduce((acc, rule) => {
+    const target = acc.find(r => areMergable(r, rule))
+    if (target) {
+      target.entries = target.entries.concat(rule.entries)
+      return acc
+    } else return acc.concat(rule)
+  }, /** @type {Rule[]} */ ([]))
+
+/** @type {(root: Rule) => Rule} */
+const simplify = root => {
+  if (root.rules.length === 0) return root
+
+  // Recursive simplify + merge of rules
+  if (root instanceof Every || root instanceof None) {
+    const ctor = /** @type {typeof Rule}*/ (root.constructor)
+    const simple = root.rules.map(simplify)
+    const entries = merge(simple).flatMap(flattenIfOfType(ctor))
+    const items = entries.filter(isItem)
+    const rules = entries.filter(isRule)
+    const rule = new ctor([...root.items, ...items, ...merge(rules)])
+    if (canBeOmitted(rule)) return rule.rules[0]
+    return rule
+  }
+
+  return root
 }
 
 /**

@@ -1,14 +1,6 @@
 // @ts-check
 /// <reference path="../paths.js" />
 
-/**
- * @typedef RawItem
- * @property {typeof Item} type
- * @property {string} id
- * @property {number=} cost
- * @property {RawRule=} rule
- */
-
 class Item {
   /**
    * List of items relevant to this item type
@@ -18,16 +10,24 @@ class Item {
   empireList = []
 
   /**
-   * @param {string} id
-   * @param {number=} cost
-   * @param {RawRule=} rule
+   * @typedef RawItem
+   * @property {string} id
+   * @property {number=} cost
+   * @property {RuleGen=} rule
    */
-  constructor(id, cost = 0, rule = { type: Rule, entries: [] }) {
+
+  /** @param {RawItem} _ */
+  constructor({ id, cost = 0, rule }) {
     this.id = id
     this.name = prettify(id)
     this.cost = cost
-    this.rule = new Every([])
-    this.rawRule = rule
+    this.ruleFns = rule ? [rule] : []
+    this.rule = new Every()
+  }
+
+  initialize() {
+    const rules = this.ruleFns.map(fn => fn().without(this))
+    this.rule = simplify(new Every(rules))
   }
 
   // Used for displaying the item in tooltip
@@ -40,9 +40,7 @@ class Item {
     return this.name
   }
 
-  clean() {
-    this.rule = this.rule.without(this)
-  }
+  toString = () => this.id
 
   /**
    * A general rule to check for every item in the class
@@ -61,7 +59,6 @@ class Item {
   isAvailable = () => true
 
   // Logic & HTML formatting helper methods
-  valid = () => this.rule.test()
   invalid = () => !this.rule.test()
   checked = () => this.empireList.includes(this)
   disabled = () => !this.checked() && (!this.isAvailable() || this.invalid())

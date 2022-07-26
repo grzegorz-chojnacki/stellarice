@@ -8,5 +8,4 @@ class Pop extends Item {
 }
 
 const pop = [{ id: 'Botanic' }, { id: 'Lithoid' }, { id: 'Mechanical' }]
-  .map(addItemType(Pop))
-  .map(cookItem)
+  .map(item => new Pop(item))

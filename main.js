@@ -3,9 +3,8 @@
 
 const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
-all.forEach(item => (item.rule = cookRule(item.rawRule, all)))
-// all.forEach(doubleBindNone)
-all.forEach(item => item.clean())
+all.forEach(item => item.initialize())
+all.forEach(doubleBindNone)
 
 /**
  * Section templates
@@ -41,13 +40,15 @@ const sections = [
     name: 'origin',
     items: origins,
     template: inputTemplate('radio'),
-    details: () => (empire.origin.length === 0 ? 'Select one:' : 'One selected'),
+    details: () =>
+      empire.origin.length === 0 ? 'Select one:' : 'One selected',
   },
   {
     name: 'ethics',
     items: ethics,
     template: inputTemplate('checkbox'),
-    details: () => `Available points: ${empire.ethics.reduce(Ethic.costSum, 3)}`,
+    details: () =>
+      `Available points: ${empire.ethics.reduce(Ethic.costSum, 3)}`,
   },
   {
     name: 'authority',

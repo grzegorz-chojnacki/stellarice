@@ -45,6 +45,8 @@ class Rule {
     ])
   }
 
+  toString = () => `${this.constructor.name}(${this.items.map(String).concat(this.rules.map(String)).join(',')})`
+
   /**
    * Checks if rule is passing, should call Rule.check for every item
    * @abstract
@@ -79,20 +81,37 @@ class None extends Rule {
   test = () => !this.entries.some(Rule.check)
 }
 
-/** @typedef {string|RawRule} RawEntry */
+/**
+ * Take an item id and fetch the real item or take a rule generator and run it
+ * @param {RawEntry} entry
+ * @returns {Rule|Item}
+ */
+ const unwrap = entry => {
+  if (typeof entry === 'string') return getItemById(all, entry)
+  else return entry()
+}
+
+/** @typedef {(() => Rule)} RuleGen  */
+/** @typedef {string|RuleGen} RawEntry */
 
 // Syntax sugar for creating rule objects
-/** @type {(...entries: RawEntry[]) => RawRule} */
-const some = (...entries) => ({ type: Some, entries })
-
-/** @type {(...entries: RawEntry[]) => RawRule} */
-const none = (...entries) => ({ type: None, entries })
-
-/** @type {(...entries: RawEntry[]) => RawRule} */
-const every = (...entries) => ({ type: Every, entries })
-
-/** @type {(...entries: RawEntry[]) => () => RawRule} */
-const one =
+/** @type {(...entries: RawEntry[]) => RuleGen} */
+const some =
   (...entries) =>
   () =>
-    none(...entries)
+    new Some(entries.map(unwrap))
+
+/** @type {(...entries: RawEntry[]) => RuleGen} */
+const none =
+  (...entries) =>
+  () =>
+    new None(entries.map(unwrap))
+
+/** @type {(...entries: RawEntry[]) => RuleGen} */
+const every =
+  (...entries) =>
+  () =>
+    new Every(entries.map(unwrap))
+
+/** @type {(...entries: RawEntry[]) => RuleGen} */
+const one = none
