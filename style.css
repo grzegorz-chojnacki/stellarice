@@ -125,10 +125,13 @@ div:hover > .tooltip {
 
 ul {
   margin: 0;
-  padding-left: 1.5em;
+  padding-left: 1.2rem;
 }
 
-li { list-style-type: disc; }
+li { list-style-type: none; }
+li::before { margin-left: -1.2rem; }
+li.rule::before { content: "* "; }
+li.rule-item::before { content: "> "; }
 
 .rule {
   color: var(--cranberry);

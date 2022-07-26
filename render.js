@@ -86,7 +86,7 @@ const inputTemplate = type => item =>
   `<div>
    <input type="${type}" id="${item.id}">
    <label for="${item.id}">${item.label}</label>
-   <div class="tooltip"></div>
+   <div class="tooltip"><ul></ul></div>
  </div>`
 
 /**
@@ -248,7 +248,7 @@ const getOrder = item => {
  * @returns {RuleItem[]}
  */
 const generateTooltipRule = (root, rule) => {
-  const handle = root.appendChild(document.createElement('span'))
+  const handle = root.appendChild(document.createElement('li'))
   handle.classList.add('rule')
   handle.innerText = rule.text
   const ul = root.appendChild(document.createElement('ul'))
@@ -345,7 +345,7 @@ const updateView = () => {
 const renderInputs = (items, inputContainer, template) => item => {
   const element = htmlToElement(template(item))
   const handle = element.getElementsByTagName('input')[0]
-  const tooltip = element.getElementsByTagName('div')[0]
+  const tooltip = element.getElementsByTagName('ul')[0]
 
   element.classList.add(getColor(item))
 
