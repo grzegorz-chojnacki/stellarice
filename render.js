@@ -175,7 +175,7 @@ const sortSummary = row => {
   /** @type {(a: Item, b: Item) => number} */
   const byGetOrder = (a, b) => (getOrder(a) > getOrder(b) ? -1 : 1)
 
-  row.items.sort((a, b) => a.id.localeCompare(b.id))
+  row.items.sort(Item.compareItems)
   row.items.sort((a, b) => b.cost - a.cost)
   row.items.sort(byGetOrder)
 }
@@ -253,7 +253,7 @@ const generateTooltipRule = (root, rule) => {
   handle.innerText = rule.text
   const ul = root.appendChild(document.createElement('ul'))
   const items = rule.items
-    .sort(compareItems)
+    .sort(Item.compareItems)
     .flatMap(item => generateTooltipItem(ul, item))
 
   const rules = rule.rules.flatMap(rule => generateTooltipRule(ul, rule))

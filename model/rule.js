@@ -23,6 +23,67 @@ class Rule {
     else return entry.test()
   }
 
+  /**
+   * Helper method for flattening the hierarchy of **Every and None** rules
+   *
+   * Parent rule can take on the entries from its child when their type match
+   *
+   * *To be used with `Array.map` or `Array.flatMap`*
+   * @type {(type: (typeof Every|typeof None)) => (rule: Rule) => (Rule|Entry[])}
+   */
+  static flattenIfOfType = type => rule => {
+    if (rule instanceof type) return rule.entries
+    else return rule
+  }
+
+  /**
+   * Check if the two rules can have their entries merged
+   * @type {(a: Rule, b: Rule) => boolean}
+   */
+  static areMergable = (a, b) =>
+    (a instanceof Every || a instanceof None) && a.constructor === b.constructor
+
+  /**
+   * A rule can be omitted if it adds unnecessary nesting: e.g. Every & Some
+   * with one child rule will always have the same test result as its child
+   * @type {(rule: Rule) => boolean}
+   */
+  static canBeOmitted = rule =>
+    (rule instanceof Every || rule instanceof Some) &&
+    rule.entries.length === 1 &&
+    rule.entries[0] instanceof Rule
+
+  /**
+   * Go through rule array and entries from merge applicable rules
+   * @type {(rule: Rule[]) => Rule[]}
+   */
+  static merge = rules =>
+    rules.reduce((acc, rule) => {
+      const target = acc.find(r => Rule.areMergable(r, rule))
+      if (target) {
+        target.entries = target.entries.concat(rule.entries)
+        return acc
+      } else return acc.concat(rule)
+    }, /** @type {Rule[]} */ ([]))
+
+  /**
+   * Recursively go through rules and try to simplify their hierarchy
+   *  @type {(root: Rule) => Rule}
+   */
+  static simplify = root => {
+    if (root.rules.length === 0) return root
+    if (root instanceof Every || root instanceof None) {
+      const ctor = /** @type {typeof Rule}*/ (root.constructor)
+      const simple = root.rules.map(Rule.simplify)
+      const entries = Rule.merge(simple).flatMap(Rule.flattenIfOfType(ctor))
+      const items = entries.filter(isItem)
+      const rules = entries.filter(isRule)
+      const rule = new ctor([...root.items, ...items, ...Rule.merge(rules)])
+      if (Rule.canBeOmitted(rule)) return rule.rules[0]
+      return rule
+    } else return root
+  }
+
   text = 'No special rules'
 
   /**
@@ -45,7 +106,11 @@ class Rule {
     ])
   }
 
-  toString = () => `${this.constructor.name}(${this.items.map(String).concat(this.rules.map(String)).join(',')})`
+  toString = () =>
+    `${this.constructor.name}(${this.items
+      .map(String)
+      .concat(this.rules.map(String))
+      .join(',')})`
 
   /**
    * Checks if rule is passing, should call Rule.check for every item
@@ -86,7 +151,7 @@ class None extends Rule {
  * @param {RawEntry} entry
  * @returns {Rule|Item}
  */
- const unwrap = entry => {
+const unwrap = entry => {
   if (typeof entry === 'string') return getItemById(all, entry)
   else return entry()
 }
@@ -96,22 +161,19 @@ class None extends Rule {
 
 // Syntax sugar for creating rule objects
 /** @type {(...entries: RawEntry[]) => RuleGen} */
-const some =
-  (...entries) =>
-  () =>
-    new Some(entries.map(unwrap))
+const some = (...entries) => {
+  return () => new Some(entries.map(unwrap))
+}
 
 /** @type {(...entries: RawEntry[]) => RuleGen} */
-const none =
-  (...entries) =>
-  () =>
-    new None(entries.map(unwrap))
+const none = (...entries) => {
+  return () => new None(entries.map(unwrap))
+}
 
 /** @type {(...entries: RawEntry[]) => RuleGen} */
-const every =
-  (...entries) =>
-  () =>
-    new Every(entries.map(unwrap))
+const every = (...entries) => {
+  return () => new Every(entries.map(unwrap))
+}
 
 /** @type {(...entries: RawEntry[]) => RuleGen} */
 const one = none

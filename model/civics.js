@@ -234,7 +234,7 @@ const civicsNormal = [
   },
 ]
   .map(item => new Civic(item))
-  .map(withRule(none('Corporate', 'HiveMind', 'MachineIntelligence')))
+  .map(Item.withRule(none('Corporate', 'HiveMind', 'MachineIntelligence')))
 
 const civicsCorporate = [
   { id: 'CriminalHeritage' },
@@ -324,7 +324,7 @@ const civicsCorporate = [
   },
 ]
   .map(item => new Civic(item))
-  .map(withRule(every('Corporate')))
+  .map(Item.withRule(every('Corporate')))
 
 const civicsHive = [
   { id: 'Ascetic' },
@@ -361,7 +361,7 @@ const civicsHive = [
   },
 ]
   .map(item => new Civic(item))
-  .map(withRule(every('HiveMind')))
+  .map(Item.withRule(every('HiveMind')))
 
 const civicsMachine = [
   { id: 'Constructobot' },
@@ -402,7 +402,7 @@ const civicsMachine = [
   },
 ]
   .map(item => new Civic(item))
-  .map(withRule(some('MachineIntelligence')))
+  .map(Item.withRule(some('MachineIntelligence')))
 
 const civics = [
   ...civicsNormal,

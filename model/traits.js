@@ -97,7 +97,7 @@ const traitsBotanic = [
   },
 ]
   .map(item => new Trait(item))
-  .map(withRule(every('Botanic')))
+  .map(Item.withRule(every('Botanic')))
 
 const traitsLithoid = [
   {
@@ -117,7 +117,7 @@ const traitsLithoid = [
   },
 ]
   .map(item => new Trait(item))
-  .map(withRule(every('Lithoid')))
+  .map(Item.withRule(every('Lithoid')))
 
 const traitsNormal = [
   // Positive traits
@@ -307,7 +307,7 @@ const traitsNormal = [
   },
 ]
   .map(item => new Trait(item))
-  .map(withRule(none('Mechanical')))
+  .map(Item.withRule(none('Mechanical')))
 
 const traitsMechanic = [
   // Positive traits
@@ -421,7 +421,7 @@ const traitsMechanic = [
   },
 ]
   .map(item => new Trait(item))
-  .map(withRule(every('Mechanical')))
+  .map(Item.withRule(every('Mechanical')))
 
 const traits = [
   ...traitsOrigin,

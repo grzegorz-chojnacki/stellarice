@@ -3,6 +3,26 @@
 
 class Item {
   /**
+   * Item name comparator used for sorting
+   * @param {Item} a
+   * @param {Item} b
+   * @returns {number}
+   */
+  static compareItems = (a, b) => a.fullName.localeCompare(b.fullName)
+
+  /**
+   * Helper method that creates function for add rule to an item
+   *
+   * To be used in `Array.map` or `Array.flatMap`
+   * @param {() => Rule} ruleFn
+   * @returns {(item: Item) => Item}
+   */
+  static withRule = ruleFn => item => {
+    item.ruleFns.push(ruleFn)
+    return item
+  }
+
+  /**
    * List of items relevant to this item type
    * @abstract
    * @type {Item[]}
@@ -25,11 +45,6 @@ class Item {
     this.rule = new Every()
   }
 
-  initialize() {
-    const rules = this.ruleFns.map(fn => fn().without(this))
-    this.rule = simplify(new Every(rules))
-  }
-
   // Used for displaying the item in tooltip
   get fullName() {
     return `${this.constructor.name} ${this.name}`
@@ -38,6 +53,12 @@ class Item {
   // Used to display the input label (and e.g. differentiate from the summary)
   get label() {
     return this.name
+  }
+
+  // Each item has to be initialized before proper usage because of lazy-rules
+  initialize() {
+    const rules = this.ruleFns.map(fn => fn().without(this))
+    this.rule = Rule.simplify(new Every(rules))
   }
 
   toString = () => this.id

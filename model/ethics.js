@@ -122,6 +122,6 @@ const normalEthics = [
   },
 ]
   .map(item => new Ethic(item))
-  .map(withRule(none('Mechanical')))
+  .map(Item.withRule(none('Mechanical')))
 
 const ethics = [...normalEthics, new Ethic({ id: 'Gestalt', cost: 3 })]

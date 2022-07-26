@@ -20,13 +20,6 @@ const partition = (arr, fn) =>
     /** @type {[T[], T[]]} */ ([[], []])
   )
 
-/**
- * Item name comparator used for sorting
- * @param {Item} a
- * @param {Item} b
- * @returns {number}
- */
-const compareItems = (a, b) => a.fullName.localeCompare(b.fullName)
 
 /**
  * Helper function for getting item by id from all items
@@ -37,28 +30,6 @@ const compareItems = (a, b) => a.fullName.localeCompare(b.fullName)
 const getItemById = (items, id) => {
   const item = items.find(item => item.id === id)
   if (!item) throw new Error(`Couldn't find item with id: '${id}'!`)
-  return item
-}
-
-/**
- * Construct rule from a raw rule object
- * @type {(rule: RawRule, items: Item[]) => Rule}
- */
-const cookRule = ({ type, entries }, items) =>
-  new type(
-    entries.map(entry => {
-      if (typeof entry === 'string') return getItemById(items, entry)
-      else return cookRule(entry, items)
-    })
-  )
-
-/**
- * Helper method that creates function for merging with rules of an item
- * @param {() => Rule} ruleFn
- * @returns {(item: Item) => Item}
- */
-const withRule = ruleFn => item => {
-  item.ruleFns.push(ruleFn)
   return item
 }
 
@@ -101,67 +72,6 @@ const doubleBindNone = item => {
  * @param {T[]} arr
  */
 const pairs = arr => arr.flatMap((v, i) => arr.slice(i + 1).map(w => [v, w]))
-
-/**
- * Helper method for flattening the hierarchy of **Every and None** rules.
- *
- * Parent rule can take on the entries from its child when their type match.
- *
- * *To be used with `Array.map` or `Array.flatMap`*
- * @type {(type: (typeof Every|typeof None)) => (rule: Rule) => (Rule|Entry[])}
- */
-const flattenIfOfType = type => rule => {
-  if (rule instanceof type) return rule.entries
-  else return rule
-}
-
-/**
- * Predicate for differentiating if the two rules can have their entries merged
- * @type {(a: Rule, b: Rule) => boolean}
- */
-const areMergable = (a, b) =>
-  (a instanceof Every || a instanceof None) && a.constructor === b.constructor
-
-/**
- * A rule can be omitted if it adds unnecessary nesting: e.g. Every & Some with
- * one child rule will always have the same test result as its child
- * @type {(rule: Rule) => boolean}
- */
-const canBeOmitted = rule =>
-  (rule instanceof Every || rule instanceof Some) &&
-  rule.entries.length === 1 &&
-  rule.entries[0] instanceof Rule
-
-/**
- * Go through rule array and entries from merge applicable rules
- * @type {(rule: Rule[]) => Rule[]}
- */
-const merge = rules =>
-  rules.reduce((acc, rule) => {
-    const target = acc.find(r => areMergable(r, rule))
-    if (target) {
-      target.entries = target.entries.concat(rule.entries)
-      return acc
-    } else return acc.concat(rule)
-  }, /** @type {Rule[]} */ ([]))
-
-/**
- * Recursively go through rules and try to simplify their hierarchy
- *  @type {(root: Rule) => Rule}
- */
-const simplify = root => {
-  if (root.rules.length === 0) return root
-  if (root instanceof Every || root instanceof None) {
-    const ctor = /** @type {typeof Rule}*/ (root.constructor)
-    const simple = root.rules.map(simplify)
-    const entries = merge(simple).flatMap(flattenIfOfType(ctor))
-    const items = entries.filter(isItem)
-    const rules = entries.filter(isRule)
-    const rule = new ctor([...root.items, ...items, ...merge(rules)])
-    if (canBeOmitted(rule)) return rule.rules[0]
-    return rule
-  } else return root
-}
 
 /**
  * Insert item to the list if it is not already included, remove it if found
