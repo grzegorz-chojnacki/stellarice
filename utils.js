@@ -102,13 +102,23 @@ const doubleBindNone = item => {
  */
 const pairs = arr => arr.flatMap((v, i) => arr.slice(i + 1).map(w => [v, w]))
 
-/** @type {(type: typeof Rule) => (rule: Rule) => (Rule|Entry[])} */
+/**
+ * Helper method for flattening the hierarchy of **Every and None** rules.
+ *
+ * Parent rule can take on the entries from its child when their type match.
+ *
+ * *To be used with `Array.map` or `Array.flatMap`*
+ * @type {(type: (typeof Every|typeof None)) => (rule: Rule) => (Rule|Entry[])}
+ */
 const flattenIfOfType = type => rule => {
   if (rule instanceof type) return rule.entries
   else return rule
 }
 
-/** @type {(a: Rule, b: Rule) => boolean} */
+/**
+ * Predicate for differentiating if the two rules can have their entries merged
+ * @type {(a: Rule, b: Rule) => boolean}
+ */
 const areMergable = (a, b) =>
   (a instanceof Every || a instanceof None) && a.constructor === b.constructor
 
@@ -122,7 +132,10 @@ const canBeOmitted = rule =>
   rule.entries.length === 1 &&
   rule.entries[0] instanceof Rule
 
-/** @type {(rule: Rule[]) => Rule[]} */
+/**
+ * Go through rule array and entries from merge applicable rules
+ * @type {(rule: Rule[]) => Rule[]}
+ */
 const merge = rules =>
   rules.reduce((acc, rule) => {
     const target = acc.find(r => areMergable(r, rule))
@@ -132,11 +145,12 @@ const merge = rules =>
     } else return acc.concat(rule)
   }, /** @type {Rule[]} */ ([]))
 
-/** @type {(root: Rule) => Rule} */
+/**
+ * Recursively go through rules and try to simplify their hierarchy
+ *  @type {(root: Rule) => Rule}
+ */
 const simplify = root => {
   if (root.rules.length === 0) return root
-
-  // Recursive simplify + merge of rules
   if (root instanceof Every || root instanceof None) {
     const ctor = /** @type {typeof Rule}*/ (root.constructor)
     const simple = root.rules.map(simplify)
@@ -146,9 +160,7 @@ const simplify = root => {
     const rule = new ctor([...root.items, ...items, ...merge(rules)])
     if (canBeOmitted(rule)) return rule.rules[0]
     return rule
-  }
-
-  return root
+  } else return root
 }
 
 /**
