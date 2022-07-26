@@ -20,7 +20,6 @@ const partition = (arr, fn) =>
     /** @type {[T[], T[]]} */ ([[], []])
   )
 
-
 /**
  * Helper function for getting item by id from all items
  * @param {Item[]} items
@@ -34,35 +33,41 @@ const getItemById = (items, id) => {
 }
 
 /**
- * Check if item has a None rule (or Every rule with None rule) and for each of
- * its items go to them and add None rule in the reversed direction
- * @param {Item} item
+ * Add reverse exclusion rule of the source item to the target item
+ * @param {Item} source - item that will be added to the target's None rule
+ * @returns {(target: Item) => void}
  */
-const doubleBindNone = item => {
-  let rule = item.rule
-  if (rule instanceof Every) {
-    // If rule is an instance of Every, we can check if it contains a None rule
-    // and use that instead
-    rule = rule.rules.find(e => e instanceof None) || rule
-  }
+const reverseExclude = source => target => {
+  const rule = target.rule
+  if (target === source) return
+  if (rule.entries.includes(source)) return
+  if (rule.constructor === Rule) {
+    target.rule = new None([source])
+  } else if (rule instanceof None) {
+    rule.entries.push(source)
+  } else if (rule instanceof Every) {
+    // Skip if the rule contains a rule that already excludes the source item
+    if (rule.rules.some(r => r instanceof None && r.entries.includes(source)))
+      return
 
-  if (rule instanceof None) {
-    rule.items.forEach(i => {
-      const target = i.rule
-      if (target.items.includes(item)) return
-      if (target.constructor === Rule) {
-        i.rule = new None([item])
-      } else if (target instanceof None) {
-        target.entries.push(item)
-      } else if (target instanceof Every) {
-        const none = target.rules.find(r => r instanceof None)
-        if (none) {
-          none.entries.push(item)
-        } else {
-          target.entries.push(new None([item]))
-        }
-      }
-    })
+    const found = rule.rules.find(r => r instanceof None)
+
+    if (found) found.entries.push(source)
+    else rule.entries.push(new None([source]))
+  }
+}
+
+/**
+ * Check if item has a nested None rule and for each of its excluded items go
+ * to them and add None rule in the reversed direction (with the source item)
+ * @param {Item} item
+ * @param {Rule} rule
+ */
+const addReverseExcludingRule = (item, rule = item.rule) => {
+  if (rule instanceof Every || rule instanceof Some) {
+    rule.rules.forEach(r => addReverseExcludingRule(item, r))
+  } else if (rule instanceof None) {
+    rule.items.forEach(reverseExclude(item))
   }
 }
 
