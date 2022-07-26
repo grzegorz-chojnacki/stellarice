@@ -42,7 +42,7 @@ class Item {
     this.name = prettify(id)
     this.cost = cost
     this.ruleFns = rule ? [rule] : []
-    this.rule = new Every()
+    this.rule = new Rule()
   }
 
   // Used for displaying the item in tooltip
@@ -57,8 +57,10 @@ class Item {
 
   // Each item has to be initialized before proper usage because of lazy-rules
   initialize() {
-    const rules = this.ruleFns.map(fn => fn().without(this))
-    this.rule = Rule.simplify(new Every(rules))
+    if (this.ruleFns.length > 0) {
+      const rules = this.ruleFns.map(fn => fn().without(this))
+      this.rule = Rule.simplify(new Every(rules))
+    }
   }
 
   toString = () => this.id
