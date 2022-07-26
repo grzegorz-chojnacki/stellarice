@@ -427,8 +427,6 @@ const traits = [
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
-  ...traitsNormal.filter(x => x.cost && x.cost > 0),
-  ...traitsMechanic.filter(x => x.cost && x.cost > 0),
-  ...traitsNormal.filter(x => x.cost && x.cost < 0),
-  ...traitsMechanic.filter(x => x.cost && x.cost < 0),
+  ...traitsNormal,
+  ...traitsMechanic,
 ]
