@@ -34,8 +34,8 @@
 /**
  * @typedef Input
  * @property {HTMLInputElement} handle - Input handle
- * @property {Item} item = Item linked to this input
- * @property {Tooltip} tooltip = Tooltip references
+ * @property {Item} item - Item linked to this input
+ * @property {Tooltip} tooltip - Tooltip references
  */
 
 /**
@@ -84,10 +84,10 @@ const setHtmlClass = (element, name, isEnabled) =>
  */
 const inputTemplate = type => item =>
   `<div>
-   <input type="${type}" id="${item.id}">
-   <label for="${item.id}">${item.label}</label>
-   <div class="tooltip"><ul></ul></div>
- </div>`
+    <input type="${type}" id="${item.id}">
+    <label for="${item.id}">${item.label}</label>
+    <div class="tooltip"><ul></ul></div>
+  </div>`
 
 /**
  * Add 'pass' HTML attribute to node if its rule is passing
@@ -242,39 +242,6 @@ const getOrder = item => {
 }
 
 /**
- * Recursively build the HTML tree of rules and attach them to the root
- * @param {HTMLElement} root
- * @param {Rule} rule
- * @returns {RuleItem[]}
- */
-const generateTooltipRule = (root, rule) => {
-  const handle = root.appendChild(document.createElement('li'))
-  handle.classList.add('rule')
-  handle.innerText = rule.text
-  const ul = root.appendChild(document.createElement('ul'))
-  const items = rule.items
-    .sort(Item.compareItems)
-    .flatMap(item => generateTooltipItem(ul, item))
-
-  const rules = rule.rules.flatMap(rule => generateTooltipRule(ul, rule))
-
-  return [{ handle, entry: rule }, ...rules, ...items]
-}
-
-/**
- * Construct the HTML item representation and attach to the root
- * @param {HTMLElement} root
- * @param {Item} item
- * @returns {RuleItem[]}
- */
-const generateTooltipItem = (root, item) => {
-  const handle = root.appendChild(document.createElement('li'))
-  handle.classList.add('rule-item')
-  handle.innerText = item.fullName
-  return [{ handle, entry: item }]
-}
-
-/**
  * Helper function for coloring the item with an arbitrary rules
  * @param {Item} item
  * @returns {string} CSS color class name or `null` for no class
@@ -336,6 +303,39 @@ const updateView = () => {
 }
 
 /**
+ * Recursively build the HTML tree of rules and attach them to the root
+ * @param {HTMLElement} root
+ * @param {Rule} rule
+ * @returns {RuleItem[]}
+ */
+const generateTooltipRule = (root, rule) => {
+  const handle = root.appendChild(document.createElement('li'))
+  handle.classList.add('rule')
+  handle.innerText = rule.text
+  const ul = root.appendChild(document.createElement('ul'))
+  const items = rule.items
+    .sort(Item.compareItems)
+    .flatMap(item => generateTooltipItem(ul, item))
+
+  const rules = rule.rules.flatMap(rule => generateTooltipRule(ul, rule))
+
+  return [{ handle, entry: rule }, ...rules, ...items]
+}
+
+/**
+ * Construct the HTML item representation and attach to the root
+ * @param {HTMLElement} root
+ * @param {Item} item
+ * @returns {RuleItem[]}
+ */
+const generateTooltipItem = (root, item) => {
+  const handle = root.appendChild(document.createElement('li'))
+  handle.classList.add('rule-item')
+  handle.innerText = item.fullName
+  return [{ handle, entry: item }]
+}
+
+/**
  * Create an input and its label for a given item, return references
  * @param {Item[]} items - Relevant empire item list
  * @param {HTMLElement} inputContainer - Element with inputs
@@ -354,13 +354,18 @@ const renderInputs = (items, inputContainer, template) => item => {
     updateView()
   }
 
+  const tooltipExclusive = generateTooltipRule(tooltip, item.exclusive)
+  tooltipExclusive.forEach(t => t.handle.classList.add('exclusive'))
+
+  const tooltipRule = generateTooltipRule(tooltip, item.rule)
+
   inputContainer.appendChild(element)
   return {
     item,
     handle,
     tooltip: {
       handle: tooltip,
-      rules: generateTooltipRule(tooltip, item.rule),
+      rules: tooltipExclusive.concat(tooltipRule),
     },
   }
 }

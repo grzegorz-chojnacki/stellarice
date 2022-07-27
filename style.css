@@ -130,8 +130,9 @@ ul {
 
 li { list-style-type: none; }
 li::before { margin-left: -1.2rem; }
+
+li.rule-item::before, li.excluded::before { content: "> "; }
 li.rule::before { content: "* "; }
-li.rule-item::before { content: "> "; }
 
 .rule {
   color: var(--cranberry);
@@ -144,3 +145,6 @@ li.rule-item::before { content: "> "; }
   color: var(--rosebud);
   font-weight: bold;
 }
+
+.exclusive { display: none; }
+.rule.exclusive:not([pass]), .exclusive[present] { display: block; }
