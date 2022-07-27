@@ -193,6 +193,11 @@ const sortInputs = inputs => {
   /** @param {{ item: Item }} item */
   const invalidFirst = ({ item }) => item.invalid() && item.checked()
 
+  /** @param {Item[]} list */
+  const ofTypeFirst = list => {
+    return ({ item }) => list.includes(item)
+  }
+
   /** @type {(a: { item: Item }, b: { item: Item }) => number} */
   const byGetOrder = (a, b) => (getOrder(a.item) > getOrder(b.item) ? -1 : 1)
 
@@ -203,8 +208,26 @@ const sortInputs = inputs => {
   }
 
   inputs.sort(byGetOrder)
-  inputs = partition(inputs, disabledLast).flatMap(x => x)
-  inputs = partition(inputs, invalidFirst).flatMap(x => x)
+
+  // If empire has a certain pop type or authority we need to slighlty alter
+  // the grouping so that the related items are close together even if disabled
+  if (inputs[0].item instanceof Trait || inputs[0].item instanceof Civic) {
+    const fn =
+      empire.pop[0]?.id === 'Mechanical'
+        ? ofTypeFirst(traitsMechanic)
+        : empire.authority[0]?.id === 'Corporate'
+        ? ofTypeFirst(civicsCorporate)
+        : empire.authority[0]?.id === 'HiveMind'
+        ? ofTypeFirst(civicsHive)
+        : empire.authority[0]?.id === 'MachineIntelligence'
+        ? ofTypeFirst(civicsMachine)
+        : null
+
+    if (fn) inputs = partition(inputs, fn).flat()
+  }
+
+  inputs = partition(inputs, disabledLast).flat()
+  inputs = partition(inputs, invalidFirst).flat()
 
   sortNodes(inputs.map(({ handle }) => handle))
 }
