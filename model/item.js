@@ -30,6 +30,12 @@ class Item {
   empireList = []
 
   /**
+   * List of items that when checked will exclude checking this item
+   * @type {Item[]}
+   */
+  excludedBy = []
+
+  /**
    * @typedef RawItem
    * @property {string} id
    * @property {number=} cost
@@ -66,6 +72,13 @@ class Item {
   toString = () => this.id
 
   /**
+   * Add an item to the excludedBy list of this item
+   * @param {Item} item
+   * @returns
+   */
+  exclude = item => this.excludedBy.includes(item) || this.excludedBy.push(item)
+
+  /**
    * A general rule to check for every item in the class
    *
    * Used to determine if the composition is valid
@@ -82,7 +95,7 @@ class Item {
   isAvailable = () => true
 
   // Logic & HTML formatting helper methods
-  invalid = () => !this.rule.test()
+  invalid = () => !this.rule.test() || this.excludedBy.some(i => i.checked())
   checked = () => this.empireList.includes(this)
   disabled = () => !this.checked() && (!this.isAvailable() || this.invalid())
 }

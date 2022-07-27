@@ -4,7 +4,7 @@
 const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
 all.forEach(item => item.initialize())
-all.forEach(item => addReverseExcludingRule(item))
+all.forEach(item => exclude(item))
 
 /**
  * Section templates
