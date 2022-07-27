@@ -150,5 +150,9 @@ li.rule::before { content: "* "; }
   font-weight: bold;
 }
 
-.exclusive { display: none; }
+.exclusive {
+  display: none;
+  color: var(--lavender);
+}
+
 .rule.exclusive:not([pass]), .exclusive[present] { display: block; }
