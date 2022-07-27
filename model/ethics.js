@@ -7,7 +7,6 @@ class Ethic extends Item {
 
   empireList = empire.ethics
 
-  generalRule = () => this.empireList.reduce(Ethic.costSum, 3) === 0
   isAvailable = () => this.empireList.reduce(Ethic.costSum, 3) - this.cost >= 0
 }
 

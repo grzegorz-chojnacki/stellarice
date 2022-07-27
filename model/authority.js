@@ -4,7 +4,6 @@
 class Authority extends Item {
   empireList = empire.authority
 
-  generalRule = () => this.empireList.length === 1
   isAvailable = () => this.empireList.length === 0
 }
 

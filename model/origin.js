@@ -4,7 +4,6 @@
 class Origin extends Item {
   empireList = empire.origin
 
-  generalRule = () => this.empireList.length === 1
   isAvailable = () => this.empireList.length === 0
 }
 

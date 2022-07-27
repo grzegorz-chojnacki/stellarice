@@ -87,14 +87,6 @@ class Item {
    * Used to determine if the composition is valid
    * @returns {boolean}
    */
-  generalRule = () => true
-
-  /**
-   * A general rule to check for every item in the class
-   *
-   * Used to determine if the composition is valid
-   * @returns {boolean}
-   */
   isAvailable = () => true
 
   // Logic & HTML formatting helper methods

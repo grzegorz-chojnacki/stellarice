@@ -11,9 +11,6 @@ class Trait extends Item {
     return `[${this.cost.toString().padStart(2)}] ${this.name}`
   }
 
-  generalRule = () =>
-    this.empireList.length <= 5 && this.empireList.reduce(Trait.costSum, 2) >= 0
-
   isAvailable = () => this.empireList.length < 5
 }
 

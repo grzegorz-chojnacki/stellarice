@@ -125,18 +125,6 @@ const updateInput = ({ handle, item, tooltip }) => {
 }
 
 /**
- * Color the section header when general rule of its items is not passing
- * @param {Header} _
- */
-const updateHeader = ({ handle, items }) => {
-  setHtmlClass(
-    handle,
-    'cranberry',
-    items.some(item => !item.generalRule())
-  )
-}
-
-/**
  * Take list of HTML nodes and apply their order to the DOM
  * @param {Element[]} nodes - list of every element of a common parent element
  */
@@ -317,7 +305,7 @@ const updateView = () => {
       sortSummary(summary)
       updateSummary(summary)
 
-      updateHeader(header)
+      setHtmlClass(header.handle, 'cranberry', !section.valid())
 
       details.handle.innerHTML = details.template()
 
