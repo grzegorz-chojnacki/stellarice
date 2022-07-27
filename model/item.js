@@ -30,12 +30,6 @@ class Item {
   empireList = []
 
   /**
-   * List of items that when checked will exclude checking this item
-   * @type {Item[]}
-   */
-  excludedBy = []
-
-  /**
    * @typedef RawItem
    * @property {string} id
    * @property {number=} cost
@@ -49,6 +43,11 @@ class Item {
     this.cost = cost
     this.ruleFns = rule ? [rule] : []
     this.rule = new Rule()
+
+    // Special rule that will contain all items that have a None rule for this
+    // item - meaning they exclude each other
+    this.exclusive = new None([])
+    this.exclusive.text = 'Excluded by:'
   }
 
   // Used for displaying the item in tooltip
@@ -72,11 +71,15 @@ class Item {
   toString = () => this.id
 
   /**
-   * Add an item to the excludedBy list of this item
+   * Add an item to the exclusive list of this item
    * @param {Item} item
    * @returns
    */
-  exclude = item => this.excludedBy.includes(item) || this.excludedBy.push(item)
+  exclude = item => {
+    if (!this.exclusive.entries.includes(item)) {
+      this.exclusive.entries.push(item)
+    }
+  }
 
   /**
    * A general rule to check for every item in the class
@@ -95,7 +98,7 @@ class Item {
   isAvailable = () => true
 
   // Logic & HTML formatting helper methods
-  invalid = () => !this.rule.test() || this.excludedBy.some(i => i.checked())
+  invalid = () => !this.rule.test() || !this.exclusive.test()
   checked = () => this.empireList.includes(this)
   disabled = () => !this.checked() && (!this.isAvailable() || this.invalid())
 }
