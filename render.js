@@ -101,8 +101,10 @@ const updateRule = (node, rule) => setHtmlFlag(node, 'pass', rule.test())
  * @param {Element} node
  * @param {Item} item
  */
-const updateRuleItem = (node, item) =>
+const updateRuleItem = (node, item) => {
   setHtmlFlag(node, 'present', item.checked())
+  setHtmlClass(node, 'gray', item.disabled())
+}
 
 /**
  * Refresh style of an input and its tooltip based on relevant item and rules

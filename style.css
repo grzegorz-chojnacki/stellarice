@@ -17,6 +17,7 @@
   padding: 0;
 }
 
+.gray      { color: var(--gray);      }
 .lavender  { color: var(--lavender);  }
 .turquoise { color: var(--turquoise); }
 .cranberry { color: var(--cranberry); }
@@ -43,10 +44,13 @@ th {
   padding-right: 2ch;
 }
 
-.repo-comment, .comment { color: var(--gray); }
-.comment { font-style: italic; }
+.comment {
+  color: var(--gray);
+  font-style: italic;
+}
 
 .repo-comment {
+  color: var(--gray);
   font-size: 0.5em;
   font-weight: normal;
   vertical-align: middle;
