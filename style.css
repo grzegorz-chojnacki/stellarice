@@ -133,10 +133,14 @@ ul {
 }
 
 li { list-style-type: none; }
-li::before { margin-left: -1.2rem; }
+li::before {
+  margin-left: -1.2rem;
+  font-weight: bold;
+}
 
-li.rule-item::before, li.excluded::before { content: "> "; }
-li.rule::before { content: "* "; }
+li.rule-item::before,
+li.excluded::before { content: "> "; }
+li.rule::before     { content: "* "; }
 
 .rule {
   color: var(--cranberry);
