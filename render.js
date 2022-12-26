@@ -394,7 +394,7 @@ const renderSection = (options, table) => section => {
   const { name, items, template, details = () => '' } = section
 
   const row = table.insertRow()
-  row.appendChild(document.createElement('th')).append(capitalize(name))
+  row.appendChild(document.createElement('th')).append(capitalize(name + ':'))
   const root = options.appendChild(document.createElement('section'))
   const header = root.appendChild(document.createElement('h2'))
   header.innerHTML = capitalize(name)
