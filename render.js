@@ -385,13 +385,14 @@ const renderInputs = (items, inputContainer, template) => item => {
   }
 }
 
-/** @param {string} name */
+/** @param {string} [name] */
 const generateResetButton = name => {
   const button = document.createElement('button')
   button.innerText = 'reset'
   button.classList.add('reset-button')
+
   button.onclick = () => {
-    empire[name].splice(0, empire[name].length)
+    name ? clear(empire[name]) : Object.values(empire).forEach(clear)
     updateView()
   }
 
@@ -436,7 +437,9 @@ const renderView = () => {
   const options = document.getElementById('options')
 
   if (summary && options) {
-    summary.appendChild(document.createElement('h2')).append('Empire summary')
+    const bebo = summary.appendChild(document.createElement('h2'))
+    bebo.append('Empire summary')
+    bebo.appendChild(generateResetButton())
     const table = summary.appendChild(document.createElement('table'))
 
     sections.forEach(renderSection(options, table))

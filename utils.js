@@ -32,6 +32,9 @@ const getItemById = (items, id) => {
   return item
 }
 
+/** @type {(arr: Array) => Array} */
+const clear = arr => arr.splice(0, arr.length)
+
 /**
  * Check if item has a nested None rule and for each of its excluded items go
  * to them and add None rule in the reversed direction (with the source item)
