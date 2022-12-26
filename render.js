@@ -385,6 +385,19 @@ const renderInputs = (items, inputContainer, template) => item => {
   }
 }
 
+/** @param {string} name */
+const generateResetButton = name => {
+  const button = document.createElement('button')
+  button.innerText = 'reset'
+  button.classList.add('reset-button')
+  button.onclick = () => {
+    empire[name].splice(0, empire[name].length)
+    updateView()
+  }
+
+  return button
+}
+
 // Create a section, return its references
 /**
  *
@@ -400,8 +413,10 @@ const renderSection = (options, table) => section => {
   const root = options.appendChild(document.createElement('section'))
   const header = root.appendChild(document.createElement('h2'))
   header.innerHTML = capitalize(name)
+  header.appendChild(generateResetButton(name))
 
   const handle = root.appendChild(document.createElement('div'))
+
   const inputList = root.appendChild(document.createElement('div'))
   inputList.classList.add('input-list')
 

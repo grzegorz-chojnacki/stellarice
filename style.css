@@ -24,20 +24,24 @@
 }
 
 .gray        { color: var(--bg-2);  }
+.positive    { color: var(--positive);    }
+.warning     { color: var(--warning);     }
+.negative    { color: var(--negative);    }
+
 .botanic     { color: var(--democratic);  }
 .lithoid     { color: var(--oligarchic);  }
-.positive    { color: var(--positive);    }
-.negative    { color: var(--negative);    }
-.warning     { color: var(--warning);     }
+
 .extreme     { color: var(--extreme);     }
 .standard    { color: var(--standard);    }
-.democratic  { color: var(--democratic);  }
-.corporate   { color: var(--corporate);   }
-.oligarchic  { color: var(--oligarchic);  }
-.hive        { color: var(--hive);        }
-.dictatorial { color: var(--dictatorial); }
 .fanatic     { color: var(--fanatic);     }
+
+.democratic  { color: var(--democratic);  }
+.oligarchic  { color: var(--oligarchic);  }
+.dictatorial { color: var(--dictatorial); }
 .imperial    { color: var(--imperial);    }
+.corporate   { color: var(--corporate);   }
+.hive        { color: var(--hive);        }
+
 .mechanical  { color: var(--mechanical);  }
 .overturned  { color: var(--overturned);  }
 
@@ -59,6 +63,22 @@ body {
 
 h1, h2, h3 {
   margin: 1rem 0;
+}
+
+.reset-button {
+  color: var(--negative);
+  background-color: var(--bg-1);
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.3em;
+  margin-left: 2em;
+}
+
+.reset-button:active { opacity: 0.8; }
+.reset-button:hover {
+  color: var(--bg);
+  background-color: var(--negative);
 }
 
 th {
