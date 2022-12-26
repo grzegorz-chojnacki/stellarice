@@ -301,6 +301,7 @@ const getColor = item => {
 
 // Update routine, triggered after each input click event
 const updateView = () => {
+  saveEmpire(empire)
   sections.forEach(section => {
     if (section.references) {
       const { summary, header, details, inputs } = section.references

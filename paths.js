@@ -1,5 +1,5 @@
 /// <reference path="utils.js" />
-/// <reference path="common.js" />
+/// <reference path="storage.js" />
 /// <reference path="model/rule.js" />
 /// <reference path="model/item.js" />
 /// <reference path="model/pop.js" />

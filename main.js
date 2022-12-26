@@ -5,6 +5,7 @@ const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
 all.forEach(item => item.initialize())
 all.forEach(item => exclude(item))
+loadEmpire()
 
 /**
  * Section templates
