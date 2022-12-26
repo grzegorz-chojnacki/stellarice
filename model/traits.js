@@ -409,7 +409,9 @@ const traitsToxoid = [
     id: 'InorganicBreath',
     cost: 3,
   },
-].map(item => new Trait(item))
+]
+  .map(item => new Trait(item))
+  .map(Item.withRule(none('Mechanical')))
 
 const traitsOverturned = [
   {
