@@ -147,12 +147,14 @@ const updateSummary = ({ handle, items }) => {
   } else {
     handle.replaceChildren()
     handle.removeAttribute('class')
-    items.forEach(item => {
+    items.forEach((item, index, array) => {
       const label = handle.appendChild(document.createElement('label'))
       label.classList.add(getColor(item))
       label.innerText = item.name
       label.setAttribute('for', item.id)
-      handle.append(', ')
+      if (index < array.length - 1) {
+        handle.append(', ')
+      }
     })
   }
 }
