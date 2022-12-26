@@ -30,7 +30,10 @@ const authority = [
   },
   {
     id: 'HiveMind',
-    rule: every('Gestalt', none('Mechanical')),
+    rule: every('Gestalt', none('Mechanical'), none(
+        'Conformists', 'Deviants',
+        'Thrifty', 'Decadent',
+      )),
   },
   {
     id: 'MachineIntelligence',
