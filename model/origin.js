@@ -134,7 +134,8 @@ const origins = [
       'DeathCult',
       'CorporateDeathCult',
       'Empath',
-      'PermanentEmployment'
+      'PermanentEmployment',
+      'Budding',
     ),
   },
   {
@@ -160,7 +161,7 @@ const origins = [
   },
   {
     id: 'Subterranean',
-    rule: none('MachineIntelligence'),
+    rule: none('MachineIntelligence', 'Phototrophic', 'OceanParadise'),
   },
   {
     id: 'TeachersOfTheShroud',

@@ -48,34 +48,6 @@ const custom = one('CustomMade', 'MassProduced')
 const luxurious = one('Luxurious', 'Recycled')
 const bandwidth = one('HighBandwidth', 'StreamlinedProtocols')
 
-const traitsOrigin = [
-  {
-    id: 'CloneSoldier',
-    cost: 0,
-    rule: every('CloneArmy', breeders),
-  },
-  {
-    id: 'Survivor',
-    cost: 0,
-    rule: every('PostApocalyptic'),
-  },
-  {
-    id: 'VoidDweller',
-    cost: 0,
-    rule: every('VoidDwellers'),
-  },
-  {
-    id: 'Necrophages',
-    cost: 0,
-    rule: every('Necrophage', none('Budding')),
-  },
-  {
-    id: 'CaveDweller',
-    cost: 0,
-    rule: every('Subterranean', none('Phototrophic')),
-  },
-].map(item => new Trait(item))
-
 const traitsBotanic = [
   {
     id: 'Radiotrophic',
@@ -497,7 +469,6 @@ const traitsOverturned = [
   .map(Item.withRule(every('Overturned')))
 
 const traits = [
-  ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
   ...traitsNormal,

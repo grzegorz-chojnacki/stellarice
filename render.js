@@ -227,7 +227,6 @@ const sortInputs = inputs => {
  */
 const getOrder = item => {
   if (item instanceof Trait) {
-    if (traitsOrigin.includes(item)) return 5
     if (traitsBotanic.includes(item)) return 4
     if (traitsLithoid.includes(item)) return 3
     if (traitsOverturned.includes(item)) return 2
