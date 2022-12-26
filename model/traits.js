@@ -2,7 +2,7 @@
 /// <reference path="../paths.js" />
 
 class Trait extends Item {
-  /** @type {(acc: number, { cost: number }) => number } */
+  /** @type {(acc: number, o: { cost: number }) => number } */
   static costSum = (acc, { cost }) => acc - cost
 
   empireList = empire.traits

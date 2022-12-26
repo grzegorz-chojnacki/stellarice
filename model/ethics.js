@@ -2,7 +2,7 @@
 /// <reference path="../paths.js" />
 
 class Ethic extends Item {
-  /** @type {(acc: number, { cost: number }) => number} */
+  /** @type {(acc: number, o: { cost: number }) => number} */
   static costSum = (acc, { cost }) => acc - cost
 
   empireList = empire.ethics
