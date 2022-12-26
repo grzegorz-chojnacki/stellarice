@@ -68,7 +68,7 @@ class Rule {
 
   /**
    * Recursively go through rules and try to simplify their hierarchy
-   *  @type {(root: Rule) => Rule}
+   * @type {(root: Rule) => Rule}
    */
   static simplify = root => {
     if (root.rules.length === 0) return root
@@ -175,5 +175,12 @@ const every = (...entries) => {
   return () => new Every(entries.map(unwrap))
 }
 
-/** @type {(...entries: RawEntry[]) => RuleGen} */
+/**
+ * Semantic helper used for exclusion groups (e.g. Authority militarist excludes
+ * its fanatic version and the pacifist authorities).
+ * Basically, an entry cannot exclude itself, so if we want to make an exlusion
+ * group we can include every entry on a common rule and use it between all of
+ * them.
+ * @type {(...entries: RawEntry[]) => RuleGen}
+ */
 const one = none
