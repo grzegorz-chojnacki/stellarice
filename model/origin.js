@@ -173,5 +173,12 @@ const origins = [
     id: 'ProgenitorHive',
     rule: every('HiveMind'),
   },
-]
-  .map(item => new Origin(item))
+  {
+    id: 'KnightsOfTheToxicGod',
+    rule: none('Gestalt', 'FanaticPurifiers'),
+  },
+  {
+    id: 'Overturned',
+    rule: none('MachineIntelligence'),
+  },
+].map(item => new Origin(item))

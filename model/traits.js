@@ -28,7 +28,7 @@ const trophic = one('Phototrophic', 'Radiotrophic')
 const strong = one('Strong', 'VeryStrong', 'Weak')
 const enduring = one('Enduring', 'Venerable', 'Fleeting')
 const adaptive = one('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
-const gaseous = one(
+const lithoidy = one(
   'GaseousByproducts',
   'ScintillatingSkin',
   'VolatileExcretions'
@@ -80,37 +80,40 @@ const traitsBotanic = [
   {
     id: 'Radiotrophic',
     cost: 2,
-    rule: trophic,
+    rule: every(trophic, some('Botanic', 'Lithoid')),
   },
   {
     id: 'Phototrophic',
     cost: 1,
-    rule: every(trophic, none('Subterranean')),
+    rule: every(trophic, 'Botanic', none('Subterranean')),
   },
   {
     id: 'Budding',
     cost: 2,
-    rule: every(breeders, none('CloneArmy', 'Necrophage')),
+    rule: every(breeders, 'Botanic', none('CloneArmy', 'Necrophage')),
   },
-]
-  .map(item => new Trait(item))
-  .map(Item.withRule(every('Botanic')))
+].map(item => new Trait(item))
 
 const traitsLithoid = [
   {
     id: 'GaseousByproducts',
     cost: 2,
-    rule: gaseous,
+    rule: lithoidy,
   },
   {
     id: 'ScintillatingSkin',
     cost: 2,
-    rule: gaseous,
+    rule: lithoidy,
   },
   {
     id: 'VolatileExcretions',
     cost: 2,
-    rule: gaseous,
+    rule: lithoidy,
+  },
+  {
+    id: 'Crystallization',
+    cost: 2,
+    rule: lithoidy,
   },
 ]
   .map(item => new Trait(item))
@@ -420,10 +423,85 @@ const traitsMechanic = [
   .map(item => new Trait(item))
   .map(Item.withRule(every('Mechanical')))
 
+const traitsToxoid = [
+  {
+    id: 'Incubators',
+    cost: 2,
+    rule: none(breeders, 'Budding'),
+  },
+  {
+    id: 'Noxious',
+    cost: 1,
+  },
+  {
+    id: 'InorganicBreath',
+    cost: 3,
+  },
+].map(item => new Trait(item))
+
+const traitsOverturned = [
+  {
+    id: 'AugmentedIntelligence',
+    cost: 1,
+  },
+  {
+    id: 'CraftedSmiles',
+    cost: 1,
+  },
+  {
+    id: 'DedicatedMiner',
+    cost: 1,
+  },
+  {
+    id: 'ExpressedTradition',
+    cost: 1,
+  },
+  {
+    id: 'FarmAppendages',
+    cost: 1,
+  },
+  {
+    id: 'GeneMentorship',
+    cost: 1,
+  },
+  {
+    id: 'JuicedPower',
+    cost: 1,
+  },
+  {
+    id: 'LowMaintenance',
+    cost: 1,
+  },
+  {
+    id: 'SplicedAdaptability',
+    cost: 1,
+  },
+  {
+    id: 'TechnicalTalent',
+    cost: 1,
+  },
+  {
+    id: 'ElevatedSynapses',
+    cost: 2,
+  },
+  {
+    id: 'PrePlannedGrowth',
+    cost: 2,
+  },
+  {
+    id: 'ExcessiveEndurance',
+    cost: 2,
+  },
+]
+  .map(item => new Trait(item))
+  .map(Item.withRule(every('Overturned')))
+
 const traits = [
   ...traitsOrigin,
   ...traitsBotanic,
   ...traitsLithoid,
   ...traitsNormal,
   ...traitsMechanic,
+  ...traitsToxoid,
+  ...traitsOverturned,
 ]

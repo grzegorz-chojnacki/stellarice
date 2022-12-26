@@ -17,7 +17,7 @@ const civicsNormal = [
     id: 'AgrarianIdyll',
     rule: every(
       some('Pacifist', 'FanaticPacifist'),
-      none('Anglers', 'PostApocalyptic', 'Remnants')
+      none('RelentlessIndustrialists', 'PostApocalyptic', 'Remnants')
     ),
   },
   {
@@ -224,13 +224,30 @@ const civicsNormal = [
   {
     id: 'Anglers',
     rule: none(
-      'AgrarianIdyll',
       'PostApocalyptic',
       'ShatteredRing',
       'VoidDwellers',
       'Subterranean'
     ),
   },
+  {
+    id: 'MutagenicSpas',
+    rule: none('LifeSeeded'),
+  },
+  {
+    id: 'RelentlessIndustrialists',
+    rule: every(
+      materialist,
+      none(
+        'AgrarianIdyll',
+        'Environmentalist',
+        'IdyllicBloom',
+        'Memorialists',
+        'LifeSeeded'
+      )
+    ),
+  },
+  { id: 'Scavengers' },
 ]
   .map(item => new Civic(item))
   .map(Item.withRule(none('Corporate', 'HiveMind', 'MachineIntelligence')))
@@ -321,6 +338,20 @@ const civicsCorporate = [
       'Subterranean'
     ),
   },
+  {
+    id: 'CorporateRelentlessIndustrialists',
+    rule: every(
+      materialist,
+      none(
+        'AgrarianIdyll',
+        'Environmentalist',
+        'IdyllicBloom',
+        'Memorialists',
+        'LifeSeeded'
+      )
+    ),
+  },
+  { id: 'CorporateScavengers' },
 ]
   .map(item => new Civic(item))
   .map(Item.withRule(every('Corporate')))

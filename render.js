@@ -227,9 +227,10 @@ const sortInputs = inputs => {
  */
 const getOrder = item => {
   if (item instanceof Trait) {
-    if (traitsOrigin.includes(item)) return 4
-    if (traitsBotanic.includes(item)) return 3
-    if (traitsLithoid.includes(item)) return 2
+    if (traitsOrigin.includes(item)) return 5
+    if (traitsBotanic.includes(item)) return 4
+    if (traitsLithoid.includes(item)) return 3
+    if (traitsOverturned.includes(item)) return 2
     if (item.cost > 0) return 1
     if (item.cost < 0) return 0
   } else if (item instanceof Ethic) {
@@ -267,6 +268,7 @@ const getColor = item => {
       Mechanical: 'turquoise',
     }[item.id]
   } else if (item instanceof Trait) {
+    if (traitsOverturned.includes(item)) return 'tacao'
     if (traitsBotanic.includes(item)) return 'rosebud'
     if (traitsLithoid.includes(item)) return 'apricot'
     if (item.cost > 0) return 'turquoise'
