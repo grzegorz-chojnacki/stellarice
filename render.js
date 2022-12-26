@@ -262,38 +262,39 @@ const getOrder = item => {
 const getColor = item => {
   if (item instanceof Pop) {
     return {
-      Botanic: 'rosebud',
-      Lithoid: 'apricot',
-      Mechanical: 'turquoise',
+      Botanic: 'botanic',
+      Lithoid: 'lithoid',
+      Mechanical: 'mechanical',
     }[item.id]
   } else if (item instanceof Trait) {
-    if (traitsOverturned.includes(item)) return 'tacao'
-    if (traitsBotanic.includes(item)) return 'rosebud'
-    if (traitsLithoid.includes(item)) return 'apricot'
-    if (item.cost > 0) return 'turquoise'
-    if (item.cost < 0) return 'cranberry'
+    if (item.cost < 0) return 'negative'
+    if (traitsBotanic.includes(item)) return 'botanic'
+    if (traitsLithoid.includes(item)) return 'lithoid'
+    if (traitsMechanic.includes(item)) return 'mechanical'
+    if (traitsOverturned.includes(item)) return 'overturned'
+    if (item.cost > 2) return 'extreme'
+    if (item.cost > 0) return 'standard'
     return 'none'
   } else if (item instanceof Origin) {
-    return 'tacao'
+    return 'standard'
   } else if (item instanceof Ethic) {
-    if (item.id.startsWith('Fanatic')) return 'cranberry'
-    if (item.id.startsWith('Gestalt')) return 'tacao'
-    return 'apricot'
+    if (item.id.startsWith('Fanatic')) return 'fanatic'
+    return 'standard'
   } else if (item instanceof Authority) {
     return {
-      Imperial: 'cranberry',
-      Dictatorial: 'apricot',
-      Oligarchic: 'rosebud',
-      Democratic: 'tacao',
-      Corporate: 'tacao',
-      HiveMind: 'lavender',
-      MachineIntelligence: 'turquoise',
+      Imperial: 'imperial',
+      Dictatorial: 'dictatorial',
+      Oligarchic: 'oligarchic',
+      Democratic: 'democratic',
+      Corporate: 'corporate',
+      HiveMind: 'hive',
+      MachineIntelligence: 'mechanical',
     }[item.id]
   } else if (item instanceof Civic) {
-    if (civicsCorporate.includes(item)) return 'rosebud'
-    if (civicsHive.includes(item)) return 'lavender'
-    if (civicsMachine.includes(item)) return 'turquoise'
-    return 'apricot'
+    if (civicsCorporate.includes(item)) return 'corporate'
+    if (civicsHive.includes(item)) return 'hive'
+    if (civicsMachine.includes(item)) return 'mechanical'
+    return 'standard'
   }
   throw new Error(`Couldn't match color for '${item.id}'`)
 }
@@ -306,7 +307,7 @@ const updateView = () => {
       sortSummary(summary)
       updateSummary(summary)
 
-      setHtmlClass(header.handle, 'cranberry', !section.valid())
+      setHtmlClass(header.handle, 'negative', !section.valid())
 
       details.handle.innerHTML = details.template()
 

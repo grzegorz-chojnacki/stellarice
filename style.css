@@ -1,29 +1,51 @@
 :root {
-  --fg:         #BBBBBB;
-  --bg:         #16161C;
-  --dark:       #232530;
-  --gray:       #4C4D53;
-  --lavender:   #B877DB;
-  --turquoise:  #25B0BC;
-  --cranberry:  #E95678;
-  --apricot:    #F09483;
-  --rosebud:    #FAB795;
-  --tacao:      #FAC29A;
+  --fg:          #CFCFCF;
+  --bg:          #141D18;
+  --bg-1:        #1e3128;
+  --bg-2:        #324d3f;
+  --bg-3:        #406150;
+  --positive:    #3bc238;
+  --negative:    #d84f40;
+  --warning:     #FDBB24;
+  --special:     #924de0;
+
+  --extreme:     #00EBD9;
+  --standard:    #00C095;
+  --democratic:  #65B227;
+  --corporate:   #AAAF46;
+  --oligarchic:  #C7A51E;
+  --hive:        #E1A521;
+  --dictatorial: #CC6E19;
+  --fanatic:     #C65B0A;
+  --imperial:    #AB2E2E;
+
+  --mechanical:  var(--extreme);
+  --overturned:  var(--warning);
 }
+
+.gray        { color: var(--bg-2);  }
+.botanic     { color: var(--democratic);  }
+.lithoid     { color: var(--oligarchic);  }
+.positive    { color: var(--positive);    }
+.negative    { color: var(--negative);    }
+.warning     { color: var(--warning);     }
+.extreme     { color: var(--extreme);     }
+.standard    { color: var(--standard);    }
+.democratic  { color: var(--democratic);  }
+.corporate   { color: var(--corporate);   }
+.oligarchic  { color: var(--oligarchic);  }
+.hive        { color: var(--hive);        }
+.dictatorial { color: var(--dictatorial); }
+.fanatic     { color: var(--fanatic);     }
+.imperial    { color: var(--imperial);    }
+.mechanical  { color: var(--mechanical);  }
+.overturned  { color: var(--overturned);  }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
-.gray      { color: var(--gray);      }
-.lavender  { color: var(--lavender);  }
-.turquoise { color: var(--turquoise); }
-.cranberry { color: var(--cranberry); }
-.apricot   { color: var(--apricot);   }
-.rosebud   { color: var(--rosebud);   }
-.tacao     { color: var(--tacao);     }
 
 body {
   font-size: 16px;
@@ -45,12 +67,12 @@ th {
 }
 
 .comment {
-  color: var(--gray);
+  color: var(--bg-2);
   font-style: italic;
 }
 
 .repo-comment {
-  color: var(--gray);
+  color: var(--bg-2);
   font-size: 0.5em;
   font-weight: normal;
   vertical-align: middle;
@@ -71,6 +93,7 @@ th {
 .input-list {
   margin-top: 1rem;
   display: flex;
+  padding-right: 0.5em;
   flex-direction: column;
   flex-grow: 1;
 }
@@ -84,14 +107,34 @@ th {
 
 .input-list {
   scrollbar-width: thin;
-  scrollbar-color: var(--gray) var(--dark);
+  scrollbar-color: var(--bg-1) var(--bg-2);
 }
 
 .input-list::-webkit-scrollbar { width: 0.5em; }
-.input-list::-webkit-scrollbar-track { background: var(--dark); }
+.input-list::-webkit-scrollbar-track { background: var(--bg-1); }
 .input-list::-webkit-scrollbar-thumb {
-  background-color: var(--gray);
+  background-color: var(--bg-2);
   border: 3px solid transparent;
+}
+
+input { visibility: hidden; }
+input[type="checkbox"]:checked::before, input[type="radio"]:checked::before {
+  background-color: var(--bg-3);
+  color: var(--bg-3);
+}
+input[type="checkbox"]::before, input[type="radio"]::before {
+  content: "";
+  visibility: visible;
+  display: inline-block;
+  width: 1.5ch;
+  height: 1.5ch;
+  background-color: var(--bg-1);
+  color: var(--bg-1);
+  border: 1px solid;
+}
+
+input[type="radio"]::before {
+  border-radius: 50%;
 }
 
 input:disabled, input:disabled + label { opacity: 0.4; }
@@ -100,7 +143,7 @@ input:disabled, input:disabled + label { opacity: 0.4; }
 input[invalid]:checked,
 input[invalid]:checked + label,
 input[invalid]:checked + label > * {
-  color: var(--cranberry);
+  color: var(--negative);
   font-weight: bold;
   text-decoration: line-through;
 }
@@ -118,7 +161,7 @@ input[invalid]:checked + label > * {
   position: fixed;
   top: 1em;
   right: 1em;
-  border: 2px solid var(--gray);
+  border: 1px solid var(--bg-2);
   padding: 0.5em;
   background-color: var(--bg);
 }
@@ -143,20 +186,20 @@ li.excluded::before { content: "> "; }
 li.rule::before     { content: "* "; }
 
 .rule {
-  color: var(--cranberry);
+  color: var(--negative);
   font-weight: bold;
 }
 
-.rule[pass] { color: var(--turquoise); }
+.rule[pass] { color: var(--extreme); }
 
 .rule-item[present] {
-  color: var(--rosebud);
+  color: var(--warning);
   font-weight: bold;
 }
 
 .exclusive {
   display: none;
-  color: var(--lavender);
+  color: var(--special);
 }
 
 .rule.exclusive:not([pass]), .exclusive[present] { display: block; }
