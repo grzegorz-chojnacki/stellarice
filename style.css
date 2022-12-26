@@ -117,24 +117,10 @@ th {
   border: 3px solid transparent;
 }
 
-input { visibility: hidden; }
-input[type="checkbox"]:checked::before, input[type="radio"]:checked::before {
-  background-color: var(--bg-3);
-  color: var(--bg-3);
-}
-input[type="checkbox"]::before, input[type="radio"]::before {
-  content: "";
-  visibility: visible;
-  display: inline-block;
-  width: 1.5ch;
-  height: 1.5ch;
-  background-color: var(--bg-1);
-  color: var(--bg-1);
-  border: 1px solid;
-}
+input, label { cursor: pointer; }
 
-input[type="radio"]::before {
-  border-radius: 50%;
+input[type="checkbox"], input[type="radio"] {
+  filter: brightness(0.6) saturate(0)
 }
 
 input:disabled, input:disabled + label { opacity: 0.4; }
