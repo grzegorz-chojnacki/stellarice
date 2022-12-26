@@ -23,7 +23,7 @@
   --overturned:  var(--warning);
 }
 
-.gray        { color: var(--bg-2);  }
+.gray        { color: var(--bg-2);        }
 .positive    { color: var(--positive);    }
 .warning     { color: var(--warning);     }
 .negative    { color: var(--negative);    }
@@ -140,6 +140,7 @@ th {
 input, label { cursor: pointer; }
 
 input[type="checkbox"], input[type="radio"] {
+  margin-right: 1ch;
   filter: brightness(0.6) saturate(0)
 }
 
@@ -209,3 +210,8 @@ li.rule::before     { content: "* "; }
 }
 
 .rule.exclusive:not([pass]), .exclusive[present] { display: block; }
+
+.related {
+  font-weight: bold;
+  filter: brightness(1.2);
+}

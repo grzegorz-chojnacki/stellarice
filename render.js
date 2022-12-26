@@ -78,16 +78,61 @@ const setHtmlClass = (element, name, isEnabled) =>
   isEnabled ? element.classList.add(name) : element.classList.remove(name)
 
 /**
+ * @param {Item} item - item for which this label is being generated
+ * @param {string} text - text to display as the label (item.name or item.label)
+ */
+const generateItemLabel = (item, text) => {
+  const handle = document.createElement('label')
+  handle.setAttribute('for', item.id)
+  handle.innerText = text
+  handle.classList.add(getColor(item))
+  handle.onmouseenter = labelEnterHandler(item)
+  handle.onmouseleave = labelLeaveHandler(item)
+  return handle
+}
+
+/** @param {Item} item */
+const getRelatedItemLabels = item => {
+  /** @type {(rule: Rule) => Item[]} */
+  const flatten = rule => [...rule.items, ...rule.rules.flatMap(flatten)]
+  const related = [item] // The item itself
+    .concat(flatten(item.rule)) // All items from rules and nested rules
+    .concat(flatten(item.exclusive)) // All items from exclusion reles
+
+  return related.flatMap(item => [
+    ...document.querySelectorAll(`label[for="${item.id}"]`),
+  ])
+}
+
+/** @param {Item} item */
+const labelEnterHandler = item => () => {
+  getRelatedItemLabels(item).forEach(label => label.classList.add('related'))
+}
+
+/** @param {Item} item */
+const labelLeaveHandler = item => () => {
+  getRelatedItemLabels(item).forEach(label => label.classList.remove('related'))
+}
+
+/**
  * HTML input template based on an item
  * @param {'checkbox'|'radio'} type
- * @returns {(item: Item) => string}
+ * @returns {(item: Item) => HTMLElement}
  */
-const inputTemplate = type => item =>
-  `<div>
-    <input type="${type}" id="${item.id}">
-    <label for="${item.id}">${item.label}</label>
-    <div class="tooltip"><ul></ul></div>
-  </div>`
+const inputTemplate = type => item => {
+  const handle = document.createElement('div')
+  const input = handle.appendChild(document.createElement('input'))
+  input.setAttribute('type', type)
+  input.id = item.id
+
+  handle.appendChild(generateItemLabel(item, item.label))
+
+  const tooltip = handle.appendChild(document.createElement('div'))
+  tooltip.classList.add('tooltip')
+  tooltip.appendChild(document.createElement('ul'))
+
+  return handle
+}
 
 /**
  * Add 'pass' HTML attribute to node if its rule is passing
@@ -140,7 +185,7 @@ const sortNodes = nodes =>
  */
 const updateSummary = ({ handle, items }) => {
   if (items.length === 0) {
-    // Pops are biological as a *default*
+    // Pops are biological by default
     const text = items === empire.pop ? 'Biological' : 'Empty'
     handle.replaceChildren(document.createTextNode(text))
     handle.classList.add('comment')
@@ -148,10 +193,7 @@ const updateSummary = ({ handle, items }) => {
     handle.replaceChildren()
     handle.removeAttribute('class')
     items.forEach((item, index, array) => {
-      const label = handle.appendChild(document.createElement('label'))
-      label.classList.add(getColor(item))
-      label.innerText = item.name
-      label.setAttribute('for', item.id)
+      handle.appendChild(generateItemLabel(item, item.name))
       if (index < array.length - 1) {
         handle.append(', ')
       }
@@ -357,11 +399,11 @@ const generateTooltipItem = (root, item) => {
  * Create an input and its label for a given item, return references
  * @param {Item[]} items - Relevant empire item list
  * @param {HTMLElement} inputContainer - Element with inputs
- * @param {(item: Item) => string} template - Item's input template
+ * @param {(item: Item) => HTMLElement} template - Item's input template
  * @returns {(item: Item) => Input}
  */
 const renderInputs = (items, inputContainer, template) => item => {
-  const element = htmlToElement(template(item))
+  const element = template(item)
   const handle = element.getElementsByTagName('input')[0]
   const tooltip = element.getElementsByTagName('ul')[0]
 

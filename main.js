@@ -14,7 +14,7 @@ loadEmpire()
  * @property {Item[]} items - items associated with this section
  * @property {References=} references - various data and HTML node references
  * @property {() => boolean} valid - a general check for this section
- * @property {(item: Item) => string} template - template for item's input
+ * @property {(item: Item) => HTMLElement} template - template for item's input
  * @property {(() => string)=} details - template for the section details part
  */
 
