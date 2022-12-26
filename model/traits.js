@@ -28,7 +28,7 @@ const trophic = one('Phototrophic', 'Radiotrophic')
 const strong = one('Strong', 'VeryStrong', 'Weak')
 const enduring = one('Enduring', 'Venerable', 'Fleeting')
 const adaptive = one('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
-const lithoidy = one(
+const gaseous = one(
   'GaseousByproducts',
   'ScintillatingSkin',
   'VolatileExcretions'
@@ -70,22 +70,21 @@ const traitsLithoid = [
   {
     id: 'GaseousByproducts',
     cost: 2,
-    rule: lithoidy,
+    rule: gaseous,
   },
   {
     id: 'ScintillatingSkin',
     cost: 2,
-    rule: lithoidy,
+    rule: gaseous,
   },
   {
     id: 'VolatileExcretions',
     cost: 2,
-    rule: lithoidy,
+    rule: gaseous,
   },
   {
     id: 'Crystallization',
     cost: 2,
-    rule: lithoidy,
   },
 ]
   .map(item => new Trait(item))
