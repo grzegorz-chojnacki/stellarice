@@ -58,12 +58,9 @@ body {
   color: var(--fg);
   padding: 1rem;
   margin: 0;
-  height: 100vh;
 }
 
-h1, h2, h3 {
-  margin: 1rem 0;
-}
+h1, h2, h3 { margin: 1rem 0 }
 
 .random-button, .reset-button {
   background-color: var(--bg-1);
@@ -112,19 +109,15 @@ th {
   gap: 2rem;
 }
 
+#options > section { flex-grow: 1; }
+
 .input-list {
   margin-top: 1rem;
   display: flex;
   padding-right: 0.5em;
   flex-direction: column;
-  flex-grow: 1;
-}
-
-@media (max-width: 1660px) {
-  .input-list {
-    overflow-y: auto;
-    height: 540px;
-  }
+  overflow-y: auto;
+  max-height: 520px;
 }
 
 .input-list {
