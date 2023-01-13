@@ -71,7 +71,7 @@ h1, h2, h3 {
   border: none;
   cursor: pointer;
   padding: 0 0.3em;
-  margin-left: 2em;
+  margin-left: 1em;
 }
 
 .reset-button  { color: var(--negative); }

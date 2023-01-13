@@ -430,20 +430,30 @@ const renderInputs = (items, inputContainer, template) => item => {
   }
 }
 
-const generateRandomizeButton = () => {
+/** @param {string?} [name] - the name of an empire attribute to randomize */
+const generateRandomizeButton = name => {
+  const randomizeFn = {
+    'pop':       randomizePop,
+    'traits':    randomizeTraits,
+    'origin':    randomizeOrigin,
+    'ethics':    randomizeEthics,
+    'authority': randomizeAuthority,
+    'civics':    randomizeCivics,
+  }
+
   const button = document.createElement('button')
   button.innerText = 'random'
   button.classList.add('random-button')
 
   button.onclick = () => {
-    randomize(empire)
+    name ? randomizeFn[name](empire) : randomize(empire)
     updateView()
   }
 
   return button
 }
 
-/** @param {string} [name] - the name of an empire attribute to reset */
+/** @param {string?} [name] - the name of an empire attribute to reset */
 const generateResetButton = name => {
   const button = document.createElement('button')
   button.innerText = 'reset'
@@ -472,6 +482,7 @@ const renderSection = (options, table) => section => {
   const root = options.appendChild(document.createElement('section'))
   const header = root.appendChild(document.createElement('h2'))
   header.innerHTML = capitalize(name)
+  header.appendChild(generateRandomizeButton(name))
   header.appendChild(generateResetButton(name))
 
   const handle = root.appendChild(document.createElement('div'))
