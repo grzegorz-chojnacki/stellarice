@@ -15,6 +15,7 @@ and *should be* compatible with patch [3.5.3](https://stellaris.paradoxwikis.com
 
 The creator currently supports:
 - Basic creation of an empire (pop type, traits, origin, ethics, authority and civics)
+- Random generation of a whole empire or specific attributes
 - Constraints validation
 - Automatical saving of the current empire preset (in the browser's local storage)
 - Highlighting related options
