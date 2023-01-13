@@ -95,8 +95,8 @@ const generateItemLabel = (item, text) => {
 const getRelatedItemLabels = item => {
   /** @type {(rule: Rule) => Item[]} */
   const flatten = rule => [...rule.items, ...rule.rules.flatMap(flatten)]
-  const related = [item] // The item itself
-    .concat(flatten(item.rule)) // All items from rules and nested rules
+  const related = [item]             // All The item itself
+    .concat(flatten(item.rule))      // All items from rules and nested rules
     .concat(flatten(item.exclusive)) // All items from exclusion reles
 
   return related.flatMap(item => [
@@ -482,9 +482,9 @@ const renderView = () => {
   const options = document.getElementById('options')
 
   if (summary && options) {
-    const bebo = summary.appendChild(document.createElement('h2'))
-    bebo.append('Empire summary')
-    bebo.appendChild(generateResetButton())
+    const summaryTitle = summary.appendChild(document.createElement('h2'))
+    summaryTitle.append('Empire summary')
+    summaryTitle.appendChild(generateResetButton())
     const table = summary.appendChild(document.createElement('table'))
 
     sections.forEach(renderSection(options, table))
