@@ -54,16 +54,11 @@ const randomizePop = empire => {
 
 /** @param {Empire} empire */
 const randomizeTraits = empire => {
-  /** @type {(arr: Trait[]) => void} */
-  const removeRandomTrait = arr => {
-    removeAt(empire.traits, empire.traits.indexOf(choice(arr)))
-  }
-
+  clear(empire.traits)
   while (true) {
     const points = empire.traits.reduce(Trait.costSum, 2)
 
-    const negativeChecked = empire.traits.filter(t => t.cost < 0)
-    const positiveChecked = empire.traits.filter(t => t.cost > 0)
+    const [positiveChecked, negativeChecked] = partition(empire.traits, t => t.cost >= 0)
     const positiveCheckable = traits.filter(t => t.checkable() && t.cost > 0)
     const negativeCheckable = traits.filter(t => t.checkable() && t.cost < 0)
 
@@ -74,20 +69,18 @@ const randomizeTraits = empire => {
 
     if (points >= 0)  {
       if (empire.traits.length === 5) {
-        removeRandomTrait(negativeChecked)
-      } else {
-        if (positiveCheckable.length > 0) {
-          empire.traits.push(choice(positiveCheckable))
-        }
+        // Too many points from negative traits, remove one for better balance
+        removeAt(empire.traits, empire.traits.indexOf(choice(negativeChecked)))
+      } else if (positiveCheckable.length > 0) {
+        // We can use points for another positive trait
+        empire.traits.push(choice(positiveCheckable))
       }
-    } else if (points < 0) {
-      if (empire.traits.length === 5) {
-        removeRandomTrait(positiveChecked)
-      } else {
-        if (negativeCheckable.length > 0) {
-          empire.traits.push(choice(negativeCheckable))
-        }
-      }
+    } else if (empire.traits.length === 5) {
+      // Points are negative and we don't have more room, remove positive trait
+      removeAt(empire.traits, empire.traits.indexOf(choice(positiveChecked)))
+    } else if (negativeCheckable.length > 0) {
+      // We still have more room for negative traits, try adding one
+      empire.traits.push(choice(negativeCheckable))
     } else {
       console.warn('Something went wrong during trait randomization')
       break
@@ -121,7 +114,6 @@ const randomizeCivics = empire => {
   while (empire.civics.length < 2) {
     empire.civics.push(randomCheckable(civics))
   }
-
 }
 
 /** @param {Empire} empire */
