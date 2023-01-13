@@ -1,7 +1,6 @@
 // @ts-check
 /// <reference path="paths.js" />
 
-
 /**
  * The empire structure, used for keeping the state of which item is checked
  * @typedef Empire
@@ -42,32 +41,19 @@ const saveEmpire = empire => {
   localStorage.setItem('empire', JSON.stringify(preset))
 }
 
-/**
- * Randomly generate new empire
- * @param {Empire} empire
- */
-const randomize = empire => {
-  /** @type {<T extends Item>(arr: T[]) => T} */
-  const randomCheckable = arr => choice(arr.filter(a => a.checkable()))
+/** @type {<T extends Item>(arr: T[]) => T} */
+const randomCheckable = arr => choice(arr.filter(a => a.checkable()))
 
-  Object.values(empire).forEach(clear)
-
+/** @param {Empire} empire */
+const randomizePop = empire => {
+  clear(empire.pop)
   if (Math.random() <= 0.4) {
     empire.pop.push(randomCheckable(pop))
   }
+}
 
-  while (empire.ethics.reduce(Ethic.costSum, 3) > 0) {
-    empire.ethics.push(randomCheckable(ethics))
-  }
-
-  empire.authority.push(randomCheckable(authority))
-
-  empire.origin.push(randomCheckable(origins))
-
-  while (empire.civics.length < 2) {
-    empire.civics.push(randomCheckable(civics))
-  }
-
+/** @param {Empire} empire */
+const randomizeTraits = empire => {
   /** @type {(arr: Trait[]) => void} */
   const removeRandomTrait = arr => {
     removeAt(empire.traits, empire.traits.indexOf(choice(arr)))
@@ -107,4 +93,45 @@ const randomize = empire => {
       break
     }
   }
+}
+
+/** @param {Empire} empire */
+const randomizeOrigin = empire => {
+  clear(empire.origin)
+  empire.origin.push(randomCheckable(origins))
+}
+
+/** @param {Empire} empire */
+const randomizeEthics = empire => {
+  clear(empire.ethics)
+  while (empire.ethics.reduce(Ethic.costSum, 3) > 0) {
+    empire.ethics.push(randomCheckable(ethics))
+  }
+}
+
+/** @param {Empire} empire */
+const randomizeAuthority = empire => {
+  clear(empire.authority)
+  empire.authority.push(randomCheckable(authority))
+}
+
+/** @param {Empire} empire */
+const randomizeCivics = empire => {
+  clear(empire.civics)
+  while (empire.civics.length < 2) {
+    empire.civics.push(randomCheckable(civics))
+  }
+
+}
+
+/** @param {Empire} empire */
+const randomize = empire => {
+  // This order should ensure that nothing is blocked by something which is
+  // randomized later.
+  randomizePop(empire)
+  randomizeEthics(empire)
+  randomizeAuthority(empire)
+  randomizeOrigin(empire)
+  randomizeCivics(empire)
+  randomizeTraits(empire)
 }
