@@ -430,7 +430,20 @@ const renderInputs = (items, inputContainer, template) => item => {
   }
 }
 
-/** @param {string} [name] */
+const generateRandomizeButton = () => {
+  const button = document.createElement('button')
+  button.innerText = 'random'
+  button.classList.add('random-button')
+
+  button.onclick = () => {
+    randomize(empire)
+    updateView()
+  }
+
+  return button
+}
+
+/** @param {string} [name] - the name of an empire attribute to reset */
 const generateResetButton = name => {
   const button = document.createElement('button')
   button.innerText = 'reset'
@@ -484,6 +497,7 @@ const renderView = () => {
   if (summary && options) {
     const summaryTitle = summary.appendChild(document.createElement('h2'))
     summaryTitle.append('Empire summary')
+    summaryTitle.appendChild(generateRandomizeButton())
     summaryTitle.appendChild(generateResetButton())
     const table = summary.appendChild(document.createElement('table'))
 

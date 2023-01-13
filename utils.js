@@ -21,6 +21,22 @@ const partition = (arr, fn) =>
   )
 
 /**
+ * Remove element from list at index
+ * @template T
+ * @param {T[]} arr - array of elements to operate on
+ * @param {Number} i - index of element to remove
+ */
+const removeAt = (arr, i) => arr.splice(i, 1)
+
+/**
+ * Get random element from an array
+ * @template T
+ * @param {T[]} arr - array of elements to choose from
+ * @return {T}
+ */
+const choice = arr => arr[Math.floor(Math.random() * arr.length)]
+
+/**
  * Helper function for getting item by id from all items
  * @param {Item[]} items
  * @param {string} id

@@ -65,8 +65,7 @@ h1, h2, h3 {
   margin: 1rem 0;
 }
 
-.reset-button {
-  color: var(--negative);
+.random-button, .reset-button {
   background-color: var(--bg-1);
   font-family: inherit;
   border: none;
@@ -75,11 +74,14 @@ h1, h2, h3 {
   margin-left: 2em;
 }
 
-.reset-button:active { opacity: 0.8; }
-.reset-button:hover {
-  color: var(--bg);
-  background-color: var(--negative);
-}
+.reset-button  { color: var(--negative); }
+.random-button { color: var(--hive); }
+
+.random-button:active, .reset-button:active { opacity: 0.8; }
+.random-button:hover, .reset-button:hover   { color: var(--bg); }
+
+.reset-button:hover  { background-color: var(--negative); }
+.random-button:hover { background-color: var(--hive); }
 
 th {
   text-align: start;

@@ -92,5 +92,6 @@ class Item {
   // Logic & HTML formatting helper methods
   invalid = () => !this.rule.test() || !this.exclusive.test()
   checked = () => this.empireList.includes(this)
+  checkable = () => !this.checked() && this.isAvailable() && !this.invalid()
   disabled = () => !this.checked() && (!this.isAvailable() || this.invalid())
 }
