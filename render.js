@@ -326,13 +326,13 @@ const getColor = item => {
     return 'standard'
   } else if (item instanceof Authority) {
     return {
-      Imperial: 'imperial',
-      Dictatorial: 'dictatorial',
-      Oligarchic: 'oligarchic',
-      Democratic: 'democratic',
-      Corporate: 'corporate',
-      HiveMind: 'hive',
-      MachineIntelligence: 'mechanical',
+      'Imperial': 'imperial',
+      'Dictatorial': 'dictatorial',
+      'Oligarchic': 'oligarchic',
+      'Democratic': 'democratic',
+      'Corporate': 'corporate',
+      'Hive Mind': 'hive',
+      'Machine Intelligence': 'mechanical',
     }[item.id]
   } else if (item instanceof Civic) {
     if (civicsCorporate.includes(item)) return 'corporate'
