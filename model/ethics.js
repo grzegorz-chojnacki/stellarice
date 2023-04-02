@@ -10,73 +10,75 @@ class Ethic extends Item {
   isAvailable = () => this.empireList.reduce(Ethic.costSum, 3) - this.cost >= 0
 }
 
+// Source: https://stellaris.paradoxwikis.com/Ethics
+
 const militarist = one(
-  'FanaticMilitarist',
+  'Fanatic Militarist',
   'Militarist',
-  'FanaticPacifist',
+  'Fanatic Pacifist',
   'Pacifist'
 )
 
 const xenophobe = one(
-  'FanaticXenophobe',
+  'Fanatic Xenophobe',
   'Xenophobe',
-  'FanaticXenophile',
+  'Fanatic Xenophile',
   'Xenophile'
 )
 
 const authoritarian = one(
-  'FanaticAuthoritarian',
+  'Fanatic Authoritarian',
   'Authoritarian',
-  'FanaticEgalitarian',
+  'Fanatic Egalitarian',
   'Egalitarian'
 )
 
 const materialist = one(
-  'FanaticMaterialist',
+  'Fanatic Materialist',
   'Materialist',
-  'FanaticSpiritualist',
+  'Fanatic Spiritualist',
   'Spiritualist'
 )
 
 const normalEthics = [
   {
     cost: 2,
-    id: 'FanaticMilitarist',
+    id: 'Fanatic Militarist',
     rule: militarist,
   },
   {
     cost: 2,
-    id: 'FanaticPacifist',
+    id: 'Fanatic Pacifist',
     rule: militarist,
   },
   {
     cost: 2,
-    id: 'FanaticXenophobe',
+    id: 'Fanatic Xenophobe',
     rule: xenophobe,
   },
   {
     cost: 2,
-    id: 'FanaticXenophile',
+    id: 'Fanatic Xenophile',
     rule: xenophobe,
   },
   {
     cost: 2,
-    id: 'FanaticAuthoritarian',
+    id: 'Fanatic Authoritarian',
     rule: authoritarian,
   },
   {
     cost: 2,
-    id: 'FanaticEgalitarian',
+    id: 'Fanatic Egalitarian',
     rule: authoritarian,
   },
   {
     cost: 2,
-    id: 'FanaticMaterialist',
+    id: 'Fanatic Materialist',
     rule: materialist,
   },
   {
     cost: 2,
-    id: 'FanaticSpiritualist',
+    id: 'Fanatic Spiritualist',
     rule: materialist,
   },
   {

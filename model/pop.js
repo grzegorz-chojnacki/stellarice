@@ -7,11 +7,18 @@ class Pop extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
+// Source: https://stellaris.paradoxwikis.com/Species
+
 const pop = [
   { id: 'Botanic' },
   {
     id: 'Lithoid',
-    rule: none('Agrarian', 'ExtremelyAdaptive', 'Nonadaptive', 'SlowBreeders'),
+    rule: none(
+      'Agrarian',
+      'Extremely Adaptive',
+      'Nonadaptive',
+      'Slow Breeders'
+    ),
   },
-  { id: 'Mechanical' }]
-  .map(item => new Pop(item))
+  { id: 'Mechanical' },
+].map(item => new Pop(item))

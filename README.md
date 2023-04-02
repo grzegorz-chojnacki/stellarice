@@ -8,7 +8,7 @@ A simple empire creator and constraints checker for
 Try it out on the [stellarice.github.io](https://grzegorz-chojnacki.github.io/stellarice)!
 
 All rules were implemented according to the [wiki](https://stellaris.paradoxwikis.com/)
-and *should be* compatible with patch [3.5.3](https://stellaris.paradoxwikis.com/Patches).
+and *should be* compatible with patch [3.7](https://stellaris.paradoxwikis.com/Patches).
 
 
 ## Features

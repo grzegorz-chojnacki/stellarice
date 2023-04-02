@@ -7,36 +7,39 @@ class Authority extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
+// Source: https://stellaris.paradoxwikis.com/Government
+
 const authority = [
   {
     id: 'Imperial',
-    rule: none('Egalitarian', 'FanaticEgalitarian', 'Gestalt'),
+    rule: none('Egalitarian', 'Fanatic Egalitarian', 'Gestalt'),
   },
   {
     id: 'Dictatorial',
-    rule: none('Egalitarian', 'FanaticEgalitarian', 'Gestalt'),
+    rule: none('Egalitarian', 'Fanatic Egalitarian', 'Gestalt'),
   },
   {
     id: 'Oligarchic',
-    rule: none('FanaticAuthoritarian', 'FanaticEgalitarian', 'Gestalt'),
+    rule: none('Fanatic Authoritarian', 'Fanatic Egalitarian', 'Gestalt'),
   },
   {
     id: 'Democratic',
-    rule: none('Authoritarian', 'FanaticAuthoritarian', 'Gestalt'),
+    rule: none('Authoritarian', 'Fanatic Authoritarian', 'Gestalt'),
   },
   {
     id: 'Corporate',
-    rule: none('FanaticAuthoritarian', 'FanaticEgalitarian', 'Gestalt'),
+    rule: none('Fanatic Authoritarian', 'Fanatic Egalitarian', 'Gestalt'),
   },
   {
-    id: 'HiveMind',
+    id: 'Hive Mind',
     rule: every('Gestalt', none('Mechanical'), none(
         'Conformists', 'Deviants',
+        'Conservationist', 'Wasteful',
         'Thrifty', 'Decadent',
       )),
   },
   {
-    id: 'MachineIntelligence',
+    id: 'Machine Intelligence',
     rule: every('Mechanical', 'Gestalt'),
   },
 ].map(item => new Authority(item))

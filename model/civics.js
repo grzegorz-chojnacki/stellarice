@@ -7,90 +7,106 @@ class Civic extends Item {
   isAvailable = () => this.empireList.length < 2
 }
 
+// Source: https://stellaris.paradoxwikis.com/Civics
+
 const civicsNormal = [
-  { id: 'CutthroatPolitics' },
-  { id: 'EfficientBureaucracy' },
-  { id: 'Environmentalist' },
-  { id: 'FunctionalArchitecture' },
-  { id: 'MiningGuilds' },
+  { id: 'Cutthroat Politics' },
+  { id: 'Efficient Bureaucracy' },
+  { id: 'Environmentalist', rule: none('Relentless Industrialists') },
+  { id: 'Functional Architecture' },
+  { id: 'Mining Guilds' },
   {
-    id: 'AgrarianIdyll',
+    id: 'Agrarian Idyll',
     rule: every(
-      some('Pacifist', 'FanaticPacifist'),
-      none('RelentlessIndustrialists', 'PostApocalyptic', 'Remnants')
+      some('Pacifist', 'Fanatic Pacifist'),
+      none(
+        'Relentless Industrialists',
+        'Post-Apocalyptic',
+        'Remnants',
+        'Shattered Ring',
+        'Void Dwellers'
+      )
     ),
   },
   {
-    id: 'AristocraticElite',
+    id: 'Aristocratic Elite',
     rule: every(
       some('Oligarchic', 'Imperial'),
       none(
         'Egalitarian',
-        'FanaticEgalitarian',
-        'ExaltedPriesthood',
-        'MerchantGuilds',
+        'Fanatic Egalitarian',
+        'Exalted Priesthood',
+        'Merchant Guilds',
         'Technocracy'
       )
     ),
   },
   {
-    id: 'BeaconOfLiberty',
+    id: 'Beacon of Liberty',
     rule: every(
-      some('Oligarchic', 'Imperial'),
-      some('Egalitarian', 'FanaticEgalitarian'),
-      none('Xenophobe', 'FanaticXenophobe')
+      'Democratic',
+      some('Egalitarian', 'Fanatic Egalitarian'),
+      none('Xenophobe', 'Fanatic Xenophobe')
     ),
   },
   {
-    id: 'CitizenService',
+    id: 'Citizen Service',
     rule: every(
       some('Democratic', 'Oligarchic'),
-      some('Militarist', 'FanaticMilitarist'),
-      none('FanaticXenophile', 'Reanimators')
+      some('Militarist', 'Fanatic Militarist'),
+      none('Fanatic Xenophile', 'Reanimators')
     ),
   },
+  // Disabled in MegaCorp DLC
+  // {
+  //   id: 'Corporate Dominion',
+  //   rule: every(
+  //     'Democratic',
+  //     none('Xenophobe', 'Fanatic Xenophobe')
+  //   ),
+  // },
   {
-    id: 'CorveeSystem',
-    rule: none('Egalitarian', 'FanaticEgalitarian', 'FreeHaven'),
+    id: 'Corvee System',
+    rule: none('Egalitarian', 'Fanatic Egalitarian', 'Free Haven'),
   },
   {
-    id: 'DistinguishedAdmiralty',
-    rule: some('Militarist', 'FanaticMilitarist'),
+    id: 'Distinguished Admiralty',
+    rule: some('Militarist', 'Fanatic Militarist'),
   },
   {
-    id: 'ExaltedPriesthood',
+    id: 'Exalted Priesthood',
     rule: every(
       some('Oligarchic', 'Dictatorial'),
-      some('Spiritualist', 'FanaticSpiritualist'),
-      none('MerchantGuilds', 'AristocraticElite', 'Technocracy')
+      some('Spiritualist', 'Fanatic Spiritualist'),
+      none('Merchant Guilds', 'Aristocratic Elite', 'Technocracy')
     ),
   },
   {
-    id: 'FeudalSociety',
+    id: 'Feudal Society',
     rule: every('Imperial'),
   },
   {
-    id: 'FreeHaven',
-    rule: every(some('Xenophile', 'FanaticXenophile'), none('CorveeSystem')),
+    id: 'Free Haven',
+    rule: every(some('Xenophile', 'Fanatic Xenophile'), none('Corvee System')),
   },
   {
-    id: 'IdealisticFoundation',
-    rule: every(some('Egalitarian', 'FanaticEgalitarian')),
+    id: 'Idealistic Foundation',
+    rule: every(some('Egalitarian', 'Fanatic Egalitarian')),
   },
   {
-    id: 'ImperialCult',
+    id: 'Imperial Cult',
     rule: every(
       'Imperial',
-      some('Spiritualist', 'FanaticSpiritualist'),
-      some('Authoritarian', 'FanaticAuthoritarian')
+      some('Authoritarian', 'Fanatic Authoritarian'),
+      some('Spiritualist', 'Fanatic Spiritualist')
     ),
   },
   {
-    id: 'InwardPerfection',
+    id: 'Inward Perfection',
     rule: every(
-      some('Pacifist', 'FanaticPacifist'),
-      some('Xenophobe', 'FanaticXenophobe'),
-      none('PompousPurists')
+      some('Pacifist', 'Fanatic Pacifist'),
+      some('Xenophobe', 'Fanatic Xenophobe'),
+      none('Pompous Purists', 'Eager Explorers', 'Fear of the Dark')
     ),
   },
   {
@@ -98,284 +114,316 @@ const civicsNormal = [
     rule: some('Democratic', 'Oligarchic'),
   },
   {
-    id: 'NationalisticZeal',
-    rule: some('Militarist', 'FanaticMilitarist'),
+    id: 'Nationalistic Zeal',
+    rule: some('Militarist', 'Fanatic Militarist'),
   },
   {
-    id: 'ParliamentarySystem',
+    id: 'Parliamentary System',
     rule: every('Democratic'),
   },
   {
-    id: 'PhilosopherKing',
+    id: 'Philosopher King',
     rule: some('Dictatorial', 'Imperial'),
   },
   {
-    id: 'PoliceState',
-    rule: none('FanaticEgalitarian'),
+    id: 'Police State',
+    rule: none('Fanatic Egalitarian'),
   },
   {
-    id: 'ShadowCouncil',
+    id: 'Shadow Council',
     rule: none('Imperial'),
   },
   {
-    id: 'SlaverGuilds',
+    id: 'Slaver Guilds',
     rule: every(
-      some('Authoritarian', 'FanaticAuthoritarian'),
-      none('PleasureSeekers')
+      some('Authoritarian', 'Fanatic Authoritarian'),
+      none('Pleasure Seekers', 'Payback')
     ),
   },
   {
     id: 'Technocracy',
     rule: every(
-      some('Materialist', 'FanaticMaterialist'),
+      some('Materialist', 'Fanatic Materialist'),
       none(
-        'AristocraticElite',
-        'ExaltedPriesthood',
-        'MerchantGuilds',
-        'SharedBurdens'
+        'Aristocratic Elite',
+        'Exalted Priesthood',
+        'Merchant Guilds',
+        'Shared Burdens'
       )
     ),
   },
   {
-    id: 'WarriorCulture',
-    rule: every(some('Militarist', 'FanaticMilitarist')),
+    id: 'Warrior Culture',
+    rule: some('Militarist', 'Fanatic Militarist'),
   },
   {
-    id: 'CatalyticProcessing',
-    rule: none('CalamitousBirth'),
+    id: 'Catalytic Processing',
+    rule: none('Calamitous Birth'),
   },
   {
-    id: 'IdyllicBloom',
-    rule: every('Botanic', none('VoidDwellers')),
+    id: 'Idyllic Bloom',
+    rule: every('Botanic', none('Relentless Industrialists', 'Void Dwellers')),
   },
   {
-    id: 'FanaticPurifiers',
+    id: 'Fanatic Purifiers',
     rule: every(
-      'FanaticXenophobe',
+      'Fanatic Xenophobe',
       some('Militarist', 'Spiritualist'),
       none(
-        'BarbaricDespoilers',
-        'PompousPurists',
-        'SyncreticEvolution',
-        'CommonGround',
-        'Hegemon'
+        'Barbaric Despoilers',
+        'Pompous Purists',
+        'Syncretic Evolution',
+        'Common Ground',
+        'Hegemon',
+        'Teachers of the Shroud',
+        'Knights of the Toxic God',
+        'Broken Shackles',
+        'Fear of the Dark',
+        'Payback'
       )
     ),
   },
-  { id: 'MasterfulCrafters' },
+  { id: 'Masterful Crafters' },
   {
-    id: 'PleasureSeekers',
-    rule: none('SlaverGuilds', 'WarriorCulture', 'SharedBurdens'),
+    id: 'Pleasure Seekers',
+    rule: none('Slaver Guilds', 'Warrior Culture', 'Shared Burdens'),
   },
   {
-    id: 'PompousPurists',
+    id: 'Pompous Purists',
     rule: every(
-      some('Xenophobe', 'FanaticXenophobe'),
-      none('InwardPerfection', 'FanaticPurifiers', 'CommonGround')
+      some('Xenophobe', 'Fanatic Xenophobe'),
+      none('Inward Perfection', 'Fanatic Purifiers', 'Scion', 'Payback')
     ),
   },
   {
-    id: 'BarbaricDespoilers',
+    id: 'Barbaric Despoilers',
     rule: every(
       some('Militarist', 'Spiritualist'),
       some(
         'Authoritarian',
-        'FanaticAuthoritarian',
+        'Fanatic Authoritarian',
         'Xenophobe',
-        'FanaticXenophobe'
+        'Fanatic Xenophobe'
       ),
-      none('Xenophile', 'FanaticXenophile', 'FanaticPurifiers', 'CommonGround')
+      none(
+        'Xenophile',
+        'Fanatic Xenophile',
+        'Fanatic Purifiers',
+        'Common Ground'
+      )
     ),
   },
   {
-    id: 'ByzantineBureaucracy',
-    rule: none('Spiritualist', 'FanaticSpiritualist'),
+    id: 'Byzantine Bureaucracy',
+    rule: none('Spiritualist', 'Fanatic Spiritualist'),
   },
   {
-    id: 'MerchantGuilds',
-    rule: none('ExaltedPriesthood', 'AristocraticElite', 'Technocracy'),
+    id: 'Merchant Guilds',
+    rule: none('Exalted Priesthood', 'Aristocratic Elite', 'Technocracy'),
   },
   {
-    id: 'SharedBurdens',
+    id: 'Shared Burdens',
     rule: every(
-      'FanaticEgalitarian',
-      none('Xenophobe', 'FanaticXenophobe', 'Technocracy', 'PleasureSeekers')
+      'Fanatic Egalitarian',
+      none('Xenophobe', 'Fanatic Xenophobe', 'Technocracy', 'Pleasure Seekers')
     ),
   },
   {
-    id: 'DiplomaticCorps',
-    rule: none('InwardPerfection', 'FanaticPurifiers'),
+    id: 'Diplomatic Corps',
+    rule: none('Inward Perfection', 'Fanatic Purifiers'),
+  },
+  {
+    id: 'Death Cult',
+    rule: every(
+      some('Spiritualist', 'Fanatic Spiritualist'),
+      none('Inward Perfection', 'Fanatic Purifiers', 'Necrophage')
+    ),
   },
   {
     id: 'Memorialists',
-    rule: none('FanaticPurifiers'),
+    rule: none('Fanatic Purifiers'),
   },
   {
     id: 'Reanimators',
-    rule: none('Pacifist', 'FanaticPacifist', 'CitizenService'),
-  },
-  {
-    id: 'DeathCult',
-    rule: every(
-      some('Spiritualist', 'FanaticSpiritualist'),
-      none('InwardPerfection', 'FanaticPurifiers', 'Necrophage')
-    ),
+    rule: none('Pacifist', 'Fanatic Pacifist', 'Citizen Service'),
   },
   {
     id: 'Anglers',
     rule: none(
-      'PostApocalyptic',
-      'ShatteredRing',
-      'VoidDwellers',
+      'Post-Apocalyptic',
+      'Shattered Ring',
+      'Void Dwellers',
       'Subterranean'
     ),
   },
   {
-    id: 'MutagenicSpas',
-    rule: none('LifeSeeded'),
+    id: 'Mutagenic Spas',
+    rule: none('Life-Seeded'),
   },
   {
-    id: 'RelentlessIndustrialists',
+    id: 'Relentless Industrialists',
     rule: every(
-      materialist,
+      some('Materialist', 'Fanatic Materialist'),
       none(
-        'AgrarianIdyll',
+        'Agrarian Idyll',
         'Environmentalist',
-        'IdyllicBloom',
+        'Idyllic Bloom',
         'Memorialists',
-        'LifeSeeded'
+        'Life-Seeded'
       )
     ),
   },
   { id: 'Scavengers' },
+  {
+    id: 'Eager Explorers',
+    rule: none(
+      'Inward Perfection',
+      'Broken Shackles',
+      'Fear of the Dark',
+      'Payback'
+    ),
+  },
 ]
   .map(item => new Civic(item))
-  .map(Item.withRule(none('Corporate', 'HiveMind', 'MachineIntelligence')))
+  .map(Item.withRule(none('Corporate', 'Hive Mind', 'Machine Intelligence')))
 
 const civicsCorporate = [
-  { id: 'CriminalHeritage' },
+  { id: 'Criminal Heritage' },
   { id: 'Franchising' },
-  { id: 'FreeTraders' },
-  { id: 'PrivateProspectors' },
-  { id: 'TradingPosts' },
+  { id: 'Free Traders' },
+  { id: 'Private Prospectors' },
+  { id: 'Trading Posts' },
   {
-    id: 'BrandLoyalty',
-    rule: none('BeaconOfLiberty'),
+    id: 'Brand Loyalty',
+    rule: none('Beacon of Liberty'),
   },
   {
-    id: 'GospelOfTheMasses',
-    rule: every(some('Spiritualist', 'FanaticSpiritualist')),
+    id: 'Gospel of the Masses',
+    rule: some('Spiritualist', 'Fanatic Spiritualist'),
   },
   {
-    id: 'IndenturedAssets',
+    id: 'Indentured Assets',
     rule: every(
-      some('Authoritarian', 'FanaticAuthoritarian'),
-      none('CorporateHedonism', 'PleasureSeekers', 'SlaverGuilds')
+      some('Authoritarian', 'Fanatic Authoritarian'),
+      none('Corporate Hedonism', 'Pleasure Seekers', 'Slaver Guilds', 'Payback')
     ),
   },
   {
-    id: 'MediaConglomerate',
-    rule: none('IdealisticFoundation'),
+    id: 'Media Conglomerate',
+    rule: none('Idealistic Foundation'),
   },
   {
-    id: 'NavalContractors',
+    id: 'Naval Contractors',
     rule: every(
-      some('Militarist', 'FanaticMilitarist'),
-      none('CitizenService')
+      some('Militarist', 'Fanatic Militarist'),
+      none('Citizen Service')
     ),
   },
   {
-    id: 'PrivateMilitaryCompanies',
+    id: 'Private Military Companies',
     rule: every(
-      some('Militarist', 'FanaticMilitarist'),
-      none('WarriorCulture')
+      some('Militarist', 'Fanatic Militarist'),
+      none('Warrior Culture')
     ),
   },
   {
-    id: 'RuthlessCompetition',
+    id: 'Ruthless Competition',
     rule: none('Meritocracy'),
   },
   {
-    id: 'CatalyticRecyclers',
-    rule: none('CatalyticProcessing', 'CalamitousBirth'),
+    id: 'Catalytic Recyclers',
+    rule: none('Catalytic Processing', 'Calamitous Birth'),
   },
   {
-    id: 'MastercraftInc',
-    rule: none('MasterfulCrafters'),
+    id: 'Ascensionists',
+    rule: none('Spiritualist', 'Fanatic Spiritualist'),
   },
   {
-    id: 'CorporateHedonism',
-    rule: none('IndenturedAssets', 'PleasureSeekers', 'SlaverGuilds'),
+    id: 'Corporate Hedonism',
+    rule: none('Indentured Assets', 'Pleasure Seekers', 'Slaver Guilds'),
   },
   {
-    id: 'PublicRelationsSpecialists',
-    rule: none('DiplomaticCorps'),
+    id: 'Mastercraft Inc.',
+    rule: none('Masterful Crafters'),
   },
   {
-    id: 'CorporateDeathCult',
+    id: 'Public Relations Specialists',
+    rule: none('Diplomatic Corps'),
+  },
+  {
+    id: 'Corporate Death Cult',
     rule: every(
-      some('Spiritualist', 'FanaticSpiritualist'),
-      none('Necrophage', 'InwardPerfection', 'FanaticPurifiers')
+      some('Spiritualist', 'Fanatic Spiritualist'),
+      none('Necrophage', 'Inward Perfection', 'Fanatic Purifiers')
     ),
   },
   {
-    id: 'PermanentEmployment',
+    id: 'Permanent Employment',
     rule: none(
       'Egalitarian',
-      'FanaticEgalitarian',
+      'Fanatic Egalitarian',
       'Mechanist',
-      'CloneArmy',
+      'Clone Army',
       'Necrophage'
     ),
   },
   {
-    id: 'CorporateAnglers',
+    id: 'Corporate Anglers',
     rule: none(
-      'AgrarianIdyll',
-      'PostApocalyptic',
-      'ShatteredRing',
-      'VoidDwellers',
+      'Post-Apocalyptic',
+      'Shattered Ring',
+      'Void Dwellers',
       'Subterranean'
     ),
   },
   {
-    id: 'CorporateRelentlessIndustrialists',
+    id: 'Corporate Mutagenic Spas',
+    rule: none('Mutagenic Spas', 'Life-Seeded'),
+  },
+  {
+    id: 'Corporate Relentless Industrialists',
     rule: every(
-      materialist,
+      some('Materialist', 'Fanatic Materialist'),
       none(
-        'AgrarianIdyll',
+        'Agrarian Idyll',
         'Environmentalist',
-        'IdyllicBloom',
+        'Idyllic Bloom',
         'Memorialists',
-        'LifeSeeded'
+        'Relentless Industrialists',
+        'Life-Seeded'
       )
     ),
   },
-  { id: 'CorporateScavengers' },
+  { id: 'Corporate Scavengers' },
+  {
+    id: 'Privatized Exploration',
+    rule: none('Broken Shackles', 'Fear of the Dark', 'Payback'),
+  },
 ]
   .map(item => new Civic(item))
   .map(Item.withRule(every('Corporate')))
 
 const civicsHive = [
   { id: 'Ascetic' },
-  { id: 'DividedAttention' },
-  { id: 'NaturalNeuralNetwork' },
-  { id: 'OneMind' },
-  { id: 'PooledKnowledge' },
-  { id: 'StrengthOfLegions' },
-  { id: 'SubspaceEphapse' },
-  { id: 'SubsumedWill' },
+  { id: 'Divided Attention' },
+  { id: 'Elevational Conemplations' },
+  { id: 'Natural Neural Network' },
+  { id: 'One Mind' },
+  { id: 'Pooled Knowledge' },
+  { id: 'Strength Of Legions' },
+  { id: 'Subspace Ephapse' },
+  { id: 'Subsumed Will' },
   {
-    id: 'DevouringSwarm',
+    id: 'Devouring Swarm',
     rule: none('Lithoid'),
   },
   {
-    id: 'HiveOrganicReprocessing',
-    rule: none('CalamitousBirth'),
+    id: 'Hive Idyllic Bloom',
+    rule: every('Botanic'),
   },
   {
-    id: 'HiveIdyllicBloom',
-    rule: every('Botanic'),
+    id: 'Hive Organic Reprocessing',
+    rule: none('Calamitous Birth'),
   },
   {
     id: 'Terravore',
@@ -383,56 +431,75 @@ const civicsHive = [
   },
   {
     id: 'Empath',
-    rule: none('DevouringSwarm', 'Terravore', 'Necrophage'),
+    rule: none('Devouring Swarm', 'Terravore', 'Necrophage'),
+  },
+  { id: 'Cordyceptic Drones' },
+  {
+    id: 'Hive Memorialist',
+    rule: none('Devouring Swarm', 'Terravore'),
   },
   {
-    id: 'HiveMemorialist',
-    rule: none('DevouringSwarm', 'Terravore'),
+    id: 'Permutation Pools',
+    rule: none('Life-Seeded'),
+  },
+  {
+    id: 'Stargazers',
+    rule: none('Broken Shackles', 'Fear of the Dark', 'Payback'),
   },
 ]
   .map(item => new Civic(item))
-  .map(Item.withRule(every('HiveMind')))
+  .map(Item.withRule(every('Hive Mind')))
 
 const civicsMachine = [
   { id: 'Constructobot' },
-  { id: 'DelegatedFunctions' },
-  { id: 'FactoryOverclocking' },
+  { id: 'Delegated Functions' },
+  { id: 'Factory Overclocking' },
   { id: 'Introspective' },
-  { id: 'MaintenanceProtocols' },
+  { id: 'Maintenance Protocols' },
   { id: 'OTAUpdates' },
-  { id: 'RapidReplicator' },
+  { id: 'Rapid Replicator' },
   { id: 'Rockbreakers' },
-  { id: 'StaticResearchAnalysis' },
-  { id: 'UnitaryCohesion' },
+  { id: 'Static Research Analysis' },
+  { id: 'Unitary Cohesion' },
   { id: 'Warbots' },
-  { id: 'ZeroWasteProtocols' },
+  { id: 'Zero Waste Protocols' },
   {
-    id: 'DeterminedExterminator',
-    rule: none('DrivenAssimilator', 'RogueServitor'),
+    id: 'Determined Exterminator',
+    rule: none('Driven Assimilator', 'Rogue Servitor', 'Exploration Protocols'),
   },
   {
-    id: 'DrivenAssimilator',
-    rule: none('DeterminedExterminator', 'RogueServitor'),
-  },
-  {
-    id: 'RogueServitor',
+    id: 'Driven Assimilator',
     rule: none(
-      'DeterminedExterminator',
-      'DrivenAssimilator',
-      'ResourceConsolidation'
+      'Determined Exterminator',
+      'Rogue Servitor',
+      'Exploration Protocols'
     ),
   },
   {
-    id: 'MachineOrganicReprocessing',
-    rule: none('ResourceConsolidation'),
+    id: 'Rogue Servitor',
+    rule: none(
+      'Determined Exterminator',
+      'Driven Assimilator',
+      'Resource Consolidation'
+    ),
   },
   {
-    id: 'MachineMemorialist',
-    rule: none('DeterminedExterminator', 'DrivenAssimilator'),
+    id: 'Machine Organic Reprocessing',
+    rule: none('Resource Consolidation'),
+  },
+  { id: 'Elevational Hypotheses' },
+  {
+    id: 'Machine Memorialist',
+    rule: none('Determined Exterminator', 'Driven Assimilator'),
+  },
+  { id: 'Hyper Lubrication Basin' },
+  {
+    id: 'Exploration Protocols',
+    rule: none('Determined Exterminator', 'Driven Assimilator'),
   },
 ]
   .map(item => new Civic(item))
-  .map(Item.withRule(some('MachineIntelligence')))
+  .map(Item.withRule(some('Machine Intelligence')))
 
 const civics = [
   ...civicsNormal,

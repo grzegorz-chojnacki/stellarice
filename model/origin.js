@@ -7,179 +7,221 @@ class Origin extends Item {
   isAvailable = () => this.empireList.length === 0
 }
 
+// Source: https://stellaris.paradoxwikis.com/Empire#Origin
+
 const origins = [
   {
-    id: 'ProsperousUnification',
+    id: 'Prosperous Unification',
   },
   {
-    id: 'GalacticDoorstep',
+    id: 'Galactic Doorstep',
   },
   {
-    id: 'LostColony',
+    id: 'Lost Colony',
     rule: none('Gestalt'),
+  },
+  {
+    id: 'Remnants',
+    rule: none('Agrarian Idyll'),
   },
   {
     id: 'Mechanist',
     rule: every(
-      some('Materialist', 'FanaticMaterialist'),
-      none('Gestalt', 'PermanentEmployment')
+      some('Materialist', 'Fanatic Materialist'),
+      none('Gestalt', 'Permanent Employment')
     ),
   },
   {
-    id: 'SyncreticEvolution',
-    rule: none('Gestalt', 'FanaticPurifiers'),
+    id: 'Syncretic Evolution',
+    rule: none('Gestalt', 'Fanatic Purifiers'),
   },
   {
-    id: 'TreeOfLife',
-    rule: every('HiveMind', none('DevouringSwarm', 'Terravore')),
+    id: 'Tree of Life',
+    rule: every('Hive Mind', none('Devouring Swarm', 'Terravore')),
   },
   {
-    id: 'ResourceConsolidation',
+    id: 'Resource Consolidation',
     rule: every(
-      'MachineIntelligence',
-      none('RogueServitor', 'MachineOrganicReprocessing')
+      'Machine Intelligence',
+      none('Rogue Servitor', 'Machine Organic Reprocessing')
     ),
   },
   {
-    id: 'CloneArmy',
-    rule: none('Gestalt', 'PermanentEmployment'),
+    id: 'Clone Army',
+    rule: none('Gestalt', 'Permanent Employment'),
   },
   {
-    id: 'LifeSeeded',
-    rule: none('MachineIntelligence'),
-  },
-  {
-    id: 'PostApocalyptic',
+    id: 'Life-Seeded',
     rule: none(
-      'MachineIntelligence',
-      'AgrarianIdyll',
-      'Anglers',
-      'CorporateAnglers'
+      'Machine Intelligence',
+      'Mutagenic Spas',
+      'Permutation Pools',
+      'Relentless Industrialists'
     ),
   },
   {
-    id: 'Remnants',
-    rule: none('AgrarianIdyll'),
+    id: 'Post-Apocalyptic',
+    rule: none(
+      'Machine Intelligence',
+      'Agrarian Idyll',
+      'Anglers',
+      'Corporate Anglers'
+    ),
   },
   {
-    id: 'CalamitousBirth',
+    id: 'Calamitous Birth',
     rule: every(
       'Lithoid',
       none(
-        'CatalyticProcessing',
-        'CatalyticRecyclers',
-        'HiveOrganicReprocessing',
-        'MachineOrganicReprocessing'
+        'Catalytic Processing',
+        'Catalytic Recyclers',
+        'Hive Organic Reprocessing',
+        'Machine Organic Reprocessing'
       )
     ),
   },
   {
-    id: 'CommonGround',
+    id: 'Common Ground',
     rule: none(
-      'Xenophile',
-      'FanaticXenophile',
       'Xenophobe',
-      'FanaticXenophobe',
+      'Fanatic Xenophobe',
       'Gestalt',
-      'InwardPerfection',
-      'FanaticPurifiers',
-      'BarbaricDespoilers'
+      'Inward Perfection',
+      'Fanatic Purifiers',
+      'Barbaric Despoilers'
     ),
   },
   {
     id: 'Hegemon',
     rule: none(
       'Xenophobe',
-      'FanaticXenophobe',
+      'Fanatic Xenophobe',
       'Egalitarian',
-      'FanaticEgalitarian',
+      'Fanatic Egalitarian',
       'Gestalt',
-      'InwardPerfection',
-      'FanaticPurifiers'
+      'Inward Perfection',
+      'Fanatic Purifiers'
     ),
   },
   {
     id: 'Doomsday',
   },
   {
-    id: 'OnTheShouldersOfGiants',
+    id: 'On the Shoulders of Giants',
     rule: none('Gestalt'),
   },
   {
     id: 'Scion',
-    rule: none('Gestalt', 'FanaticXenophobe', 'PompousPurists'),
+    rule: none('Fanatic Xenophobe', 'Gestalt', 'Pompous Purists'),
   },
   {
-    id: 'ShatteredRing',
-    rule: none('AgrarianIdyll', 'Anglers', 'CorporateAnglers'),
+    id: 'Shattered Ring',
+    rule: none('Agrarian Idyll', 'Anglers', 'Corporate Anglers'),
   },
   {
-    id: 'VoidDwellers',
+    id: 'Void Dwellers',
     rule: none(
       'Gestalt',
-      'AgrarianIdyll',
+      'Agrarian Idyll',
       'Anglers',
-      'CorporateAnglers',
-      'IdyllicBloom',
-      'HiveIdyllicBloom'
+      'Corporate Anglers',
+      'Idyllic Bloom'
     ),
   },
   {
     id: 'Necrophage',
     rule: none(
-      'MachineIntelligence',
+      'Machine Intelligence',
       'Xenophile',
-      'FanaticXenophile',
-      'FanaticEgalitarian',
-      'DeathCult',
-      'CorporateDeathCult',
+      'Fanatic Xenophile',
+      'Fanatic Egalitarian',
+      'Death Cult',
+      'Corporate Death Cult',
       'Empath',
-      'PermanentEmployment',
-      'Budding',
+      'Permanent Employment'
     ),
   },
   {
-    id: 'HereBeDragons',
-    rule: none('FanaticPurifiers', 'DevouringSwarm', 'DeterminedExterminator'),
-  },
-  {
-    id: 'OceanParadise',
-    rule: none('MachineIntelligence'),
-  },
-  {
-    id: 'SlingshotToTheStars',
-  },
-  {
-    id: 'ImperialFiefdom',
+    id: 'Here Be Dragons',
     rule: none(
-      'InwardPerfection',
-      'DrivenAssimilator',
-      'FanaticPurifiers',
-      'DevouringSwarm',
-      'DeterminedExterminator'
+      'Fanatic Purifiers',
+      'Devouring Swarm',
+      'Determined Exterminator'
     ),
+  },
+  {
+    id: 'Ocean Paradise',
+    rule: none('Machine Intelligence'),
+  },
+  {
+    id: 'Imperial Fiefdom',
+    rule: none(
+      'Inward Perfection',
+      'Driven Assimilator',
+      'Fanatic Purifiers',
+      'Devouring Swarm',
+      'Determined Exterminator'
+    ),
+  },
+  {
+    id: 'Progenitor Hive',
+    rule: every('Hive Mind'),
+  },
+  {
+    id: 'Slingshot to the Stars',
   },
   {
     id: 'Subterranean',
-    rule: none('MachineIntelligence', 'Phototrophic', 'OceanParadise'),
+    rule: none('Machine Intelligence'),
   },
   {
-    id: 'TeachersOfTheShroud',
+    id: 'Teachers of the Shroud',
     rule: every(
-      some('Spiritualist', 'FanaticSpiritualist'),
-      none('FanaticPurifiers')
+      some('Spiritualist', 'Fanatic Spiritualist'),
+      none('Fanatic Purifiers')
     ),
   },
   {
-    id: 'ProgenitorHive',
-    rule: every('HiveMind'),
-  },
-  {
-    id: 'KnightsOfTheToxicGod',
-    rule: none('Gestalt', 'FanaticPurifiers'),
+    id: 'Knights of the Toxic God',
+    rule: none('Gestalt', 'Fanatic Purifiers'),
   },
   {
     id: 'Overturned',
-    rule: none('MachineIntelligence'),
+    rule: none('Machine Intelligence'),
+  },
+  {
+    id: 'Broken Shackles',
+    rule: none(
+      'Authoritarian',
+      'Fanatic Authoritarian',
+      'Xenophobe',
+      'Fanatic Xenophobe',
+      'Gestalt',
+      'Fanatic Purifiers',
+      'Eager Explorers',
+      'Privatized Exploration',
+    ),
+  },
+  {
+    id: 'Payback',
+    rule: none(
+      'Gestalt',
+      'Slaver Guilds',
+      'Fanatic Purifiers',
+      'Pompous Purists',
+      'Eager Explorers',
+      'Indentured Assets',
+      'Privatized Exploration',
+    ),
+  },
+  {
+    id: 'Fear of the Dark',
+    rule: none(
+      'Gestalt',
+      'Inward Perfection',
+      'Fanatic Purifiers',
+      'Eager Explorers',
+      'Privatized Exploration',
+    ),
   },
 ].map(item => new Origin(item))

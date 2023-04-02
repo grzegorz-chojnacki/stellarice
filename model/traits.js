@@ -14,81 +14,43 @@ class Trait extends Item {
   isAvailable = () => this.empireList.length < 5
 }
 
+// Source: https://stellaris.paradoxwikis.com/Traits
+
 // Biological
 const charismatic = one('Charismatic', 'Repugnant')
 const communal = one('Communal', 'Solitary')
 const conformists = one('Conformists', 'Deviants')
-const conservationists = one('Conservationist', 'Wasteful')
+const conservationist = one('Conservationist', 'Wasteful')
 const docile = one('Docile', 'Unruly')
 const nomadic = one('Nomadic', 'Sedentary')
-const learners = one('QuickLearners', 'SlowLearners')
-const breeders = one('RapidBreeders', 'SlowBreeders')
+const learners = one('Quick Learners', 'Slow Learners')
+const breeders = one('Rapid Breeders', 'Slow Breeders')
 const traditional = one('Traditional', 'Quarrelsome')
-const trophic = one('Phototrophic', 'Radiotrophic')
-const strong = one('Strong', 'VeryStrong', 'Weak')
+const strong = one('Strong', 'Very Strong', 'Weak')
 const enduring = one('Enduring', 'Venerable', 'Fleeting')
-const adaptive = one('Adaptive', 'ExtremelyAdaptive', 'Nonadaptive')
-const gaseous = one(
-  'GaseousByproducts',
-  'ScintillatingSkin',
-  'VolatileExcretions'
-)
+const adaptive = one('Adaptive', 'Extremely Adaptive', 'Nonadaptive')
 const scientist = one(
-  'NaturalEngineers',
-  'NaturalPhysicists',
-  'NaturalSociologists'
+  'Natural Engineers',
+  'Natural Physicists',
+  'Natural Sociologists'
+)
+
+// Special
+const trophic = one('Phototrophic', 'Radiotrophic')
+const gaseous = one(
+  'Gaseous Byproducts',
+  'Scintillating Skin',
+  'Volatile Excretions'
 )
 
 // Mechanical
-const bulky = one('Bulky', 'DoubleJointed')
-const maintenance = one('HighMaintenance', 'Durable')
-const uncanny = one('Uncanny', 'EmotionEmulators')
-const repurposed = one('RepurposedHardware', 'LearningAlgorithms')
-const custom = one('CustomMade', 'MassProduced')
+const bulky = one('Bulky', 'Double Jointed')
+const maintenance = one('High Maintenance', 'Durable')
+const uncanny = one('Uncanny', 'Emotion Emulators')
+const repurposed = one('Repurposed Hardware', 'Learning Algorithms')
+const custom = one('Custom-Made', 'Mass-Produced')
 const luxurious = one('Luxurious', 'Recycled')
-const bandwidth = one('HighBandwidth', 'StreamlinedProtocols')
-
-const traitsBotanic = [
-  {
-    id: 'Radiotrophic',
-    cost: 2,
-    rule: every(trophic, some('Botanic', 'Lithoid')),
-  },
-  {
-    id: 'Phototrophic',
-    cost: 1,
-    rule: every(trophic, 'Botanic', none('Subterranean')),
-  },
-  {
-    id: 'Budding',
-    cost: 2,
-    rule: every(breeders, 'Botanic', none('CloneArmy', 'Necrophage')),
-  },
-].map(item => new Trait(item))
-
-const traitsLithoid = [
-  {
-    id: 'GaseousByproducts',
-    cost: 2,
-    rule: gaseous,
-  },
-  {
-    id: 'ScintillatingSkin',
-    cost: 2,
-    rule: gaseous,
-  },
-  {
-    id: 'VolatileExcretions',
-    cost: 2,
-    rule: gaseous,
-  },
-  {
-    id: 'Crystallization',
-    cost: 2,
-  },
-]
-  .map(item => new Trait(item))
-  .map(Item.withRule(every('Lithoid')))
+const bandwidth = one('High Bandwidth', 'Streamlined Protocols')
 
 const traitsNormal = [
   // Positive traits
@@ -99,7 +61,7 @@ const traitsNormal = [
   },
   {
     cost: 4,
-    id: 'ExtremelyAdaptive',
+    id: 'Extremely Adaptive',
     rule: adaptive,
   },
   {
@@ -124,7 +86,7 @@ const traitsNormal = [
   {
     cost: 1,
     id: 'Conservationist',
-    rule: conservationists,
+    rule: conservationist,
   },
   {
     cost: 2,
@@ -155,17 +117,17 @@ const traitsNormal = [
   },
   {
     cost: 1,
-    id: 'NaturalEngineers',
+    id: 'Natural Engineers',
     rule: scientist,
   },
   {
     cost: 1,
-    id: 'NaturalPhysicists',
+    id: 'Natural Physicists',
     rule: scientist,
   },
   {
     cost: 1,
-    id: 'NaturalSociologists',
+    id: 'Natural Sociologists',
     rule: scientist,
   },
   {
@@ -175,12 +137,12 @@ const traitsNormal = [
   },
   {
     cost: 1,
-    id: 'QuickLearners',
+    id: 'Quick Learners',
     rule: learners,
   },
   {
     cost: 2,
-    id: 'RapidBreeders',
+    id: 'Rapid Breeders',
     rule: breeders,
   },
   {
@@ -194,7 +156,7 @@ const traitsNormal = [
   },
   {
     cost: 3,
-    id: 'VeryStrong',
+    id: 'Very Strong',
     rule: strong,
   },
   {
@@ -223,7 +185,7 @@ const traitsNormal = [
     rule: charismatic,
   },
   {
-    cost: -2,
+    cost: -1,
     id: 'Solitary',
     rule: communal,
   },
@@ -235,7 +197,7 @@ const traitsNormal = [
   {
     cost: -1,
     id: 'Wasteful',
-    rule: conservationists,
+    rule: conservationist,
   },
   {
     cost: -2,
@@ -254,12 +216,12 @@ const traitsNormal = [
   },
   {
     cost: -1,
-    id: 'SlowLearners',
+    id: 'Slow Learners',
     rule: learners,
   },
   {
     cost: -2,
-    id: 'SlowBreeders',
+    id: 'Slow Breeders',
     rule: breeders,
   },
   {
@@ -280,119 +242,49 @@ const traitsNormal = [
   .map(item => new Trait(item))
   .map(Item.withRule(none('Mechanical')))
 
-const traitsMechanic = [
-  // Positive traits
-  {
-    cost: 2,
-    id: 'DomesticProtocols',
-  },
-  {
-    cost: 1,
-    id: 'DoubleJointed',
-    rule: bulky,
-  },
-  {
-    cost: 1,
-    id: 'Durable',
-    rule: maintenance,
-  },
-  {
-    cost: 3,
-    id: 'EfficientProcessors',
-  },
-  {
-    cost: 1,
-    id: 'EmotionEmulators',
-    rule: uncanny,
-  },
-  {
-    cost: 2,
-    id: 'EnhancedMemory',
-  },
-  {
-    cost: 2,
-    id: 'Harvesters',
-  },
-  {
-    cost: 1,
-    id: 'LearningAlgorithms',
-    rule: repurposed,
-  },
-  {
-    cost: 2,
-    id: 'LogicEngines',
-  },
-  {
-    cost: 2,
-    id: 'LoyaltyCircuits',
-  },
-  {
-    cost: 1,
-    id: 'MassProduced',
-    rule: custom,
-  },
-  {
-    cost: 2,
-    id: 'PowerDrills',
-  },
-  {
-    cost: 1,
-    id: 'PropagandaMachines',
-  },
-  {
-    cost: 2,
-    id: 'Recycled',
-    rule: luxurious,
-  },
-  {
-    cost: 2,
-    id: 'StreamlinedProtocols',
-    rule: bandwidth,
-  },
-  {
-    cost: 2,
-    id: 'Superconductiv',
-  },
 
-  // Negative traits
+const traitsBotanic = [
   {
-    cost: -1,
-    id: 'Bulky',
-    rule: bulky,
+    id: 'Phototrophic',
+    cost: 1,
+    rule: every(trophic, 'Botanic', none('Subterranean', 'Void Dwellers')),
   },
   {
-    cost: -1,
-    id: 'HighMaintenance',
-    rule: maintenance,
+    id: 'Radiotrophic',
+    cost: 2,
+    rule: every(trophic, some('Botanic', 'Lithoid'), none('Void Dwellers')),
   },
   {
-    cost: -1,
-    id: 'Uncanny',
-    rule: uncanny,
+    id: 'Budding',
+    cost: 2,
+    rule: every(breeders, 'Botanic', none('Clone Army', 'Necrophage')),
+  },
+].map(item => new Trait(item))
+
+
+const traitsLithoid = [
+  {
+    id: 'Gaseous Byproducts',
+    cost: 2,
+    rule: gaseous,
   },
   {
-    cost: -1,
-    id: 'RepurposedHardware',
-    rule: repurposed,
+    id: 'Scintillating Skin',
+    cost: 2,
+    rule: gaseous,
   },
   {
-    cost: -1,
-    id: 'CustomMade',
-    rule: custom,
+    id: 'Volatile Excretions',
+    cost: 2,
+    rule: gaseous,
   },
   {
-    cost: -1,
-    id: 'Luxurious',
-    rule: luxurious,
-  },
-  {
-    cost: -1,
-    id: 'HighBandwidth',
-    rule: bandwidth,
+    id: 'Crystallization',
+    cost: 2,
   },
 ]
   .map(item => new Trait(item))
-  .map(Item.withRule(every('Mechanical')))
+  .map(Item.withRule(every('Lithoid')))
 
 const traitsToxoid = [
   {
@@ -405,7 +297,7 @@ const traitsToxoid = [
     cost: 1,
   },
   {
-    id: 'InorganicBreath',
+    id: 'Inorganic Breath',
     cost: 3,
   },
 ]
@@ -414,66 +306,184 @@ const traitsToxoid = [
 
 const traitsOverturned = [
   {
-    id: 'AugmentedIntelligence',
+    id: 'Augmented Intelligence',
     cost: 1,
   },
   {
-    id: 'CraftedSmiles',
+    id: 'Crafted Smiles',
     cost: 1,
   },
   {
-    id: 'DedicatedMiner',
+    id: 'Dedicated Miner',
     cost: 1,
   },
   {
-    id: 'ExpressedTradition',
+    id: 'Expressed Tradition',
     cost: 1,
   },
   {
-    id: 'FarmAppendages',
+    id: 'Farm Appendages',
     cost: 1,
   },
   {
-    id: 'GeneMentorship',
+    id: 'Gene Mentorship',
     cost: 1,
   },
   {
-    id: 'JuicedPower',
+    id: 'Juiced Power',
     cost: 1,
   },
   {
-    id: 'LowMaintenance',
+    id: 'Low Maintenance',
     cost: 1,
   },
   {
-    id: 'SplicedAdaptability',
+    id: 'Spliced Adaptability',
     cost: 1,
   },
   {
-    id: 'TechnicalTalent',
+    id: 'Technical Talent',
     cost: 1,
   },
   {
-    id: 'ElevatedSynapses',
+    id: 'Elevated Synapses',
     cost: 2,
   },
   {
-    id: 'PrePlannedGrowth',
+    id: 'Pre-Planned Growth',
     cost: 2,
   },
   {
-    id: 'ExcessiveEndurance',
-    cost: 2,
+    id: 'Excessive Endurance',
+    cost: 3,
   },
 ]
   .map(item => new Trait(item))
   .map(Item.withRule(every('Overturned')))
 
+const traitsMechanic = [
+  // Positive traits
+  {
+    cost: 2,
+    id: 'Domestic Protocols',
+  },
+  {
+    cost: 1,
+    id: 'Double Jointed',
+    rule: bulky,
+  },
+  {
+    cost: 1,
+    id: 'Durable',
+    rule: maintenance,
+  },
+  {
+    cost: 3,
+    id: 'Efficient Processors',
+  },
+  {
+    cost: 1,
+    id: 'Emotion Emulators',
+    rule: uncanny,
+  },
+  {
+    cost: 2,
+    id: 'Enhanced Memory',
+  },
+  {
+    cost: 2,
+    id: 'Harvesters',
+  },
+  {
+    cost: 1,
+    id: 'Learning Algorithms',
+    rule: repurposed,
+  },
+  {
+    cost: 2,
+    id: 'Logic Engines',
+  },
+  {
+    cost: 2,
+    id: 'Loyalty Circuits',
+  },
+  {
+    cost: 1,
+    id: 'Mass-Produced',
+    rule: custom,
+  },
+  {
+    cost: 2,
+    id: 'Power Drills',
+  },
+  {
+    cost: 1,
+    id: 'Propaganda Machines',
+  },
+  {
+    cost: 2,
+    id: 'Recycled',
+    rule: luxurious,
+  },
+  {
+    cost: 2,
+    id: 'Streamlined Protocols',
+    rule: bandwidth,
+  },
+  {
+    cost: 2,
+    id: 'Superconductive',
+  },
+  {
+    cost: 2,
+    id: 'Trading Algorithms',
+  },
+
+  // Negative traits
+  {
+    cost: -1,
+    id: 'Bulky',
+    rule: bulky,
+  },
+  {
+    cost: -1,
+    id: 'High Maintenance',
+    rule: maintenance,
+  },
+  {
+    cost: -1,
+    id: 'Uncanny',
+    rule: uncanny,
+  },
+  {
+    cost: -1,
+    id: 'Repurposed Hardware',
+    rule: repurposed,
+  },
+  {
+    cost: -1,
+    id: 'Custom-Made',
+    rule: custom,
+  },
+  {
+    cost: -2,
+    id: 'Luxurious',
+    rule: luxurious,
+  },
+  {
+    cost: -2,
+    id: 'High Bandwidth',
+    rule: bandwidth,
+  },
+]
+  .map(item => new Trait(item))
+  .map(Item.withRule(every('Mechanical')))
+
 const traits = [
+  ...traitsNormal,
   ...traitsBotanic,
   ...traitsLithoid,
-  ...traitsNormal,
-  ...traitsMechanic,
   ...traitsToxoid,
   ...traitsOverturned,
+  ...traitsMechanic,
 ]
