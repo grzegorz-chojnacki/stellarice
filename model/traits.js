@@ -8,7 +8,7 @@ class Trait extends Item {
   empireList = empire.traits
 
   get label() {
-    return `[${this.cost.toString().padStart(2)}] ${this.name}`
+    return `[${this.cost.toString().padStart(2)}] ${this.id}`
   }
 
   isAvailable = () => this.empireList.length < 5

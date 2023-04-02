@@ -79,7 +79,7 @@ const setHtmlClass = (element, name, isEnabled) =>
 
 /**
  * @param {Item} item - item for which this label is being generated
- * @param {string} text - text to display as the label (item.name or item.label)
+ * @param {string} text - text to display as the label (item.id or item.label)
  */
 const generateItemLabel = (item, text) => {
   const handle = document.createElement('label')
@@ -193,7 +193,7 @@ const updateSummary = ({ handle, items }) => {
     handle.replaceChildren()
     handle.removeAttribute('class')
     items.forEach((item, index, array) => {
-      handle.appendChild(generateItemLabel(item, item.name))
+      handle.appendChild(generateItemLabel(item, item.id))
       if (index < array.length - 1) {
         handle.append(', ')
       }

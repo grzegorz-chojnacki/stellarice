@@ -39,7 +39,6 @@ class Item {
   /** @param {RawItem} _ */
   constructor({ id, cost = 0, rule }) {
     this.id = id
-    this.name = prettify(id)
     this.cost = cost
     this.ruleFns = rule ? [rule] : []
     this.rule = new Rule()
@@ -52,12 +51,12 @@ class Item {
 
   // Used for displaying the item in tooltip
   get fullName() {
-    return `${this.constructor.name} ${this.name}`
+    return `${this.constructor.name} ${this.id}`
   }
 
   // Used to display the input label (and e.g. differentiate from the summary)
   get label() {
-    return this.name
+    return this.id
   }
 
   // Each item has to be initialized before proper usage because of lazy-rules
