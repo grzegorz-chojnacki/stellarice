@@ -5,7 +5,19 @@ const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
 
 all.forEach(item => item.initialize())
 all.forEach(item => exclude(item))
-loadEmpire()
+
+try {
+  loadEmpire()
+} catch (e) {
+  // Stored configuration contains invalid data, try reverting to defaults
+  localStorage.clear()
+  document.getElementById('summary')?.prepend(htmlToElement(`
+    <p class="warning">
+      <strong>* Something went wrong during initialization!
+      Reverting to the default configuration.</strong>
+    </p>
+  `))
+}
 
 /**
  * Section templates
