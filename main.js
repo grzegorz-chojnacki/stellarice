@@ -11,6 +11,7 @@ try {
 } catch (e) {
   // Stored configuration contains invalid data, try reverting to defaults
   localStorage.clear()
+  Object.values(empire).forEach(clear)
   document.getElementById('summary')?.prepend(htmlToElement(`
     <p class="warning">
       <strong>* Something went wrong during initialization!
