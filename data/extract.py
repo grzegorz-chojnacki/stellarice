@@ -9,11 +9,33 @@ SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
 ARGS = sys.argv[1:]
 
-RULES = ['OR', 'AND', 'NOT', 'NOR']
+RULES = {
+    'NOT',
+    'OR',
+    'NOR',
+    'AND',
+    'NAND',
+}
+
+SUPPORTED_PROPS = {
+    *RULES,
+    'cost',
+    'allowed_archetypes',
+    'species_class',
+    'opposites',
+    'value',
+    'always',
+    'possible',
+    'playable',
+    'potential',
+    'authority',
+    'civics',
+    'ethics',
+}
 
 PATHS = {
     'traits': {
-        'special':   '/common/traits/02_species_traits_basic_characteristics.txt',
+        # 'special':   '/common/traits/02_species_traits_basic_characteristics.txt',
         'normal':    '/common/traits/04_species_traits.txt',
         'mechanic':  '/common/traits/05_species_traits_robotic.txt',
         'toxoid':    '/common/traits/09_tox_traits.txt',
@@ -32,48 +54,90 @@ PATHS = {
 }
 
 
+def flatten(arr):
+    if not isinstance(arr, List):
+        return arr
+
+    result = []
+    for a in arr:
+        if isinstance(a, List):
+            result += a
+        else:
+            result.append(a)
+    return result
+
+
+def find(arr, name, default=[]):
+    return next((v for k, v in arr if k == name), default)
+
+
 def rule_mapper(data):
-    return data
+    if isinstance(data, List):
+        return flatten([rule_mapper(v) for v in data])
+
+    if isinstance(data, Tuple):
+        k, v = data
+        if k in RULES:
+            return {
+                'type': k,
+                'entries': flatten(rule_mapper(v))
+            }
+        if k == 'value':
+            return v
+        return flatten(rule_mapper(v))
+    return flatten(data)
 
 
-def trait_mapper(attribute, data):
-    if data.get('initial', True):
-        return {
-            'id': attribute,
-            'cost': data.get('cost', 0),
-            'allowed_archetypes': data.get('allowed_archetypes', []),
-            'species_class': data.get('species_class', []),
-            'opposites': data.get('opposites', []),
-        }
+def create_rule(type, entries):
+    entries = flatten([entry for entry in entries if entry is not None])
+    if len(entries) == 0:
+        return {'type': 'AND', 'entries': []}  # Default rule
     else:
+        return {
+            'type': type,
+            'entries': entries
+        }
+
+
+def traits_mapper(id, data):
+    return {
+        'id': id,
+        'cost': find(data, 'cost', 0),
+        'rule': create_rule('AND', [
+            create_rule('OR', find(data, 'allowed_archetypes')),
+            create_rule('NOR', find(data, 'opposites'))
+        ])
+    }
+
+
+def origins_mapper(id, data):
+    playable = find(find(data, 'playable'), 'always', True)
+    if not playable:
+        return None
+    return {
+        'id': id,
+        'rule': create_rule('AND', rule_mapper(find(data, 'possible')))
+    }
+
+
+def civics_mapper(id, data):
+    playable = find(find(data, 'playable'), 'always', True)
+    if not playable:
         return None
 
+    entries = rule_mapper(find(data, 'potential')) + \
+        rule_mapper(find(data, 'possible'))
 
-def origin_mapper(attribute, data):
-    if data.get('playable', {'always': True}).get('always', True):
-        return {
-            'id': attribute,
-            'possible': rule_mapper(data.get('possible', {})),
-        }
-    else:
-        return None
-
-
-def civic_mapper(attribute, data):
-    if True:
-        return {
-            'id': attribute,
-            'possible': rule_mapper(data.get('possible', {})),
-            'potential': rule_mapper(data.get('potential', {})),
-        }
-    else:
-        return None
+    return {
+        'id': id,
+        'rule': create_rule('AND', entries)
+    }
 
 
 MAPPERS = {
-    'traits':  trait_mapper,
-    'origins': origin_mapper,
-    'civics':  civic_mapper,
+    'traits': traits_mapper,
+    'origins': origins_mapper,
+    'civics': civics_mapper,
 }
 
 
@@ -97,13 +161,13 @@ def tokenize(text):
     return text.split()
 
 
-def blockify(tokens):
-    '''Extract nested blocks'''
+def extract_blocks(tokens):
+    '''Extract nested blocks from a token stream'''
     data = []
     for token in tokens:
         if token == '{':
-            # Tokens from the nested block will be consumed
-            data.append(blockify(tokens))
+            # Tokens from the nested block will be consumed as they are streamed
+            data.append(extract_blocks(tokens))
         elif token == '}':
             # End of the current block, return collected data
             return data
@@ -112,7 +176,7 @@ def blockify(tokens):
     return data
 
 
-def pairify(tokens):
+def pairup(tokens):
     '''Convert tokens to key-value pairs'''
     data = []
     state = 'key'
@@ -130,7 +194,7 @@ def pairify(tokens):
             state = 'value'
         elif state == 'value':
             if isinstance(token, List):
-                data.append((key, pairify(token)))
+                data.append((key, pairup(token)))
             else:
                 data.append((key, token))
             state = 'key'
@@ -140,33 +204,33 @@ def pairify(tokens):
     return data
 
 
-def dictify(data):
-    '''Transform list of tuples into dicts and lists'''
-    if isinstance(data, List):
-        if all(isinstance(t, Tuple) for t in data):
-            result = {}
-            for k, v in data:
-                if k in result:
-                    if not isinstance(result[k], List):
-                        result[k] = [result[k]]
-                    result[k].append(dictify(v))
-                else:
-                    result[k] = dictify(v)
-            return result
+def filter_supported(data):
+    '''Remove unsupported tokens'''
+    if isinstance(data, Tuple):
+        k, v = data
+        if k in SUPPORTED_PROPS:
+            return (k, filter_supported(v))
         else:
-            return [dictify(x) for x in data]
+            return None
+    elif isinstance(data, List):
+        result = []
+        for v in data:
+            v = filter_supported(v)
+            if v:
+                result.append(v)
+        return result
     return data
 
 
-def typify(data):
+def infer_types(data):
     '''Infer and cast to types based on data contents'''
     if isinstance(data, List):
-        return [typify(v) for v in data]
+        return [infer_types(v) for v in data]
     elif isinstance(data, Tuple):
         k, v = data
-        return (k, typify(v))
+        return (k, infer_types(v))
     elif isinstance(data, Dict):
-        return {k: typify(v) for k, v in data.items()}
+        return {k: infer_types(v) for k, v in data.items()}
     elif isinstance(data, str):
         if data[0] == '"':
             return data[1:-1]  # Remove quotes
@@ -182,10 +246,12 @@ def typify(data):
 def parse(text):
     '''Parse Clausewitz format'''
     tokens = iter(tokenize(text))
-    data = blockify(tokens)
-    data = pairify(data)
-    data = dictify(data)
-    data = typify(data)
+    data = extract_blocks(tokens)
+    print(list(tokens))
+    sys.exit(1)
+    data = pairup(data)
+    data = [(k, filter_supported(v)) for k, v in data]
+    data = infer_types(data)
     return data
 
 
@@ -205,9 +271,8 @@ if __name__ == '__main__':
             data[item_domain][item_kind] = {}
             with open(root_path+path) as f:
                 parsed = parse(f.read())
-                for item, value in parsed.items():
+                for item, value in parsed:
                     value = MAPPERS[item_domain](item, value)
                     if value:
                         data[item_domain][item_kind][item] = value
-
     print(json.dumps(data, indent=4))
