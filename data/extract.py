@@ -3,30 +3,12 @@
 import re
 import sys
 import json
-from typing import List, Dict, Any, Union
-from typing_extensions import TypeAlias
-
+from typing import List, Dict, Tuple
 
 SCRIPT_NAME = sys.argv[0]
 ARGS = sys.argv[1:]
 
-ALLOWED_LIST = [
-    'cost',
-    'allowed_archetypes',
-    'species_class',
-    'opposites',
-    'possible',
-    'NOT', 'NOR', 'OR,'
-    'potential',
-    'authority',
-    'etchics',
-    'civics',
-    'value',
-    'traits',
-    'trait',
-]
-
-RULES = [ 'OR', 'AND', 'NOT', 'NOR' ]
+RULES = ['OR', 'AND', 'NOT', 'NOR']
 
 PATHS = {
     'traits': {
@@ -43,54 +25,68 @@ PATHS = {
         'gestalt':   '/common/governments/civics/02_gestalt_civics.txt',
         'corporate': '/common/governments/civics/03_corporate_civics.txt',
     }
+    # 'pops'
+    # 'ethics'
+    # 'authority'
 }
 
 
-def isfloat(x: str):
+def trait_mapper(attribute, data):
+    return data
+
+
+def origin_mapper(attribute, data):
+    return data
+
+
+def civic_mapper(attribute, data):
+    return data
+
+MAPPERS = {
+    'traits':  trait_mapper,
+    'origins': origin_mapper,
+    'civics':  civic_mapper,
+}
+
+
+def isfloat(x):
     try:
         float(x)
         return True
     except:
         return False
 
-# pops
-# ethics
-# authority
 
-
-# Extract tokens by splitting and transforming the input text
-def tokenize(text: str) -> List[str]:
+def tokenize(text):
+    """Extract tokens by splitting and transforming the input text"""
     # Remove comment
     text = re.sub(r'#.*', '', text)
-    # Change all whitespace to spaces
-    text = text.replace('\s', ' ')
     # Ensure proper spacing around special characters
     text = text.replace('=', ' = ')
     text = text.replace('{', ' { ').replace('}', ' } ')
-    # Fold repeating spaces
-    text = re.sub(' +', ' ', text)
+    # Fold whitespace
+    text = text.replace('\s+', ' ')
     return text.split()
 
-# Extract nested blocks
-def blockify(tokens: List[str]):
-    stack = [[]]
 
+def blockify(tokens):
+    """Extract nested blocks"""
+    data = []
     for token in tokens:
         if token == '{':
-            new_block = []
-            stack[-1].append(new_block)
-            stack.append(new_block)
+            # Tokens from the nested block will be consumed
+            data.append(blockify(tokens))
         elif token == '}':
-            stack.pop()
+            # End of the current block, return collected data
+            return data
         else:
-            stack[-1].append(token)
+            data.append(token)
+    return data
 
-    assert len(stack) == 1, f'Stack has more than one element! ({len(stack)}))'
-    return stack[0]
 
-# Pair key-value tokens
-def pairify(tokens: List) -> Dict:
-    data = {}
+def pairify(tokens):
+    """Convert tokens to key-value pairs"""
+    data = []
     state = 'key'
     prev = None
     key = None
@@ -106,62 +102,70 @@ def pairify(tokens: List) -> Dict:
             state = 'value'
         elif state == 'value':
             if isinstance(token, List):
-                data[key] = pairify(token)
+                data.append((key, pairify(token)))
             else:
-                data[key] = token
+                data.append((key, token))
             state = 'key'
 
         prev = token
 
     return data
 
-# Infer and cast type based on string contents
-def cast(v: str):
-    if v[0] == '"':
-        return v[1:-1]  # Remove quotes
-    elif v == 'yes':
-        return True
-    elif v == 'no':
-        return False
-    elif isfloat(v):
-        return float(v)
-    return v
 
-# Fix types
-def typify(data: Dict) -> Dict:
-    for k, v in data.items():
-        if isinstance(v, Dict):
-            data[k] = typify(v)
-        elif isinstance(v, List):
-            data[k] = [cast(vv) for vv in v]
+def dictify(data):
+    """Transform list of tuples into dicts and lists"""
+    if isinstance(data, List):
+        if all(isinstance(t, Tuple) for t in data):
+            result = {}
+            for k, v in data:
+                if k in result:
+                    if not isinstance(result[k], List):
+                        result[k] = [result[k]]
+                    result[k].append(dictify(v))
+                else:
+                    result[k] = dictify(v)
+            return result
         else:
-            data[k] = cast(v)
-
+            return [dictify(x) for x in data]
     return data
 
-# Remove unnecessary keys from dict
-def trim(data: Dict):
-    result = {}
-    for k, v in data.items():
-        if k in ALLOWED_LIST:
-            if isinstance(v, Dict):
-                result[k] = trim(v)
-            else:
-                result[k] = v
-    return result
 
-# Parse Clausewitz format to dict
-def parse(text: str) -> Dict:
-    tokens = tokenize(text)
-    blocks = blockify(tokens)
-    data = pairify(blocks)
-    return typify(data)
+def typify(data):
+    """Infer and cast to types based on data contents"""
+    if isinstance(data, List):
+        return [typify(v) for v in data]
+    elif isinstance(data, Tuple):
+        k, v = data
+        return (k, typify(v))
+    elif isinstance(data, Dict):
+        return {k: typify(v) for k, v in data.items()}
+    elif isinstance(data, str):
+        if data[0] == '"':
+            return data[1:-1]  # Remove quotes
+        elif data == 'yes':
+            return True
+        elif data == 'no':
+            return False
+        elif isfloat(data):
+            return float(data)
+    return data
+
+
+def parse(text):
+    """Parse Clausewitz format"""
+    tokens = iter(tokenize(text))
+    data = blockify(tokens)
+    data = pairify(data)
+    data = dictify(data)
+    data = typify(data)
+    return data
 
 
 if __name__ == '__main__':
     if len(ARGS) != 1:
         print(f'usage: {SCRIPT_NAME} <STELLARIS_ROOT_PATH>')
-        print(f'       e.g. {SCRIPT_NAME} "/home/{{USER_NAME}}/Games/Steam/Stellaris"')
+        print(
+            f'       e.g. {SCRIPT_NAME} "/home/{{USER_NAME}}/Games/Steam/Stellaris"')
         sys.exit(1)
 
     root_path = ARGS[0]
@@ -171,10 +175,9 @@ if __name__ == '__main__':
     for (attribute_domain, attribute_kinds) in PATHS.items():
         data[attribute_domain] = {}
         for (attribute_kind, path) in attribute_kinds.items():
+            data[attribute_domain][attribute_kind] = {}
             with open(root_path+path) as f:
                 parsed = parse(f.read())
-                for (attribute, value) in parsed.items():
-                    parsed[attribute] = trim(value)
                 data[attribute_domain][attribute_kind] = parsed
 
     print(json.dumps(data, indent=4))
