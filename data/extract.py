@@ -165,7 +165,7 @@ if __name__ == '__main__':
     if len(ARGS) != 1:
         print(f'usage: {SCRIPT_NAME} <STELLARIS_ROOT_PATH>')
         print(
-            f'       e.g. {SCRIPT_NAME} "/home/{{USER_NAME}}/Games/Steam/Stellaris"')
+            f'       e.g. {SCRIPT_NAME} "$HOME/.steam/steam/steamapps/common/Stellaris"')
         sys.exit(1)
 
     root_path = ARGS[0]
