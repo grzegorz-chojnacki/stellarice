@@ -54,12 +54,16 @@ PATHS = {
 }
 
 
-def flatten(arr):
-    if not isinstance(arr, List):
-        return arr
+def remove_empty_keys(d):
+    return {k: v for k, v in d.items() if v is not None}
+
+
+def flatten(x):
+    if not isinstance(x, List):
+        return x
 
     result = []
-    for a in arr:
+    for a in x:
         if isinstance(a, List):
             result += a
         else:
@@ -91,7 +95,7 @@ def rule_mapper(data):
 def create_rule(type, entries):
     entries = flatten([entry for entry in entries if entry is not None])
     if len(entries) == 0:
-        return {'type': 'AND', 'entries': []}  # Default rule
+        return None
     else:
         return {
             'type': type,
@@ -100,24 +104,24 @@ def create_rule(type, entries):
 
 
 def traits_mapper(id, data):
-    return {
+    return remove_none_keys({
         'id': id,
         'cost': find(data, 'cost', 0),
         'rule': create_rule('AND', [
             create_rule('OR', find(data, 'allowed_archetypes')),
             create_rule('NOR', find(data, 'opposites'))
         ])
-    }
+    })
 
 
 def origins_mapper(id, data):
     playable = find(find(data, 'playable'), 'always', True)
     if not playable:
         return None
-    return {
+    return remove_none_keys({
         'id': id,
         'rule': create_rule('AND', rule_mapper(find(data, 'possible')))
-    }
+    })
 
 
 def civics_mapper(id, data):
@@ -128,10 +132,10 @@ def civics_mapper(id, data):
     entries = rule_mapper(find(data, 'potential')) + \
         rule_mapper(find(data, 'possible'))
 
-    return {
+    return remove_none_keys({
         'id': id,
         'rule': create_rule('AND', entries)
-    }
+    })
 
 
 MAPPERS = {
@@ -247,8 +251,6 @@ def parse(text):
     '''Parse Clausewitz format'''
     tokens = iter(tokenize(text))
     data = extract_blocks(tokens)
-    print(list(tokens))
-    sys.exit(1)
     data = pairup(data)
     data = [(k, filter_supported(v)) for k, v in data]
     data = infer_types(data)
