@@ -6,6 +6,7 @@ import json
 from typing import List, Dict, Tuple
 
 SCRIPT_NAME = sys.argv[0]
+DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
 ARGS = sys.argv[1:]
 
 RULES = ['OR', 'AND', 'NOT', 'NOR']
@@ -31,16 +32,43 @@ PATHS = {
 }
 
 
-def trait_mapper(attribute, data):
+def rule_mapper(data):
     return data
+
+
+def trait_mapper(attribute, data):
+    if data.get('initial', True):
+        return {
+            'id': attribute,
+            'cost': data.get('cost', 0),
+            'allowed_archetypes': data.get('allowed_archetypes', []),
+            'species_class': data.get('species_class', []),
+            'opposites': data.get('opposites', []),
+        }
+    else:
+        return None
 
 
 def origin_mapper(attribute, data):
-    return data
+    if data.get('playable', {'always': True}).get('always', True):
+        return {
+            'id': attribute,
+            'possible': rule_mapper(data.get('possible', {})),
+        }
+    else:
+        return None
 
 
 def civic_mapper(attribute, data):
-    return data
+    if True:
+        return {
+            'id': attribute,
+            'possible': rule_mapper(data.get('possible', {})),
+            'potential': rule_mapper(data.get('potential', {})),
+        }
+    else:
+        return None
+
 
 MAPPERS = {
     'traits':  trait_mapper,
@@ -58,7 +86,7 @@ def isfloat(x):
 
 
 def tokenize(text):
-    """Extract tokens by splitting and transforming the input text"""
+    '''Extract tokens by splitting and transforming the input text'''
     # Remove comment
     text = re.sub(r'#.*', '', text)
     # Ensure proper spacing around special characters
@@ -70,7 +98,7 @@ def tokenize(text):
 
 
 def blockify(tokens):
-    """Extract nested blocks"""
+    '''Extract nested blocks'''
     data = []
     for token in tokens:
         if token == '{':
@@ -85,7 +113,7 @@ def blockify(tokens):
 
 
 def pairify(tokens):
-    """Convert tokens to key-value pairs"""
+    '''Convert tokens to key-value pairs'''
     data = []
     state = 'key'
     prev = None
@@ -113,7 +141,7 @@ def pairify(tokens):
 
 
 def dictify(data):
-    """Transform list of tuples into dicts and lists"""
+    '''Transform list of tuples into dicts and lists'''
     if isinstance(data, List):
         if all(isinstance(t, Tuple) for t in data):
             result = {}
@@ -131,7 +159,7 @@ def dictify(data):
 
 
 def typify(data):
-    """Infer and cast to types based on data contents"""
+    '''Infer and cast to types based on data contents'''
     if isinstance(data, List):
         return [typify(v) for v in data]
     elif isinstance(data, Tuple):
@@ -152,7 +180,7 @@ def typify(data):
 
 
 def parse(text):
-    """Parse Clausewitz format"""
+    '''Parse Clausewitz format'''
     tokens = iter(tokenize(text))
     data = blockify(tokens)
     data = pairify(data)
@@ -164,20 +192,22 @@ def parse(text):
 if __name__ == '__main__':
     if len(ARGS) != 1:
         print(f'usage: {SCRIPT_NAME} <STELLARIS_ROOT_PATH>')
-        print(
-            f'       e.g. {SCRIPT_NAME} "$HOME/.steam/steam/steamapps/common/Stellaris"')
+        print(f'       e.g. {SCRIPT_NAME} "{DEFAULT_ROOT}"')
         sys.exit(1)
 
     root_path = ARGS[0]
     localisation_path = root_path+'/localisation/english/l_english.yml'
 
     data = {}
-    for (attribute_domain, attribute_kinds) in PATHS.items():
-        data[attribute_domain] = {}
-        for (attribute_kind, path) in attribute_kinds.items():
-            data[attribute_domain][attribute_kind] = {}
+    for (item_domain, item_kinds) in PATHS.items():
+        data[item_domain] = {}
+        for (item_kind, path) in item_kinds.items():
+            data[item_domain][item_kind] = {}
             with open(root_path+path) as f:
                 parsed = parse(f.read())
-                data[attribute_domain][attribute_kind] = parsed
+                for item, value in parsed.items():
+                    value = MAPPERS[item_domain](item, value)
+                    if value:
+                        data[item_domain][item_kind][item] = value
 
     print(json.dumps(data, indent=4))
