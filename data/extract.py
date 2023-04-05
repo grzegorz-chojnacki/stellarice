@@ -3,6 +3,7 @@
 import re
 import sys
 import json
+import yaml
 from typing import List, Dict, Tuple, Iterable
 import pprint
 pp = pprint.PrettyPrinter().pprint
@@ -99,11 +100,13 @@ DATA = {
     },
 }
 
+
 def trait_mapper(attribute, data):
     if data.get('initial', True):
         entries = data.get('allowed_archetypes', [])
         if data.get('species_class') == ['PLANT', 'FUN']:
-            entries = ['BOTANICAL' if x == 'BIOLOGICAL' else x for x in entries]
+            entries = ['BOTANICAL' if x ==
+                       'BIOLOGICAL' else x for x in entries]
         return {
             'id': attribute,
             'cost': data.get('cost', 0),
@@ -164,6 +167,23 @@ def assign_rule_types(x):
         if k in RULES:
             return {'type': k, 'entries': v}
     return x
+
+
+def load_dictionary(path):
+    text = ''
+    with open(path) as f:
+        for n, line in enumerate(f.readlines()):
+            sp = line.split('"')
+            if len(sp) > 1:
+                line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
+            text += re.sub(r':.*? ', ': ', line, count=1)
+    return yaml.safe_load(text)['l_english']
+
+
+def translate(dictionary, data):
+    if 'id' in data:
+        data['name'] = dictionary.get(data['id'], data['id'])
+
 
 def normalize_pop(x):
     if isinstance(x, str):
@@ -327,12 +347,20 @@ if __name__ == '__main__':
         DATA[item_domain] = {}
         mapper = MAPPERS[item_domain]
         for item_kind, path in item_kinds.items():
-            DATA[item_domain][item_kind] = []
+            DATA[item_domain][item_kind] = {}
             with open(root_path+path) as f:
                 parsed = parse(f.read())
                 for k, v in parsed.items():
                     mapped = mapper(k, v)
                     if mapped:
-                        DATA[item_domain][item_kind].append(mapped)
+                        DATA[item_domain][item_kind][k] = mapped
 
+    dictionary = load_dictionary(localisation_path)
+
+    for item_domain, item_kinds in DATA.items():
+        for item_kind, items in item_kinds.items():
+            handle = DATA[item_domain][item_kind]
+            for item, value in items.items():
+                handle[item]['id'] = item
+                translate(dictionary, value)
     print(json.dumps(DATA, indent=4))
