@@ -11,11 +11,12 @@ SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
 ARGS = sys.argv[1:]
 
-ALWAYS_LISTS = {
-    'NOT', 'OR', 'NOR', 'AND', 'NAND',
-    'authority', 'civics', 'ethics', 'origin',
-    'possible', 'potential', 'species_class'
-}
+RULES = {'NOT', 'OR', 'NOR', 'AND', 'NAND'}
+RULE_LISTS = {'possible', 'potential'}
+RULE_DOMAINS = {'authority', 'civics', 'ethics',
+                'origin', 'species_class', 'species_archetype'}
+
+ALWAYS_LISTS = {*RULES, *RULE_DOMAINS, *RULE_LISTS}
 
 PATHS = {
     'traits': {
@@ -38,8 +39,89 @@ PATHS = {
 }
 
 
+def trait_mapper(attribute, data):
+    if data.get('initial', True):
+        return {
+            'id': attribute,
+            'cost': data.get('cost', 0),
+            'allowed_archetypes': data.get('allowed_archetypes', []),
+            'species_class': data.get('species_class', []),
+            'opposites': data.get('opposites', []),
+        }
+    else:
+        return None
+
+
+def origin_mapper(attribute, data):
+    if data.get('playable', {}).get('always', True):
+        return {
+            'id': attribute,
+            'possible': data.get('possible', []),
+        }
+    else:
+        return None
+
+
+def civic_mapper(attribute, data):
+    if True:
+        return {
+            'id': attribute,
+            'possible': data.get('possible', []),
+            'potential': data.get('potential', []),
+        }
+    else:
+        return None
+
+
+def normalize_rule_names(x):
+    if isinstance(x, Tuple):
+        key, value = x
+        if key in {'authority', 'civics', 'ethics', 'origin'}:
+            return ('AND', value)
+    return x
+
+
+def remove_text(x):
+    if isinstance(x, Dict) and 'text' in x:
+        return None
+    return x
+
+
+def assign_rule_types(x):
+    if isinstance(x, Tuple):
+        k, v = x
+        if k in RULE_LISTS:
+            return (k, assign_rule_types({'AND': v }))
+    elif isinstance(x, Dict):
+        k, v = next(iter(x.items()))
+        if k in RULES:
+            return {'type': k, 'entries': v}
+    return x
+
+
+def map_not_none(fn, xs):
+    return filter(lambda x: x is not None, map(fn, xs))
+
+
+def collection_mapper(data, fn):
+    if isinstance(data, Dict):
+        return {k: collection_mapper(v, fn) for k, v in map_not_none(fn, data.items())}
+    elif isinstance(data, List):
+        return [collection_mapper(v, fn) for v in map_not_none(fn, data)]
+    else:
+        return data
+
+
+MAPPERS = {
+    'traits':  trait_mapper,
+    'origins': origin_mapper,
+    'civics':  civic_mapper,
+}
+
+
 def prop_kind(prop):
     return 'list' if prop in ALWAYS_LISTS else 'dict'
+
 
 def dictify(data, assuming='dict'):
     '''Transform tuples and list of tuples into dicts and lists'''
@@ -54,7 +136,6 @@ def dictify(data, assuming='dict'):
         else:
             return [dictify(v) for v in data]
     return data
-
 
 
 def isfloat(x):
@@ -146,9 +227,16 @@ def parse(text):
     '''Parse Clausewitz format into a token tree'''
     data = iter(tokenize(text))
     data = make_tree(data)
+
+    # Transform into dict
     data = pairup(data)
     data = dictify(data)
     data = infer_types(data)
+
+    # Apply some intermediate mappings
+    data = collection_mapper(data, remove_text)
+    data = collection_mapper(data, normalize_rule_names)
+    data = collection_mapper(data, assign_rule_types)
     return data
 
 
@@ -164,9 +252,13 @@ if __name__ == '__main__':
     data = {}
     for (item_domain, item_kinds) in PATHS.items():
         data[item_domain] = {}
+        mapper = MAPPERS[item_domain]
         for (item_kind, path) in item_kinds.items():
-            data[item_domain][item_kind] = {}
+            data[item_domain][item_kind] = []
             with open(root_path+path) as f:
                 parsed = parse(f.read())
-                data[item_domain][item_kind] = parsed
+                for k, v in parsed.items():
+                    mapped = mapper(k, v)
+                    if mapped:
+                        data[item_domain][item_kind].append(mapped)
     print(json.dumps(data, indent=4))
