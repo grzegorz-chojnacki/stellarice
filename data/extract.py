@@ -11,6 +11,12 @@ SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
 ARGS = sys.argv[1:]
 
+ALWAYS_LISTS = {
+    'NOT', 'OR', 'NOR', 'AND', 'NAND',
+    'authority', 'civics', 'ethics', 'origin',
+    'possible', 'potential', 'species_class'
+}
+
 PATHS = {
     'traits': {
         # 'special':   '/common/traits/02_species_traits_basic_characteristics.txt',
@@ -31,137 +37,24 @@ PATHS = {
     # 'authority'
 }
 
-STRING_LIST_SCHEMA = {
-    'type': list,
-    'items': {'type': str},
-    'default': [],
-}
 
-RULE_SCHEMA = {
-    'type': dict,
-    'properties': {}
-}
+def prop_kind(prop):
+    return 'list' if prop in ALWAYS_LISTS else 'dict'
 
-RULE_LIST_SCHEMA = {
-    'type': list,
-    'items': RULE_SCHEMA,
-    'default': []
-}
-
-# Recursive rule nesting
-RULE_KEYS = ['NOT', 'OR', 'NOR', 'AND', 'NAND',
-             'authority', 'ethics', 'civics']
-for key in RULE_KEYS:
-    RULE_SCHEMA['properties'][key] = RULE_LIST_SCHEMA
-
-RULE_LIST_SCHEMA['items'] = RULE_SCHEMA
-
-PLAYABLE_SCHEMA = {
-    'type': dict,
-    'properties': {
-        'always': {
-            'type': bool,
-            'default': True,
-        }
-    },
-}
-
-TRAIT_SCHEMA = {
-    'type': dict,
-    'properties': {
-        'cost': {
-            'type': float,
-            'default': 0,
-        },
-        'allowed_archetypes': STRING_LIST_SCHEMA,
-        'opposite': STRING_LIST_SCHEMA,
-    }
-}
-
-ORIGIN_SCHEMA = {
-    'type': dict,
-    'properties': {
-        'playable': PLAYABLE_SCHEMA,
-        'possible': RULE_LIST_SCHEMA,
-    }
-}
-
-CIVIC_SCHEMA = {
-    'type': dict,
-    'properties': {
-        'playable': PLAYABLE_SCHEMA,
-        'potential': RULE_LIST_SCHEMA,
-        'possible': RULE_LIST_SCHEMA,
-    }
-}
-
-
-def select(arr, name, default=[]):
-    for a in arr:
-        if isinstance(a, Tuple):
-            k, v = a
-            if k == name:
-                return v
-    return default
-
-
-def apply_schema(schema, data):
-    data_type = schema['type']
-    result = data
-
+def dictify(data, assuming='dict'):
+    '''Transform tuples and list of tuples into dicts and lists'''
+    # Single tuples are always interpreted as one-key dicts
     if isinstance(data, Tuple):
         k, v = data
-        result = {k: apply_schema(schema, v)}
+        return {k: dictify(v, assuming=prop_kind(k))}
+    # Lists could either contain key-value pairs for dict or just values
     elif isinstance(data, List):
-        if data_type == dict:
-            result = {}
-            for prop, prop_schema in schema['properties'].items():
-                value = select(data, prop, None)
-                default = prop_schema.get('default')
-                if value is not None:
-                    result[prop] = apply_schema(prop_schema, value)
-                elif default:
-                    result[prop] = default
-        elif data_type == list:
-            result = []
-            item_schema = schema['items']
-            for item in data:
-                result.append(apply_schema(item_schema, item))
-    return result
-
-
-def remove_empty_keys(d):
-    return {k: v for k, v in d.items() if v is not None}
-
-
-def flatten(x):
-    if not isinstance(x, List):
-        return x
-
-    result = []
-    for a in x:
-        if isinstance(a, List):
-            result += a
+        if assuming == 'dict' and all(isinstance(t, Tuple) for t in data):
+            return {k: dictify(v, prop_kind(k)) for k, v in data}
         else:
-            result.append(a)
-    return result
+            return [dictify(v) for v in data]
+    return data
 
-
-def rule_mapper(data):
-    if isinstance(data, List):
-        return flatten([rule_mapper(v) for v in data])
-
-    if isinstance(data, Tuple):
-        k, v = data
-        if k in RULES:
-            return {
-                'type': k,
-                'entries': flatten(rule_mapper(v))
-            }
-        if k == 'value':
-            return v
-        return flatten(rule_mapper(v))
-    return flatten(data)
 
 
 def isfloat(x):
@@ -180,19 +73,20 @@ def tokenize(text):
     text = text.replace('=', ' = ')
     text = text.replace('{', ' { ').replace('}', ' } ')
     # Fold whitespace
-    text = text.replace('\s+', ' ')
+    text = text.replace('\s+', '')
+    # text = re.sub(r'\s+', ' ', text)
     return text.split()
 
 
-def extract_blocks(tokens):
-    '''Extract nested blocks from a token stream'''
+def make_tree(tokens):
+    '''Convert the token stream to a token tree'''
     data = []
     for token in tokens:
         if token == '{':
-            # Tokens from the nested block will be consumed as they are streamed
-            data.append(extract_blocks(tokens))
+            # Tokens from the nested trees will be consumed
+            data.append(make_tree(tokens))
         elif token == '}':
-            # End of the current block, return collected data
+            # End of the current tree, return collected data
             return data
         else:
             data.append(token)
@@ -249,10 +143,11 @@ def infer_types(data):
 
 
 def parse(text):
-    '''Parse Clausewitz format'''
-    tokens = iter(tokenize(text))
-    data = extract_blocks(tokens)
+    '''Parse Clausewitz format into a token tree'''
+    data = iter(tokenize(text))
+    data = make_tree(data)
     data = pairup(data)
+    data = dictify(data)
     data = infer_types(data)
     return data
 
@@ -266,12 +161,6 @@ if __name__ == '__main__':
     root_path = ARGS[0]
     localisation_path = root_path+'/localisation/english/l_english.yml'
 
-    SCHEMAS = {
-        'traits': TRAIT_SCHEMA,
-        'origins': ORIGIN_SCHEMA,
-        'civics': CIVIC_SCHEMA,
-    }
-
     data = {}
     for (item_domain, item_kinds) in PATHS.items():
         data[item_domain] = {}
@@ -279,9 +168,5 @@ if __name__ == '__main__':
             data[item_domain][item_kind] = {}
             with open(root_path+path) as f:
                 parsed = parse(f.read())
-                schema = SCHEMAS[item_domain]
-                for item, value in parsed:
-                    value = apply_schema(schema, value)
-                    if value:
-                        data[item_domain][item_kind][item] = value
+                data[item_domain][item_kind] = parsed
     print(json.dumps(data, indent=4))
