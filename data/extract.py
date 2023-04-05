@@ -187,12 +187,12 @@ def load_dictionary(path):
             if len(sp) > 1:
                 line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
             text += re.sub(r':.*? ', ': ', line, count=1)
+
     return yaml.safe_load(text)['l_english']
 
 
-def translate(dictionary, data):
-    if 'id' in data:
-        data['name'] = dictionary.get(data['id'], data['id'])
+
+
 
 
 def normalize_pop(x):
@@ -205,11 +205,12 @@ def map_not_none(fn, xs):
     return filter(lambda x: x is not None, map(fn, xs))
 
 
-def collection_mapper(data, fn):
+def recmap(data, fn):
+    '''Recursively map dict and list items'''
     if isinstance(data, Dict):
-        return {k: collection_mapper(v, fn) for k, v in map_not_none(fn, data.items())}
+        return {k: recmap(v, fn) for k, v in map_not_none(fn, data.items())}
     elif isinstance(data, List):
-        return [collection_mapper(v, fn) for v in map_not_none(fn, data)]
+        return [recmap(v, fn) for v in map_not_none(fn, data)]
     else:
         return fn(data)
 
@@ -307,14 +308,7 @@ def pairup(tokens):
 
 def infer_types(data):
     '''Infer and cast to types based on data contents'''
-    if isinstance(data, List):
-        return [infer_types(v) for v in data]
-    elif isinstance(data, Tuple):
-        k, v = data
-        return (k, infer_types(v))
-    elif isinstance(data, Dict):
-        return {k: infer_types(v) for k, v in data.items()}
-    elif isinstance(data, str):
+    if isinstance(data, str):
         if data[0] == '"':
             return data[1:-1]  # Remove quotes
         elif data == 'yes':
@@ -334,14 +328,14 @@ def parse(text):
     # Transform into dict
     data = pairup(data)
     data = dictify(data)
-    data = infer_types(data)
 
     # Apply some intermediate mappings
-    data = collection_mapper(data, remove_text)
-    data = collection_mapper(data, normalize_rule_names)
-    data = collection_mapper(data, assign_rule_types)
-    data = collection_mapper(data, normalize_pop)
-    data = collection_mapper(data, flatten_rule_values)
+    data = recmap(data, infer_types)
+    data = recmap(data, remove_text)
+    data = recmap(data, normalize_rule_names)
+    data = recmap(data, assign_rule_types)
+    data = recmap(data, normalize_pop)
+    data = recmap(data, flatten_rule_values)
     return data
 
 
@@ -373,5 +367,5 @@ if __name__ == '__main__':
             handle = DATA[item_domain][item_kind]
             for item, value in items.items():
                 handle[item]['id'] = item
-                translate(dictionary, value)
+                handle[item]['name'] = dictionary.get(item, item)
     print(json.dumps(DATA, indent=4))
