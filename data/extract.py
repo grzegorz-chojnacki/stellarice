@@ -18,6 +18,13 @@ RULE_DOMAINS = {'authority', 'civics', 'ethics',
 
 ALWAYS_LISTS = {*RULES, *RULE_DOMAINS, *RULE_LISTS}
 
+POP_ID_MAP = {
+    'BIOLOGICAL': 'pop_biological',
+    'BOTANICAL':  'pop_botanical',
+    'ROBOT':      'pop_mechanical',
+    'LITHOID':    'pop_lithoid',
+}
+
 PATHS = {
     'traits': {
         # 'special':   '/common/traits/02_species_traits_basic_characteristics.txt',
@@ -84,20 +91,23 @@ DATA = {
     },
     'pops': {
         'normal': {
-            'pop_botanic':  {},
-            'pop_lithoid':  {},
-            'pop_mechanic': {},
+            'pop_biological': {},
+            'pop_botanic':    {},
+            'pop_lithoid':    {},
+            'pop_mechanic':   {},
         }
     },
 }
 
 def trait_mapper(attribute, data):
     if data.get('initial', True):
+        entries = data.get('allowed_archetypes', [])
+        if data.get('species_class') == ['PLANT', 'FUN']:
+            entries = ['BOTANICAL' if x == 'BIOLOGICAL' else x for x in entries]
         return {
             'id': attribute,
             'cost': data.get('cost', 0),
-            'allowed_archetypes': data.get('allowed_archetypes', []),
-            'species_class': data.get('species_class', []),
+            'rule': make_rule('AND', entries),
             'opposites': data.get('opposites', []),
         }
     else:
@@ -108,24 +118,25 @@ def origin_mapper(attribute, data):
     if data.get('playable', {}).get('always', True):
         return {
             'id': attribute,
-            'possible': data.get('possible', []),
+            'rule': data.get('possible', {}),
         }
     else:
         return None
 
 
 def civic_mapper(attribute, data):
+    possible = data.get('possible', {}).get('entries', [])
+    potential = data.get('potential', {}).get('entries', [])
     return {
         'id': attribute,
-        'possible': data.get('possible', []),
-        'potential': data.get('potential', []),
+        'rule': make_rule('AND', possible + potential),
     }
 
 
 def authority_mapper(attribute, data):
     return {
         'id': attribute,
-        'possible': data.get('possible', []),
+        'rule': data.get('possible', []),
     }
 
 
@@ -154,6 +165,11 @@ def assign_rule_types(x):
             return {'type': k, 'entries': v}
     return x
 
+def normalize_pop(x):
+    if isinstance(x, str):
+        return POP_ID_MAP.get(x, x)
+    return x
+
 
 def map_not_none(fn, xs):
     return filter(lambda x: x is not None, map(fn, xs))
@@ -165,7 +181,7 @@ def collection_mapper(data, fn):
     elif isinstance(data, List):
         return [collection_mapper(v, fn) for v in map_not_none(fn, data)]
     else:
-        return data
+        return fn(data)
 
 
 MAPPERS = {
@@ -294,6 +310,7 @@ def parse(text):
     data = collection_mapper(data, remove_text)
     data = collection_mapper(data, normalize_rule_names)
     data = collection_mapper(data, assign_rule_types)
+    data = collection_mapper(data, normalize_pop)
     return data
 
 
@@ -317,4 +334,5 @@ if __name__ == '__main__':
                     mapped = mapper(k, v)
                     if mapped:
                         DATA[item_domain][item_kind].append(mapped)
+
     print(json.dumps(DATA, indent=4))
