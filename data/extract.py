@@ -138,7 +138,7 @@ def civic_mapper(attribute, data):
 
 def authority_mapper(attribute, data):
     potential = data.get('potential', {}).get('entries', [{}])
-    if potential[0].get('country_type', [{}])[0].get('value') != 'ai_empire':
+    if 'ai_empire' not in potential[0].get('country_type', [{}]):
         return {
             'id': attribute,
             'rule': data.get('possible', []),
@@ -170,6 +170,12 @@ def assign_rule_types(x):
         k, v = next(iter(x.items()))
         if k in RULES:
             return {'type': k, 'entries': v}
+    return x
+
+def flatten_rule_values(x):
+    if isinstance(x, Dict):
+        if 'value' in x:
+            return x['value']
     return x
 
 
@@ -335,6 +341,7 @@ def parse(text):
     data = collection_mapper(data, normalize_rule_names)
     data = collection_mapper(data, assign_rule_types)
     data = collection_mapper(data, normalize_pop)
+    data = collection_mapper(data, flatten_rule_values)
     return data
 
 
