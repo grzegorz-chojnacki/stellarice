@@ -32,12 +32,64 @@ PATHS = {
         'normal':    '/common/governments/civics/00_civics.txt',
         'gestalt':   '/common/governments/civics/02_gestalt_civics.txt',
         'corporate': '/common/governments/civics/03_corporate_civics.txt',
+    },
+    'authority': {
+        'normal': '/common/governments/authorities/00_authorities.txt',
     }
-    # 'pops'
-    # 'ethics'
-    # 'authority'
 }
 
+
+def make_rule(type, entries):
+    return {'type': type, 'entries': entries}
+
+
+def make_ethic(cost, rule):
+    return {'cost': cost, 'rule': rule}
+
+
+COL_ALIGNMENT = ['ethic_fanatic_authoritarian', 'ethic_authoritarian',
+                 'ethic_fanatic_egalitarian',   'ethic_egalitarian']
+XEN_ALIGNMENT = ['ethic_fanatic_xenophobe',     'ethic_xenophobe',
+                 'ethic_fanatic_xenophile',     'ethic_xenophile']
+MIL_ALIGNMENT = ['ethic_fanatic_militarist',    'ethic_militarist',
+                 'ethic_fanatic_pacifist',      'ethic_pacifist']
+SPI_ALIGNMENT = ['ethic_fanatic_spiritualist',  'ethic_spiritualist',
+                 'ethic_fanatic_materialist',   'ethic_materialist']
+COL_RULE = make_rule('NOR', COL_ALIGNMENT)
+XEN_RULE = make_rule('NOR', XEN_ALIGNMENT)
+MIL_RULE = make_rule('NOR', MIL_ALIGNMENT)
+SPI_RULE = make_rule('NOR', SPI_ALIGNMENT)
+
+DATA = {
+    'ethics': {
+        'normal': {
+            'ethic_fanatic_authoritarian': make_ethic(2, COL_RULE),
+            'ethic_authoritarian':         make_ethic(1, COL_RULE),
+            'ethic_fanatic_egalitarian':   make_ethic(2, COL_RULE),
+            'ethic_egalitarian':           make_ethic(1, COL_RULE),
+            'ethic_fanatic_xenophobe':     make_ethic(2, XEN_RULE),
+            'ethic_xenophobe':             make_ethic(1, XEN_RULE),
+            'ethic_fanatic_xenophile':     make_ethic(2, XEN_RULE),
+            'ethic_xenophile':             make_ethic(1, XEN_RULE),
+            'ethic_fanatic_militarist':    make_ethic(2, MIL_RULE),
+            'ethic_militarist':            make_ethic(1, MIL_RULE),
+            'ethic_fanatic_pacifist':      make_ethic(2, MIL_RULE),
+            'ethic_pacifist':              make_ethic(1, MIL_RULE),
+            'ethic_fanatic_spiritualist':  make_ethic(3, SPI_RULE),
+            'ethic_spiritualist':          make_ethic(1, SPI_RULE),
+            'ethic_fanatic_materialist':   make_ethic(2, SPI_RULE),
+            'ethic_materialist':           make_ethic(1, SPI_RULE),
+            'ethic_gestalt_consciousness': make_ethic(3, make_rule('NOR', [])),
+        }
+    },
+    'pops': {
+        'normal': {
+            'pop_botanic':  {},
+            'pop_lithoid':  {},
+            'pop_mechanic': {},
+        }
+    },
+}
 
 def trait_mapper(attribute, data):
     if data.get('initial', True):
@@ -63,14 +115,18 @@ def origin_mapper(attribute, data):
 
 
 def civic_mapper(attribute, data):
-    if True:
-        return {
-            'id': attribute,
-            'possible': data.get('possible', []),
-            'potential': data.get('potential', []),
-        }
-    else:
-        return None
+    return {
+        'id': attribute,
+        'possible': data.get('possible', []),
+        'potential': data.get('potential', []),
+    }
+
+
+def authority_mapper(attribute, data):
+    return {
+        'id': attribute,
+        'possible': data.get('possible', []),
+    }
 
 
 def normalize_rule_names(x):
@@ -91,7 +147,7 @@ def assign_rule_types(x):
     if isinstance(x, Tuple):
         k, v = x
         if k in RULE_LISTS:
-            return (k, assign_rule_types({'AND': v }))
+            return (k, assign_rule_types({'AND': v}))
     elif isinstance(x, Dict):
         k, v = next(iter(x.items()))
         if k in RULES:
@@ -116,6 +172,7 @@ MAPPERS = {
     'traits':  trait_mapper,
     'origins': origin_mapper,
     'civics':  civic_mapper,
+    'authority':  authority_mapper,
 }
 
 
@@ -249,16 +306,15 @@ if __name__ == '__main__':
     root_path = ARGS[0]
     localisation_path = root_path+'/localisation/english/l_english.yml'
 
-    data = {}
-    for (item_domain, item_kinds) in PATHS.items():
-        data[item_domain] = {}
+    for item_domain, item_kinds in PATHS.items():
+        DATA[item_domain] = {}
         mapper = MAPPERS[item_domain]
-        for (item_kind, path) in item_kinds.items():
-            data[item_domain][item_kind] = []
+        for item_kind, path in item_kinds.items():
+            DATA[item_domain][item_kind] = []
             with open(root_path+path) as f:
                 parsed = parse(f.read())
                 for k, v in parsed.items():
                     mapped = mapper(k, v)
                     if mapped:
-                        data[item_domain][item_kind].append(mapped)
-    print(json.dumps(data, indent=4))
+                        DATA[item_domain][item_kind].append(mapped)
+    print(json.dumps(DATA, indent=4))
