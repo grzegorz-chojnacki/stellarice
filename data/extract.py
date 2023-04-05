@@ -14,7 +14,7 @@ ARGS = sys.argv[1:]
 
 RULES = {'NOT', 'OR', 'NOR', 'AND', 'NAND'}
 RULE_LISTS = {'possible', 'potential'}
-RULE_DOMAINS = {'authority', 'civics', 'ethics',
+RULE_DOMAINS = {'authority', 'civics', 'ethics', 'country_type',
                 'origin', 'species_class', 'species_archetype'}
 
 ALWAYS_LISTS = {*RULES, *RULE_DOMAINS, *RULE_LISTS}
@@ -137,10 +137,14 @@ def civic_mapper(attribute, data):
 
 
 def authority_mapper(attribute, data):
-    return {
-        'id': attribute,
-        'rule': data.get('possible', []),
-    }
+    potential = data.get('potential', {}).get('entries', [{}])
+    if potential[0].get('country_type', [{}])[0].get('value') != 'ai_empire':
+        return {
+            'id': attribute,
+            'rule': data.get('possible', []),
+        }
+    else:
+        return None
 
 
 def normalize_rule_names(x):
