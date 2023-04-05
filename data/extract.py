@@ -3,35 +3,13 @@
 import re
 import sys
 import json
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Iterable
+import pprint
+pp = pprint.PrettyPrinter().pprint
 
 SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
 ARGS = sys.argv[1:]
-
-RULES = {
-    'NOT',
-    'OR',
-    'NOR',
-    'AND',
-    'NAND',
-}
-
-SUPPORTED_PROPS = {
-    *RULES,
-    'cost',
-    'allowed_archetypes',
-    'species_class',
-    'opposites',
-    'value',
-    'always',
-    'possible',
-    'playable',
-    'potential',
-    'authority',
-    'civics',
-    'ethics',
-}
 
 PATHS = {
     'traits': {
@@ -53,6 +31,101 @@ PATHS = {
     # 'authority'
 }
 
+STRING_LIST_SCHEMA = {
+    'type': list,
+    'items': { 'type': str },
+    'default': [],
+}
+
+RULE_SCHEMA = {
+    'type': dict,
+    'properties': {}
+}
+
+RULE_LIST_SCHEMA = {
+    'type': list,
+    'items': RULE_SCHEMA,
+    'default': []
+}
+
+# Recursive rule nesting
+RULE_KEYS = ['NOT', 'OR', 'NOR', 'AND', 'NAND', 'authority', 'ethics', 'civics', 'value']
+for key in RULE_KEYS:
+    RULE_SCHEMA['properties'][key] = RULE_LIST_SCHEMA
+
+RULE_LIST_SCHEMA['items'] = RULE_SCHEMA
+
+PLAYABLE_SCHEMA = {
+    'type': dict,
+    'properties': {
+        'always': {
+            'type': bool,
+            'default': True,
+        }
+    },
+}
+
+TRAIT_SCHEMA = {
+    'type': dict,
+    'properties': {
+        'cost': {
+            'type': float,
+            'default': 0,
+        },
+        'allowed_archetypes': STRING_LIST_SCHEMA,
+        'opposite': STRING_LIST_SCHEMA,
+    }
+}
+
+ORIGIN_SCHEMA = {
+    'type': dict,
+    'properties': {
+        'playable': PLAYABLE_SCHEMA,
+        'possible': RULE_LIST_SCHEMA,
+    }
+}
+
+CIVIC_SCHEMA = {
+    'type': dict,
+    'properties': {
+        'playable': PLAYABLE_SCHEMA,
+        'potential': RULE_LIST_SCHEMA,
+        'possible': RULE_LIST_SCHEMA,
+    }
+}
+
+def find(arr, name, default=[]):
+    for a in arr:
+        if isinstance(a, Tuple):
+            k, v = a
+            if k == name:
+                return v
+    return default
+
+
+def apply_schema(schema, data, n=0):
+    data_type = schema['type']
+    result = data
+
+    if isinstance(data, Tuple):
+        k, v = data
+        result = {k: apply_schema(schema, v, n+1)}
+    elif isinstance(data, List):
+        if data_type == dict:
+            result = {}
+            for prop, prop_schema in schema['properties'].items():
+                value = find(data, prop, None)
+                default = prop_schema.get('default')
+                if value is not None:
+                    result[prop] = apply_schema(prop_schema, value, n+1)
+                elif default:
+                    result[prop] = default
+        elif data_type == list:
+            result = []
+            item_schema = schema['items']
+            for item in data:
+                result.append(apply_schema(item_schema, item, n+1))
+    return result
 
 def remove_empty_keys(d):
     return {k: v for k, v in d.items() if v is not None}
@@ -69,10 +142,6 @@ def flatten(x):
         else:
             result.append(a)
     return result
-
-
-def find(arr, name, default=[]):
-    return next((v for k, v in arr if k == name), default)
 
 
 def rule_mapper(data):
@@ -104,7 +173,8 @@ def create_rule(type, entries):
 
 
 def traits_mapper(id, data):
-    return remove_none_keys({
+    return apply_schema(TRAIT_SCHEMA, data)
+    return remove_empty_keys({
         'id': id,
         'cost': find(data, 'cost', 0),
         'rule': create_rule('AND', [
@@ -118,7 +188,7 @@ def origins_mapper(id, data):
     playable = find(find(data, 'playable'), 'always', True)
     if not playable:
         return None
-    return remove_none_keys({
+    return remove_empty_keys({
         'id': id,
         'rule': create_rule('AND', rule_mapper(find(data, 'possible')))
     })
@@ -132,7 +202,7 @@ def civics_mapper(id, data):
     entries = rule_mapper(find(data, 'potential')) + \
         rule_mapper(find(data, 'possible'))
 
-    return remove_none_keys({
+    return remove_empty_keys({
         'id': id,
         'rule': create_rule('AND', entries)
     })
@@ -252,10 +322,8 @@ def parse(text):
     tokens = iter(tokenize(text))
     data = extract_blocks(tokens)
     data = pairup(data)
-    data = [(k, filter_supported(v)) for k, v in data]
     data = infer_types(data)
     return data
-
 
 if __name__ == '__main__':
     if len(ARGS) != 1:
@@ -266,6 +334,12 @@ if __name__ == '__main__':
     root_path = ARGS[0]
     localisation_path = root_path+'/localisation/english/l_english.yml'
 
+    SCHEMAS = {
+        'traits': TRAIT_SCHEMA,
+        'origins': ORIGIN_SCHEMA,
+        'civics': CIVIC_SCHEMA,
+    }
+
     data = {}
     for (item_domain, item_kinds) in PATHS.items():
         data[item_domain] = {}
@@ -273,8 +347,9 @@ if __name__ == '__main__':
             data[item_domain][item_kind] = {}
             with open(root_path+path) as f:
                 parsed = parse(f.read())
+                schema = SCHEMAS[item_domain]
                 for item, value in parsed:
-                    value = MAPPERS[item_domain](item, value)
+                    value = apply_schema(schema, value)
                     if value:
                         data[item_domain][item_kind][item] = value
     print(json.dumps(data, indent=4))
