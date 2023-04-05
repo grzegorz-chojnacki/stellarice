@@ -33,7 +33,7 @@ PATHS = {
 
 STRING_LIST_SCHEMA = {
     'type': list,
-    'items': { 'type': str },
+    'items': {'type': str},
     'default': [],
 }
 
@@ -49,7 +49,8 @@ RULE_LIST_SCHEMA = {
 }
 
 # Recursive rule nesting
-RULE_KEYS = ['NOT', 'OR', 'NOR', 'AND', 'NAND', 'authority', 'ethics', 'civics', 'value']
+RULE_KEYS = ['NOT', 'OR', 'NOR', 'AND', 'NAND',
+             'authority', 'ethics', 'civics']
 for key in RULE_KEYS:
     RULE_SCHEMA['properties'][key] = RULE_LIST_SCHEMA
 
@@ -94,7 +95,8 @@ CIVIC_SCHEMA = {
     }
 }
 
-def find(arr, name, default=[]):
+
+def select(arr, name, default=[]):
     for a in arr:
         if isinstance(a, Tuple):
             k, v = a
@@ -103,29 +105,30 @@ def find(arr, name, default=[]):
     return default
 
 
-def apply_schema(schema, data, n=0):
+def apply_schema(schema, data):
     data_type = schema['type']
     result = data
 
     if isinstance(data, Tuple):
         k, v = data
-        result = {k: apply_schema(schema, v, n+1)}
+        result = {k: apply_schema(schema, v)}
     elif isinstance(data, List):
         if data_type == dict:
             result = {}
             for prop, prop_schema in schema['properties'].items():
-                value = find(data, prop, None)
+                value = select(data, prop, None)
                 default = prop_schema.get('default')
                 if value is not None:
-                    result[prop] = apply_schema(prop_schema, value, n+1)
+                    result[prop] = apply_schema(prop_schema, value)
                 elif default:
                     result[prop] = default
         elif data_type == list:
             result = []
             item_schema = schema['items']
             for item in data:
-                result.append(apply_schema(item_schema, item, n+1))
+                result.append(apply_schema(item_schema, item))
     return result
+
 
 def remove_empty_keys(d):
     return {k: v for k, v in d.items() if v is not None}
@@ -159,60 +162,6 @@ def rule_mapper(data):
             return v
         return flatten(rule_mapper(v))
     return flatten(data)
-
-
-def create_rule(type, entries):
-    entries = flatten([entry for entry in entries if entry is not None])
-    if len(entries) == 0:
-        return None
-    else:
-        return {
-            'type': type,
-            'entries': entries
-        }
-
-
-def traits_mapper(id, data):
-    return apply_schema(TRAIT_SCHEMA, data)
-    return remove_empty_keys({
-        'id': id,
-        'cost': find(data, 'cost', 0),
-        'rule': create_rule('AND', [
-            create_rule('OR', find(data, 'allowed_archetypes')),
-            create_rule('NOR', find(data, 'opposites'))
-        ])
-    })
-
-
-def origins_mapper(id, data):
-    playable = find(find(data, 'playable'), 'always', True)
-    if not playable:
-        return None
-    return remove_empty_keys({
-        'id': id,
-        'rule': create_rule('AND', rule_mapper(find(data, 'possible')))
-    })
-
-
-def civics_mapper(id, data):
-    playable = find(find(data, 'playable'), 'always', True)
-    if not playable:
-        return None
-
-    entries = rule_mapper(find(data, 'potential')) + \
-        rule_mapper(find(data, 'possible'))
-
-    return remove_empty_keys({
-        'id': id,
-        'rule': create_rule('AND', entries)
-    })
-
-
-MAPPERS = {
-    'traits': traits_mapper,
-    'origins': origins_mapper,
-    'civics': civics_mapper,
-}
 
 
 def isfloat(x):
@@ -278,24 +227,6 @@ def pairup(tokens):
     return data
 
 
-def filter_supported(data):
-    '''Remove unsupported tokens'''
-    if isinstance(data, Tuple):
-        k, v = data
-        if k in SUPPORTED_PROPS:
-            return (k, filter_supported(v))
-        else:
-            return None
-    elif isinstance(data, List):
-        result = []
-        for v in data:
-            v = filter_supported(v)
-            if v:
-                result.append(v)
-        return result
-    return data
-
-
 def infer_types(data):
     '''Infer and cast to types based on data contents'''
     if isinstance(data, List):
@@ -324,6 +255,7 @@ def parse(text):
     data = pairup(data)
     data = infer_types(data)
     return data
+
 
 if __name__ == '__main__':
     if len(ARGS) != 1:
