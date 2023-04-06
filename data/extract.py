@@ -112,6 +112,46 @@ DATA = {
     },
 }
 
+# These items will be removed from rule entries as they are not used during
+# the empire creation
+NOT_SUPPORTED = {
+    # Ascension traits
+    'trait_advanced_radiotrophic',
+    'trait_advanced_phototrophic',
+    'trait_advanced_scintillating',
+    'trait_advanced_gaseous_byproducts',
+    'trait_advanced_budding',
+    'trait_advanced_volatile_excretions',
+    'trait_voidling',
+    'trait_erudite',
+    'trait_robust',
+    'trait_rapid_breeders_lithoid',
+    'trait_vat_grown',
+    'trait_nerve_stapled',
+    'trait_tiyanki',
+    'trait_fertile',
+    'trait_adaptive_lithoid',
+    # Not initial traits
+    'trait_enigmatic_intelligence',
+    'trait_cave_dweller',
+    'trait_drake_scaled',
+    'trait_clone_soldier_infertile',
+    'trait_clone_soldier_infertile_full_potential',
+    'trait_enigmatic_intelligence_poor',
+    # Not initial traits, but may be important
+    'trait_hive_mind',
+    'trait_machine_unit',
+    'trait_necrophage',
+    # No idea traits
+    'trait_harvested_radiotrophic',
+    # Only for enclaves
+    'civic_ancient_preservers',
+    # AI authority
+    'auth_ancient_machine_intelligence',
+    # From event
+    'civic_galactic_sovereign_megacorp',
+}
+
 ##################
 # Output mappers #
 ##################
@@ -238,17 +278,23 @@ def extract_singular_rule(x):
 
 POP_ID_MAP = {
     'BIOLOGICAL': 'pop_biologic',
+    'PLANT':      'pop_botanic',
     'BOTANICAL':  'pop_botanic',
     'MACHINE':    'pop_mechanic',
     'LITHOID':    'pop_lithoid',
+    # We don't care about ROBOT as it is not used during empire creation
+    'ROBOT':       None,
+    # FUN is always paired with PLANT, so it is unnecessary
+    'FUN':         None,
 }
 
 
-def normalize_pop_names(x):
-    # Pop types are defined in capital letters without prefix
+def clean_entries(x):
     if isinstance(x, str):
-        # We don't care about ROBOT as it is not used during empire creation
-        return None if x == 'ROBOT' else POP_ID_MAP.get(x, x)
+        if x in NOT_SUPPORTED:
+            return None
+        # Pop types are defined in capital letters without prefix
+        return POP_ID_MAP.get(x, x)
     return x
 
 
@@ -385,7 +431,7 @@ def parse(text):
     for v in data.values():
         v['rule'] = extract_singular_rule(v)
 
-    data = recmap(data, normalize_pop_names)
+    data = recmap(data, clean_entries)
     return data
 
 
@@ -425,6 +471,18 @@ def load_dictionary(root_path):
             pickle.dump(dictionary, p)
             eprint(f'[INFO] Saved dictionary to {DICTIONARY_PATHS["pickle"]}')
     return dictionary
+
+
+def check_missing(visited):
+    def internal(x):
+        if isinstance(x, Tuple):
+            k, v = x
+            if k == 'entries':
+                for y in v:
+                    if isinstance(y, str):
+                        visited.add(y)
+        return x
+    return internal
 
 
 def translate(dictionary, id, item):
@@ -477,4 +535,16 @@ if __name__ == '__main__':
                 item['id'] = id
                 translate(dictionary, id, item)
 
-    print(json.dumps(DATA, indent=4))
+    # Ensure that every entry is referencing a defined item
+    visited_entries = set()
+    recmap(DATA, check_missing(visited_entries))
+    defined = {id for domain, kinds in DATA.items()
+               for kind, items in kinds.items()
+               for id, item in items.items()}
+    undefined = visited_entries - defined
+    if len(undefined) > 0:
+        eprint(f'[ERROR] Found {len(undefined)} undefined entries:')
+        eprint(undefined)
+        sys.exit(1)
+    else:
+        print(json.dumps(DATA, indent=4))
