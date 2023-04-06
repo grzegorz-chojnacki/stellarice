@@ -20,33 +20,6 @@ RULE_DOMAINS = {'authority', 'civics', 'ethics', 'origin', 'country_type',
 
 ALWAYS_LISTS = {*RULES, *RULE_DOMAINS, *RULE_LISTS}
 
-POP_ID_MAP = {
-    'BIOLOGICAL': 'pop_biological',
-    'BOTANICAL':  'pop_botanical',
-    'MACHINE':    'pop_mechanical',
-    'LITHOID':    'pop_lithoid',
-}
-
-PATHS = {
-    'traits': {
-        # 'special':   '/common/traits/02_species_traits_basic_characteristics.txt',
-        'normal':    '/common/traits/04_species_traits.txt',
-        'mechanic':  '/common/traits/05_species_traits_robotic.txt',
-        'toxoid':    '/common/traits/09_tox_traits.txt',
-    },
-    'origins': {
-        'normal':    '/common/governments/civics/00_origins.txt',
-    },
-    'civics': {
-        'normal':    '/common/governments/civics/00_civics.txt',
-        'gestalt':   '/common/governments/civics/02_gestalt_civics.txt',
-        'corporate': '/common/governments/civics/03_corporate_civics.txt',
-    },
-    'authority': {
-        'normal': '/common/governments/authorities/00_authorities.txt',
-    }
-}
-
 
 def make_rule(type, entries):
     return {'type': type, 'entries': entries}
@@ -56,6 +29,7 @@ def make_ethic(cost, rule):
     return {'cost': cost, 'rule': rule}
 
 
+# We don't care that ethics exclude themselves as frontend handles it
 COL_ALIGNMENT = ['ethic_fanatic_authoritarian', 'ethic_authoritarian',
                  'ethic_fanatic_egalitarian',   'ethic_egalitarian']
 XEN_ALIGNMENT = ['ethic_fanatic_xenophobe',     'ethic_xenophobe',
@@ -70,6 +44,22 @@ MIL_RULE = make_rule('NOR', MIL_ALIGNMENT)
 SPI_RULE = make_rule('NOR', SPI_ALIGNMENT)
 
 DATA = {
+    'pop': {
+        'normal': {
+            'pop_biological': {},
+            'pop_botanic':    {},
+            'pop_lithoid':    {},
+            'pop_mechanic':   {},
+        }
+    },
+    'traits': {
+        'normal':    '/common/traits/04_species_traits.txt',
+        'mechanic':  '/common/traits/05_species_traits_robotic.txt',
+        'toxoid':    '/common/traits/09_tox_traits.txt',
+    },
+    'origins': {
+        'normal':    '/common/governments/civics/00_origins.txt',
+    },
     'ethics': {
         'normal': {
             'ethic_fanatic_authoritarian': make_ethic(2, COL_RULE),
@@ -91,21 +81,28 @@ DATA = {
             'ethic_gestalt_consciousness': make_ethic(3, make_rule('NOR', [])),
         }
     },
-    'pops': {
-        'normal': {
-            'pop_biological': {},
-            'pop_botanic':    {},
-            'pop_lithoid':    {},
-            'pop_mechanic':   {},
-        }
+    'authority': {
+        'normal': '/common/governments/authorities/00_authorities.txt',
+    },
+    'civics': {
+        'normal':    '/common/governments/civics/00_civics.txt',
+        'gestalt':   '/common/governments/civics/02_gestalt_civics.txt',
+        'corporate': '/common/governments/civics/03_corporate_civics.txt',
     },
 }
 
+##################
+# Output mappers #
+##################
 
-def trait_mapper(attribute, data):
+# Functions below map third-level (e.g. civics > normal > *) items to their
+# output form. They are responsible for the removal of properties which are not
+# needed and skipping whole items from being exported.
+
+
+def trait_mapper(data):
     if data.get('initial', True):
         return {
-            'id': attribute,
             'cost': data.get('cost', 0),
             'rule': data.get('rule', {}),
         }
@@ -113,49 +110,70 @@ def trait_mapper(attribute, data):
         return None
 
 
-def origin_mapper(attribute, data):
+def origin_mapper(data):
     if data.get('playable', {}).get('always', True):
         return {
-            'id': attribute,
             'rule': data.get('rule', {}),
         }
     else:
         return None
 
 
-def civic_mapper(attribute, data):
+def civic_mapper(data):
     return {
-        'id': attribute,
         'rule': data.get('rule', {}),
     }
 
 
-def authority_mapper(attribute, data):
+def authority_mapper(data):
     potential = data.get('potential', {}).get('entries', [{}])
     if 'ai_empire' not in potential[0].get('country_type', [{}]):
         return {
-            'id': attribute,
             'rule': data.get('rule', {}),
         }
     else:
         return None
+
+
+MAPPERS = {
+    'pop': lambda x: x,
+    'traits':  trait_mapper,
+    'origins': origin_mapper,
+    'ethics': lambda x: x,
+    'authority':  authority_mapper,
+    'civics':  civic_mapper,
+}
+
+##################
+# Transformators #
+##################
+
+# The functions below are meant to be used with the recmap function.
+# They will be applied to each value, dict's key-value pairs, and list element
+# of the DATA (or other nested structure).
+# The DATA cannot contain Tuples as they are reserved for key-value operations.
+# Each should return either a transformed value or None for its removal.
 
 
 def normalize_rule_names(x):
     if isinstance(x, Tuple):
         key, value = x
+        # We don't care for rule domains, but we must ensure proper nesting
         if key in {'authority', 'civics', 'ethics', 'origin'}:
             return ('AND', value)
     return x
 
 
-def remove_text(x):
+def remove_text_entries(x):
+    # Some rules contain {'text': ...} entries which we don't use
     if isinstance(x, Dict) and 'text' in x:
         return None
     return x
 
 
 def assign_rule_types(x):
+    # Transform rules to a more structured format:
+    # {'AND': [...]} => {'type': 'AND', 'entries': [...]}
     if isinstance(x, Tuple):
         k, v = x
         if k in RULE_LISTS:
@@ -168,17 +186,15 @@ def assign_rule_types(x):
 
 
 def flatten_rule_values(x):
+    # Map {'value': str} entries to their contents
     if isinstance(x, Dict):
         if 'value' in x:
             return x['value']
     return x
 
 
-def is_playable(x):
-    playable = data.get('playable', {}).get('always', True)
-
-
 def extract_singular_rule(x):
+    # Convert multiple different rule-props to a single one which handles all
     archetypes = x.get('allowed_archetypes', [])
     species = x.get('species_class', [])
     opposites = x.get('opposites', [])
@@ -186,9 +202,10 @@ def extract_singular_rule(x):
     possible = x.get('possible', {}).get('entries', [])
     potential = x.get('potential', {}).get('entries', [])
 
+    # PLANT and FUN seem to always be together
     if len(archetypes) > 0 and species == ['PLANT', 'FUN']:
         archetypes = ['BOTANICAL' if x == 'BIOLOGICAL' else x
-                    for x in archetypes]
+                      for x in archetypes]
 
     entries = sum([archetypes, possible, potential], [])
 
@@ -198,30 +215,29 @@ def extract_singular_rule(x):
     return {'type': 'AND', 'entries': entries}
 
 
-def load_dictionary(path):
-    text = ''
-    with open(path) as f:
-        for n, line in enumerate(f.readlines()):
-            sp = line.split('"')
-            if len(sp) > 1:
-                line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
-            text += re.sub(r':.*? ', ': ', line, count=1)
-
-    return yaml.safe_load(text)['l_english']
+POP_ID_MAP = {
+    'BIOLOGICAL': 'pop_biological',
+    'BOTANICAL':  'pop_botanical',
+    'MACHINE':    'pop_mechanical',
+    'LITHOID':    'pop_lithoid',
+}
 
 
-def normalize_pop(x):
+def normalize_pop_names(x):
+    # Pop types are defined in capital letters without prefix
     if isinstance(x, str):
+        # We don't care about ROBOT as it is not used during empire creation
         return None if x == 'ROBOT' else POP_ID_MAP.get(x, x)
     return x
 
 
 def map_not_none(fn, xs):
+    '''Applies fn to xs, if the result is None it won't be included'''
     return filter(lambda x: x is not None, map(fn, xs))
 
 
 def recmap(data, fn):
-    '''Recursively map dict and list items'''
+    '''Recursively map dict key-value pairs, list items and others'''
     if isinstance(data, Dict):
         return {k: recmap(v, fn) for k, v in map_not_none(fn, data.items())}
     elif isinstance(data, List):
@@ -230,39 +246,22 @@ def recmap(data, fn):
         return fn(data)
 
 
-MAPPERS = {
-    'traits':  trait_mapper,
-    'origins': origin_mapper,
-    'civics':  civic_mapper,
-    'authority':  authority_mapper,
-}
-
-
-def prop_kind(prop):
-    return 'list' if prop in ALWAYS_LISTS else 'dict'
-
-
 def dictify(data, assuming='dict'):
-    '''Transform tuples and list of tuples into dicts and lists'''
-    # Single tuples are always interpreted as one-key dicts
+    '''Transform token tree into dicts and lists'''
+    def prop_kind(prop):
+        return 'list' if prop in ALWAYS_LISTS else 'dict'
+
+    # Singular tuples are always interpreted as one-key dicts
     if isinstance(data, Tuple):
         k, v = data
         return {k: dictify(v, assuming=prop_kind(k))}
-    # Lists could either contain key-value pairs for dict or just values
+    # Lists could either contain key-value pairs for a dict or just be a lists
     elif isinstance(data, List):
         if assuming == 'dict' and all(isinstance(t, Tuple) for t in data):
             return {k: dictify(v, prop_kind(k)) for k, v in data}
         else:
             return [dictify(v) for v in data]
     return data
-
-
-def isfloat(x):
-    try:
-        float(x)
-        return True
-    except:
-        return False
 
 
 def tokenize(text):
@@ -274,12 +273,11 @@ def tokenize(text):
     text = text.replace('{', ' { ').replace('}', ' } ')
     # Fold whitespace
     text = text.replace('\s+', '')
-    # text = re.sub(r'\s+', ' ', text)
     return text.split()
 
 
 def make_tree(tokens):
-    '''Convert the token stream to a token tree'''
+    '''Convert token stream to a token tree'''
     data = []
     for token in tokens:
         if token == '{':
@@ -305,24 +303,34 @@ def pairup(tokens):
         return tokens
 
     for token in tokens:
-        # Encountered '=', the previous token must be a key
         if token == '=' and state == 'key':
+            # The previous token must be a key, we begin looking for its value
             key = prev
             state = 'value'
         elif state == 'value':
+            # We've found a key-value pair
             if isinstance(token, List):
                 data.append((key, pairup(token)))
             else:
                 data.append((key, token))
+            # Now we begin looking for the next key
             state = 'key'
-
+        # Remember token for key assignment
         prev = token
 
     return data
 
 
+def isfloat(x):
+    try:
+        float(x)
+        return True
+    except:
+        return False
+
+
 def infer_types(data):
-    '''Infer and cast to types based on data contents'''
+    '''Infer and cast to types based on str contents'''
     if isinstance(data, str):
         if data[0] == '"':
             return data[1:-1]  # Remove quotes
@@ -336,7 +344,9 @@ def infer_types(data):
 
 
 def parse(text):
-    '''Parse Clausewitz format into a token tree'''
+    '''Parse Clausewitz format to JSON'''
+    # The output of tokenize needs to be streamed as each token must be consumed
+    # only once in the recursive make_tree calls
     data = iter(tokenize(text))
     data = make_tree(data)
 
@@ -346,14 +356,37 @@ def parse(text):
 
     # Apply some intermediate mappings
     data = recmap(data, infer_types)
-    data = recmap(data, remove_text)
+    data = recmap(data, remove_text_entries)
     data = recmap(data, normalize_rule_names)
     data = recmap(data, assign_rule_types)
     data = recmap(data, flatten_rule_values)
+
     for v in data.values():
         v['rule'] = extract_singular_rule(v)
-    data = recmap(data, normalize_pop)
+
+    data = recmap(data, normalize_pop_names)
     return data
+
+
+def load_data(path):
+    with open(path) as f:
+        return parse(f.read())
+
+
+def load_dictionary(path):
+    with open(path) as f:
+        text = ''
+        # Although localization files are allegedly YAML, their format
+        # is slightly cursed so we need to remove some of its "quirks"
+        for line in f.readlines():
+            # Lines can contain multiple double quotes
+            sp = line.split('"')
+            if len(sp) > 1:
+                # Keep only the first and loast double quote
+                line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
+            # For some reason each key has a number after its colon symbol
+            text += re.sub(r':.*? ', ': ', line, count=1)
+        return yaml.safe_load(text)['l_english']
 
 
 if __name__ == '__main__':
@@ -363,26 +396,25 @@ if __name__ == '__main__':
         sys.exit(1)
 
     root_path = ARGS[0]
-    localisation_path = root_path+'/localisation/english/l_english.yml'
-
-    for item_domain, item_kinds in PATHS.items():
-        DATA[item_domain] = {}
-        mapper = MAPPERS[item_domain]
-        for item_kind, path in item_kinds.items():
-            DATA[item_domain][item_kind] = {}
-            with open(root_path+path) as f:
-                parsed = parse(f.read())
-                for k, v in parsed.items():
-                    mapped = mapper(k, v)
-                    if mapped:
-                        DATA[item_domain][item_kind][k] = mapped
-
+    # Only English for now
+    localisation_path = root_path + '/localisation/english/l_english.yml'
     dictionary = load_dictionary(localisation_path)
 
-    for item_domain, item_kinds in DATA.items():
-        for item_kind, items in item_kinds.items():
-            handle = DATA[item_domain][item_kind]
-            for item, value in items.items():
-                handle[item]['id'] = item
-                handle[item]['name'] = dictionary.get(item, item)
+    for domain, kinds in DATA.items():
+        mapper = MAPPERS[domain]
+        for kind, items in kinds.items():
+            # Some items lists are actually paths to files we'll need to parse
+            if isinstance(items, str):
+                DATA[domain][kind] = {}
+                parsed = load_data(root_path + items)
+                for id, item in parsed.items():
+                    mapped = mapper(item)
+                    if mapped:
+                        DATA[domain][kind][id] = mapped
+
+            # Add translated id's as names
+            for id, item in DATA[domain][kind].items():
+                item['id'] = id
+                item['name'] = dictionary.get(id, id)
+
     print(json.dumps(DATA, indent=4))
