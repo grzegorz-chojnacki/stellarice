@@ -19,6 +19,7 @@ SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
 DICTIONARY_PATHS = {
     'pickle': './.dictionary.bin',
+    # Only English for now
     'game': [
         '/localisation/english/l_english.yml',
         '/localisation/english/toxoids_l_english.yml',
@@ -227,12 +228,12 @@ def extract_singular_rule(x):
         archetypes = ['BOTANICAL' if x == 'BIOLOGICAL' else x
                       for x in archetypes]
 
-    entries = sum([archetypes, possible, potential], [])
-
-    if len(opposites) > 0:
-        entries.append(make_rule('NOR', opposites))
-
-    return {'type': 'AND', 'entries': entries}
+    return make_rule('AND', [
+        *possible, *potential,
+        # Janky workaround for unnecessary empty rules
+        *[make_rule('OR',  xs) for xs in [archetypes] if len(xs) > 0],
+        *[make_rule('NOR', xs) for xs in [opposites]  if len(xs) > 0],
+    ])
 
 
 POP_ID_MAP = {
@@ -460,7 +461,6 @@ if __name__ == '__main__':
         sys.exit(1)
 
     root_path = ARGS[0]
-    # Only English for now
     dictionary = load_dictionary(root_path)
 
     for domain, kinds in DATA.items():
