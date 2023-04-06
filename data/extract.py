@@ -103,7 +103,7 @@ DATA = {
         }
     },
     'authority': {
-        'normal': '/common/governments/authorities/00_authorities.txt',
+        'normal':    '/common/governments/authorities/00_authorities.txt',
     },
     'civics': {
         'normal':    '/common/governments/civics/00_civics.txt',
@@ -138,17 +138,13 @@ NOT_SUPPORTED = {
     'trait_clone_soldier_infertile',
     'trait_clone_soldier_infertile_full_potential',
     'trait_enigmatic_intelligence_poor',
-    # Not initial traits, but may be important
-    'trait_hive_mind',
-    'trait_machine_unit',
-    'trait_necrophage',
     # No idea traits
     'trait_harvested_radiotrophic',
     # Only for enclaves
     'civic_ancient_preservers',
     # AI authority
     'auth_ancient_machine_intelligence',
-    # From event
+    # Given from an event
     'civic_galactic_sovereign_megacorp',
 }
 
@@ -276,16 +272,19 @@ def extract_singular_rule(x):
     ])
 
 
-POP_ID_MAP = {
-    'BIOLOGICAL': 'pop_biologic',
-    'PLANT':      'pop_botanic',
-    'BOTANICAL':  'pop_botanic',
-    'MACHINE':    'pop_mechanic',
-    'LITHOID':    'pop_lithoid',
+ENTRY_MAP = {
+    'BIOLOGICAL':         'pop_biologic',
+    'PLANT':              'pop_botanic',
+    'BOTANICAL':          'pop_botanic',
+    'MACHINE':            'pop_mechanic',
+    'LITHOID':            'pop_lithoid',
     # We don't care about ROBOT as it is not used during empire creation
-    'ROBOT':       None,
+    'ROBOT':               None,
     # FUN is always paired with PLANT, so it is unnecessary
-    'FUN':         None,
+    'FUN':                 None,
+    'trait_hive_mind':    'auth_hive_mind',
+    'trait_machine_unit': 'pop_mechanic',
+    'trait_necrophage':   'origin_necrophage',
 }
 
 
@@ -294,7 +293,7 @@ def clean_entries(x):
         if x in NOT_SUPPORTED:
             return None
         # Pop types are defined in capital letters without prefix
-        return POP_ID_MAP.get(x, x)
+        return ENTRY_MAP.get(x, x)
     return x
 
 
