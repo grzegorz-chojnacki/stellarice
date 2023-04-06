@@ -17,7 +17,19 @@ def eprint(*args, **kwargs):
 
 SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
-DICTIONARY_PICKLE = './.dictionary.bin'
+DICTIONARY_PATHS = {
+    'pickle': './.dictionary.bin',
+    'game': [
+        '/localisation/english/l_english.yml',
+        '/localisation/english/toxoids_l_english.yml',
+        '/localisation/english/plantoids_l_english.yml',
+        '/localisation/english/federations_l_english.yml',
+        '/localisation/english/necroids_l_english.yml',
+        '/localisation/english/clone_army_l_english.yml',
+        '/localisation/english/aquatics_l_english.yml',
+        '/localisation/english/overlord_l_english.yml',
+    ]
+}
 ARGS = sys.argv[1:]
 
 RULES = {'NOT', 'OR', 'NOR', 'AND', 'NAND'}
@@ -54,10 +66,10 @@ SPI_RULE = make_rule('NOR', SPI_ALIGNMENT)
 DATA = {
     'pop': {
         'normal': {
-            'pop_biological': {},
-            'pop_botanic':    {},
-            'pop_lithoid':    {},
-            'pop_mechanic':   {},
+            'pop_biologic': {'name': 'Biologic'},
+            'pop_botanic':  {'name': 'Botanic'},
+            'pop_lithoid':  {'name': 'Lithoid'},
+            'pop_mechanic': {'name': 'Mechanic'},
         }
     },
     'traits': {
@@ -224,9 +236,9 @@ def extract_singular_rule(x):
 
 
 POP_ID_MAP = {
-    'BIOLOGICAL': 'pop_biological',
-    'BOTANICAL':  'pop_botanical',
-    'MACHINE':    'pop_mechanical',
+    'BIOLOGICAL': 'pop_biologic',
+    'BOTANICAL':  'pop_botanic',
+    'MACHINE':    'pop_mechanic',
     'LITHOID':    'pop_lithoid',
 }
 
@@ -381,34 +393,64 @@ def load_data(path):
         return parse(f.read())
 
 
-def load_dictionary(path):
+def load_dictionary(root_path):
     try:
-        with open(DICTIONARY_PICKLE, 'rb') as f:
+        with open(DICTIONARY_PATHS['pickle'], 'rb') as f:
             eprint('[INFO] Loading cached dictionary')
             return pickle.load(f)
     except Exception as e:
-        eprint(e)
+        eprint(f'[WARN]: {e}')
         eprint('[INFO] Failed to load cached dictionary')
 
-    with open(path) as f:
-        eprint('[INFO] Loading dictionary from game files')
-        text = ''
-        # Although localization files are allegedly YAML, their format
-        # is slightly cursed so we need to remove some of its "quirks"
-        for line in f.readlines():
-            # Lines can contain multiple double quotes
-            sp = line.split('"')
-            if len(sp) > 1:
-                # Keep only the first and loast double quote
-                line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
-            # For some reason each key has a number after its colon symbol
-            text += re.sub(r':.*? ', ': ', line, count=1)
-        dictionary = yaml.safe_load(text)['l_english']
+    dictionary = {}
+    for path in DICTIONARY_PATHS['game']:
+        with open(root_path + path) as f:
+            eprint(f'[INFO] Loading dictionary from {path}')
+            text = ''
+            # Although localization files are allegedly YAML, their format
+            # is slightly cursed so we need to remove some of its "quirks"
+            for line in f.readlines():
+                # Lines can contain multiple double quotes
+                sp = line.split('"')
+                if len(sp) > 1:
+                    # Keep only the first and loast double quote
+                    line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
+                # For some reason each key has a number after its colon symbol
+                text += re.sub(r':.*? ', ': ', line, count=1)
+            new_dictionary = next(iter(yaml.safe_load(text).values()))
+            dictionary.update(new_dictionary)
 
-        with open(DICTIONARY_PICKLE, 'wb') as p:
+        with open(DICTIONARY_PATHS['pickle'], 'wb') as p:
             pickle.dump(dictionary, p)
-            eprint(f'[INFO] Saved dictionary to {DICTIONARY_PICKLE}')
-        return dictionary
+            eprint(f'[INFO] Saved dictionary to {DICTIONARY_PATHS["pickle"]}')
+    return dictionary
+
+
+def translate(dictionary, id, item):
+    '''Add id to item and translate to name using dictionary'''
+    item['id'] = id
+
+    # Some hard-coded items already have names
+    if item.get('name'):
+        return
+
+    item['name'] = dictionary.get(id)
+    if item['name']:
+        return
+
+    # Handle normal civic-origins
+    item['name'] = dictionary.get(id.replace('origin_', 'civic_'))
+    if item['name']:
+        return
+
+    # Handle machine civic-origins
+    item['name'] = dictionary.get(
+        id.replace('origin_', 'civic_machine_'))
+    if item['name']:
+        return
+
+    item['name'] = id
+    eprint(f'[WARN] Failed to translate: "{id}"!')
 
 
 if __name__ == '__main__':
@@ -419,8 +461,7 @@ if __name__ == '__main__':
 
     root_path = ARGS[0]
     # Only English for now
-    localisation_path = root_path + '/localisation/english/l_english.yml'
-    dictionary = load_dictionary(localisation_path)
+    dictionary = load_dictionary(root_path)
 
     for domain, kinds in DATA.items():
         mapper = MAPPERS[domain]
@@ -428,31 +469,14 @@ if __name__ == '__main__':
             # Some items lists are actually paths to files we'll need to parse
             if isinstance(items, str):
                 DATA[domain][kind] = {}
+                eprint(f'[INFO] Loading items from {items}')
                 parsed = load_data(root_path + items)
                 for id, item in parsed.items():
                     mapped = mapper(item)
                     if mapped:
                         DATA[domain][kind][id] = mapped
 
-            # Add id's and translated names
             for id, item in DATA[domain][kind].items():
-                item['id'] = id
-                item['name'] = dictionary.get(id)
-                if item['name']:
-                    continue
-
-                # Handle normal civic-origins
-                item['name'] = dictionary.get(id.replace('origin_', 'civic_'))
-                if item['name']:
-                    continue
-
-                # Handle machine civic-origins
-                item['name'] = dictionary.get(
-                    id.replace('origin_', 'civic_machine_'))
-                if item['name']:
-                    continue
-
-                item['name'] = id
-                eprint(f'Failed to translate: "{id}"!')
+                translate(dictionary, id, item)
 
     print(json.dumps(DATA, indent=4))
