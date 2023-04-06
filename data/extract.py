@@ -14,15 +14,16 @@ ARGS = sys.argv[1:]
 
 RULES = {'NOT', 'OR', 'NOR', 'AND', 'NAND'}
 RULE_LISTS = {'possible', 'potential'}
-RULE_DOMAINS = {'authority', 'civics', 'ethics', 'country_type',
-                'origin', 'species_class', 'species_archetype'}
+RULE_DOMAINS = {'authority', 'civics', 'ethics', 'origin', 'country_type',
+                'allowed_archetypes',  'species_class', 'species_archetype',
+                'opposites'}
 
 ALWAYS_LISTS = {*RULES, *RULE_DOMAINS, *RULE_LISTS}
 
 POP_ID_MAP = {
     'BIOLOGICAL': 'pop_biological',
     'BOTANICAL':  'pop_botanical',
-    'ROBOT':      'pop_mechanical',
+    'MACHINE':    'pop_mechanical',
     'LITHOID':    'pop_lithoid',
 }
 
@@ -103,15 +104,10 @@ DATA = {
 
 def trait_mapper(attribute, data):
     if data.get('initial', True):
-        entries = data.get('allowed_archetypes', [])
-        if data.get('species_class') == ['PLANT', 'FUN']:
-            entries = ['BOTANICAL' if x ==
-                       'BIOLOGICAL' else x for x in entries]
         return {
             'id': attribute,
             'cost': data.get('cost', 0),
-            'rule': make_rule('AND', entries),
-            'opposites': data.get('opposites', []),
+            'rule': data.get('rule', {}),
         }
     else:
         return None
@@ -121,18 +117,16 @@ def origin_mapper(attribute, data):
     if data.get('playable', {}).get('always', True):
         return {
             'id': attribute,
-            'rule': data.get('possible', {}),
+            'rule': data.get('rule', {}),
         }
     else:
         return None
 
 
 def civic_mapper(attribute, data):
-    possible = data.get('possible', {}).get('entries', [])
-    potential = data.get('potential', {}).get('entries', [])
     return {
         'id': attribute,
-        'rule': make_rule('AND', possible + potential),
+        'rule': data.get('rule', {}),
     }
 
 
@@ -141,7 +135,7 @@ def authority_mapper(attribute, data):
     if 'ai_empire' not in potential[0].get('country_type', [{}]):
         return {
             'id': attribute,
-            'rule': data.get('possible', []),
+            'rule': data.get('rule', {}),
         }
     else:
         return None
@@ -172,11 +166,36 @@ def assign_rule_types(x):
             return {'type': k, 'entries': v}
     return x
 
+
 def flatten_rule_values(x):
     if isinstance(x, Dict):
         if 'value' in x:
             return x['value']
     return x
+
+
+def is_playable(x):
+    playable = data.get('playable', {}).get('always', True)
+
+
+def extract_singular_rule(x):
+    archetypes = x.get('allowed_archetypes', [])
+    species = x.get('species_class', [])
+    opposites = x.get('opposites', [])
+
+    possible = x.get('possible', {}).get('entries', [])
+    potential = x.get('potential', {}).get('entries', [])
+
+    if len(archetypes) > 0 and species == ['PLANT', 'FUN']:
+        archetypes = ['BOTANICAL' if x == 'BIOLOGICAL' else x
+                    for x in archetypes]
+
+    entries = sum([archetypes, possible, potential], [])
+
+    if len(opposites) > 0:
+        entries.append(make_rule('NOR', opposites))
+
+    return {'type': 'AND', 'entries': entries}
 
 
 def load_dictionary(path):
@@ -191,13 +210,9 @@ def load_dictionary(path):
     return yaml.safe_load(text)['l_english']
 
 
-
-
-
-
 def normalize_pop(x):
     if isinstance(x, str):
-        return POP_ID_MAP.get(x, x)
+        return None if x == 'ROBOT' else POP_ID_MAP.get(x, x)
     return x
 
 
@@ -334,8 +349,10 @@ def parse(text):
     data = recmap(data, remove_text)
     data = recmap(data, normalize_rule_names)
     data = recmap(data, assign_rule_types)
-    data = recmap(data, normalize_pop)
     data = recmap(data, flatten_rule_values)
+    for v in data.values():
+        v['rule'] = extract_singular_rule(v)
+    data = recmap(data, normalize_pop)
     return data
 
 
