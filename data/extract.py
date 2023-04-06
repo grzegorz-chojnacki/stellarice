@@ -4,12 +4,20 @@ import re
 import sys
 import json
 import yaml
+import pickle
 from typing import List, Dict, Tuple, Iterable
+
 import pprint
 pp = pprint.PrettyPrinter().pprint
 
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 SCRIPT_NAME = sys.argv[0]
 DEFAULT_ROOT = '$HOME/.steam/steam/steamapps/common/Stellaris'
+DICTIONARY_PICKLE = './.dictionary.bin'
 ARGS = sys.argv[1:]
 
 RULES = {'NOT', 'OR', 'NOR', 'AND', 'NAND'}
@@ -374,7 +382,16 @@ def load_data(path):
 
 
 def load_dictionary(path):
+    try:
+        with open(DICTIONARY_PICKLE, 'rb') as f:
+            eprint('[INFO] Loading cached dictionary')
+            return pickle.load(f)
+    except Exception as e:
+        eprint(e)
+        eprint('[INFO] Failed to load cached dictionary')
+
     with open(path) as f:
+        eprint('[INFO] Loading dictionary from game files')
         text = ''
         # Although localization files are allegedly YAML, their format
         # is slightly cursed so we need to remove some of its "quirks"
@@ -386,13 +403,18 @@ def load_dictionary(path):
                 line = sp[0] + '"' + ' '.join(sp[1:-1]) + '"' + sp[-1]
             # For some reason each key has a number after its colon symbol
             text += re.sub(r':.*? ', ': ', line, count=1)
-        return yaml.safe_load(text)['l_english']
+        dictionary = yaml.safe_load(text)['l_english']
+
+        with open(DICTIONARY_PICKLE, 'wb') as p:
+            pickle.dump(dictionary, p)
+            eprint(f'[INFO] Saved dictionary to {DICTIONARY_PICKLE}')
+        return dictionary
 
 
 if __name__ == '__main__':
     if len(ARGS) != 1:
-        print(f'usage: {SCRIPT_NAME} <STELLARIS_ROOT_PATH>')
-        print(f'       e.g. {SCRIPT_NAME} "{DEFAULT_ROOT}"')
+        eprint(f'usage: {SCRIPT_NAME} <STELLARIS_ROOT_PATH>')
+        eprint(f'       e.g. {SCRIPT_NAME} "{DEFAULT_ROOT}"')
         sys.exit(1)
 
     root_path = ARGS[0]
@@ -412,9 +434,25 @@ if __name__ == '__main__':
                     if mapped:
                         DATA[domain][kind][id] = mapped
 
-            # Add translated id's as names
+            # Add id's and translated names
             for id, item in DATA[domain][kind].items():
                 item['id'] = id
-                item['name'] = dictionary.get(id, id)
+                item['name'] = dictionary.get(id)
+                if item['name']:
+                    continue
+
+                # Handle normal civic-origins
+                item['name'] = dictionary.get(id.replace('origin_', 'civic_'))
+                if item['name']:
+                    continue
+
+                # Handle machine civic-origins
+                item['name'] = dictionary.get(
+                    id.replace('origin_', 'civic_machine_'))
+                if item['name']:
+                    continue
+
+                item['name'] = id
+                eprint(f'Failed to translate: "{id}"!')
 
     print(json.dumps(DATA, indent=4))
