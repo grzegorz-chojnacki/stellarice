@@ -232,7 +232,7 @@ def extract_singular_rule(x):
         *possible, *potential,
         # Janky workaround for unnecessary empty rules
         *[make_rule('OR',  xs) for xs in [archetypes] if len(xs) > 0],
-        *[make_rule('NOR', xs) for xs in [opposites]  if len(xs) > 0],
+        *[make_rule('NOR', xs) for xs in [opposites] if len(xs) > 0],
     ])
 
 
@@ -429,26 +429,23 @@ def load_dictionary(root_path):
 
 def translate(dictionary, id, item):
     '''Add id to item and translate to name using dictionary'''
-    item['id'] = id
+    translated = item.setdefault('name', dictionary.get(id))
 
-    # Some hard-coded items already have names
-    if item.get('name'):
+    while re.match(r'\$.+\$', translated or ''):
+        translated = dictionary.get(translated[1:-1])
+
+    if translated:
+        item['name'] = translated
         return
 
-    item['name'] = dictionary.get(id)
-    if item['name']:
-        return
+    replace_map = {'origin_': ['origin_', 'civic_', 'civic_machine_']}
 
-    # Handle normal civic-origins
-    item['name'] = dictionary.get(id.replace('origin_', 'civic_'))
-    if item['name']:
-        return
-
-    # Handle machine civic-origins
-    item['name'] = dictionary.get(
-        id.replace('origin_', 'civic_machine_'))
-    if item['name']:
-        return
+    for pattern in replace_map.keys():
+        if re.search(pattern, id):
+            for repl in replace_map[pattern]:
+                item['name'] = dictionary.get(re.sub(pattern, repl, id))
+                if item['name']:
+                    return
 
     item['name'] = id
     eprint(f'[WARN] Failed to translate: "{id}"!')
@@ -477,6 +474,7 @@ if __name__ == '__main__':
                         DATA[domain][kind][id] = mapped
 
             for id, item in DATA[domain][kind].items():
+                item['id'] = id
                 translate(dictionary, id, item)
 
     print(json.dumps(DATA, indent=4))
