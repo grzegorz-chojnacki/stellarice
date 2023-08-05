@@ -23,6 +23,28 @@ class Rule {
     else return entry.test()
   }
 
+  /** @param {string|RawRule} entry */
+  static fromRaw = entry => {
+    if (entry instanceof Object) {
+      try {
+
+        const  { type, entries } = entry
+        const ruleMap = {
+          'OR':  Some,
+          'NOT': None,
+          'NOR': None,
+          'AND': Every,
+          'NAND': () => {
+            throw new Error('NAND is not implemented!')
+          },
+        }
+        return new ruleMap[type](entries.map(e => Rule.fromRaw(e)))
+      } catch (e) {
+        console.log(entry)
+      }
+    } else return entry
+  }
+
   /**
    * Helper method for flattening the hierarchy of **Every and None** rules
    *

@@ -1,7 +1,8 @@
 // @ts-check
 /// <reference path="paths.js" />
 
-const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
+// const all = [...pop, ...traits, ...origins, ...ethics, ...authority, ...civics]
+const all = Item.loadData(data)
 
 all.forEach(item => item.initialize())
 all.forEach(item => exclude(item))
@@ -35,14 +36,14 @@ try {
 const sections = [
   {
     name: 'pop',
-    items: pop,
+    items: data.pop,
     valid: () => true,
     template: inputTemplate('radio'),
     details: () => `Available: ${1 - empire.pop.length}`,
   },
   {
     name: 'traits',
-    items: traits,
+    items: data.traits,
     valid: () =>
       empire.traits.length <= 5 && empire.traits.reduce(Trait.costSum, 2) >= 0,
     template: inputTemplate('checkbox'),
@@ -56,7 +57,7 @@ const sections = [
   },
   {
     name: 'origin',
-    items: origins,
+    items: data.origins,
     valid: () => empire.origin.length === 1,
     template: inputTemplate('radio'),
     details: () =>
@@ -64,7 +65,7 @@ const sections = [
   },
   {
     name: 'ethics',
-    items: ethics,
+    items: data.ethics,
     valid: () => empire.ethics.reduce(Ethic.costSum, 3) === 0,
     template: inputTemplate('checkbox'),
     details: () =>
@@ -72,7 +73,7 @@ const sections = [
   },
   {
     name: 'authority',
-    items: authority,
+    items: data.authority,
     valid: () => empire.authority.length === 1,
     template: inputTemplate('radio'),
     details: () =>
@@ -80,7 +81,7 @@ const sections = [
   },
   {
     name: 'civics',
-    items: civics,
+    items: data.civics,
     valid: () => empire.civics.length === 2,
     template: inputTemplate('checkbox'),
     details: () => `Available: ${2 - empire.civics.length}`,

@@ -11,15 +11,30 @@ class Item {
   static compareItems = (a, b) => a.fullName.localeCompare(b.fullName)
 
   /**
-   * Helper method that creates function for add rule to an item
-   *
-   * To be used in `Array.map` or `Array.flatMap`
-   * @param {() => Rule} ruleFn
-   * @returns {(item: Item) => Item}
+   * @type {(str: Object) => Item[]}
    */
-  static withRule = ruleFn => item => {
-    item.ruleFns.push(ruleFn)
-    return item
+  static loadData = data => {
+    const ctorMap = {
+      pop: Pop,
+      traits: Trait,
+      origins: Origin,
+      ethics: Ethic,
+      authority: Authority,
+      civics: Civic,
+    }
+
+    const all = []
+
+    for (let [domain, kinds] of Object.entries(data)) {
+      const ctor = ctorMap[domain]
+      for (let [kind, items] of Object.entries(kinds)) {
+        for (let [id, item] of Object.entries(items)) {
+          data[domain][kind][id] = new ctor(item)
+          all.push(data[domain][kind][id])
+        }
+      }
+    }
+    return all
   }
 
   /**
@@ -33,14 +48,14 @@ class Item {
    * @typedef RawItem
    * @property {string} id
    * @property {number=} cost
-   * @property {RuleGen=} rule
+   * @property {RawRule=} rule
    */
 
   /** @param {RawItem} _ */
   constructor({ id, cost = 0, rule }) {
     this.id = id
     this.cost = cost
-    this.ruleFns = rule ? [rule] : []
+    this.rawRule = rule
     this.rule = new Rule()
 
     // Special rule that will contain all items that have a None rule for this
@@ -61,9 +76,8 @@ class Item {
 
   // Each item has to be initialized before proper usage because of lazy-rules
   initialize() {
-    if (this.ruleFns.length > 0) {
-      const rules = this.ruleFns.map(fn => fn().without(this))
-      this.rule = Rule.simplify(new Every(rules))
+    if (this.rawRule) {
+      this.rule = Rule.simplify(Rule.fromRaw(this.rawRule))
     }
   }
 

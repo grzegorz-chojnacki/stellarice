@@ -1,3 +1,4 @@
+/// <reference path="data/data.js" />
 /// <reference path="utils.js" />
 /// <reference path="empire.js" />
 /// <reference path="model/rule.js" />

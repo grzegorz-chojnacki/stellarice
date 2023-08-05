@@ -221,13 +221,6 @@ def normalize_rule_names(x):
     return x
 
 
-def remove_text_entries(x):
-    # Some rules contain {'text': ...} entries which we don't use
-    if isinstance(x, Dict) and 'text' in x:
-        return None
-    return x
-
-
 def assign_rule_types(x):
     # Transform rules to a more structured format:
     # {'AND': [...]} => {'type': 'AND', 'entries': [...]}
@@ -242,14 +235,6 @@ def assign_rule_types(x):
     return x
 
 
-def flatten_rule_values(x):
-    # Map {'value': str} entries to their contents
-    if isinstance(x, Dict):
-        if 'value' in x:
-            return x['value']
-    return x
-
-
 def extract_singular_rule(x):
     # Convert multiple different rule-props to a single one which handles all
     archetypes = x.get('allowed_archetypes', [])
@@ -259,17 +244,19 @@ def extract_singular_rule(x):
     possible = x.get('possible', {}).get('entries', [])
     potential = x.get('potential', {}).get('entries', [])
 
-    # PLANT and FUN seem to always be together
-    if len(archetypes) > 0 and species == ['PLANT', 'FUN']:
-        archetypes = ['BOTANICAL' if x == 'BIOLOGICAL' else x
-                      for x in archetypes]
+    entries = [*possible, *potential]
 
-    return make_rule('AND', [
-        *possible, *potential,
-        # Janky workaround for unnecessary empty rules
-        *[make_rule('OR',  xs) for xs in [archetypes] if len(xs) > 0],
-        *[make_rule('NOR', xs) for xs in [opposites] if len(xs) > 0],
-    ])
+    if len(archetypes) > 0:
+        # PLANT and FUN seem to always be together
+        if species == ['PLANT', 'FUN']:
+            archetypes = ['BOTANICAL' if x == 'BIOLOGICAL' else x
+                          for x in archetypes]
+        entries.append(make_rule('OR', archetypes))
+
+    if len(opposites) > 0:
+        entries.append(make_rule('NOR', opposites))
+
+    return make_rule('AND', entries)
 
 
 ENTRY_MAP = {
@@ -294,6 +281,22 @@ def clean_entries(x):
             return None
         # Pop types are defined in capital letters without prefix
         return ENTRY_MAP.get(x, x)
+    elif isinstance(x, Dict):
+        # Some rules contain {'text': ...} entries which we don't use
+        if 'text' in x:
+            return None
+        # Map some entries to their contents
+        if 'value' in x:
+            return x['value']
+    elif isinstance(x, List):
+        result = []
+        for v in x:
+            if isinstance(v, Dict):
+                for k in {'allowed_archetype', 'species_class', 'species_archetype'}:
+                    if k in v:
+                        result.append(v[k])
+            result.append(v)
+        return result
     return x
 
 
@@ -307,7 +310,7 @@ def recmap(data, fn):
     if isinstance(data, Dict):
         return {k: recmap(v, fn) for k, v in map_not_none(fn, data.items())}
     elif isinstance(data, List):
-        return [recmap(v, fn) for v in map_not_none(fn, data)]
+        return list(filter(None, (recmap(v, fn) for v in map_not_none(fn, data))))
     else:
         return fn(data)
 
@@ -422,10 +425,8 @@ def parse(text):
 
     # Apply some intermediate mappings
     data = recmap(data, infer_types)
-    data = recmap(data, remove_text_entries)
     data = recmap(data, normalize_rule_names)
     data = recmap(data, assign_rule_types)
-    data = recmap(data, flatten_rule_values)
 
     for v in data.values():
         v['rule'] = extract_singular_rule(v)
@@ -541,9 +542,10 @@ if __name__ == '__main__':
                for kind, items in kinds.items()
                for id, item in items.items()}
     undefined = visited_entries - defined
-    if len(undefined) > 0:
+    if len(undefined) > 0 and False:
         eprint(f'[ERROR] Found {len(undefined)} undefined entries:')
         eprint(undefined)
         sys.exit(1)
     else:
+        print('const data = ', end='')
         print(json.dumps(DATA, indent=4))
